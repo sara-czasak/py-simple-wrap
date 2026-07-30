@@ -269,3 +269,33 @@ def sq_feet_to_sq_meters(sq_feet: float) -> float:
             (10.0)
         """
     return float(f"{(sq_feet * 0.092903):.2f}")
+def mph_to_kph(mph):
+    """
+        Converts mph speed to kph speed.
+        Returns kph speed as float.
+
+        Arguments:
+            mph (float) -- mph speed to be converted to
+            kph speed.
+
+        Example:
+            mph_to_kph(0.621371)
+            (1.0)
+        """
+    return float(f"{(mph * 1.60934):.2f}")
+
+
+def kph_to_mph(kph):
+    """
+        Converts kph speed to mph speed.
+        Returns mph speed as float.
+
+        Arguments:
+            kph (float) -- kph speed to be converted to
+            kph speed.
+
+        Example:
+            kph_to_mph(1.60934)
+            (1.0)
+        """
+    return float(f"{(kph * 0.621371):.2f}")
