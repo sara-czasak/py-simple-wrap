@@ -4,6 +4,18 @@ easy_web is built to simplify getting information from the web.
 import requests
 from bs4 import BeautifulSoup
 
+SUPPORTED_TAG_ATTRIBUTES = {
+    "a": "href",
+    "img": "src",
+}
+
+
+def print_allowed_tags() -> None:
+    """Print the supported HTML tags and attributes."""
+    print("Supported tags: " + ", ".join(SUPPORTED_TAG_ATTRIBUTES.keys()))
+    for tag, attr in SUPPORTED_TAG_ATTRIBUTES.items():
+        print(f"  <{tag}> -> {attr}")
+
 
 def get_page_content(url: str) -> str | None:
     """
@@ -217,6 +229,42 @@ def get_link_list(url: str) -> list[str] | None:
             for link in soup.find_all('a'):
                 link_list.append(link.get('href'))
             return link_list
+    except Exception as e:
+        print(f"Something went wrong with {url}\nERROR: {e}")
+        return None
+
+
+def count_tags(url: str, tag: str) -> int | None:
+    """Count matching tags on the page."""
+    if tag not in SUPPORTED_TAG_ATTRIBUTES:
+        print(f"Unsupported tag: {tag}. Call print_allowed_tags() first.")
+        return None
+
+    try:
+        response = requests.get(url, timeout=10)
+        soup = BeautifulSoup(response.content, "html.parser")
+        return len(soup.find_all(tag))
+    except Exception as e:
+        print(f"Something went wrong with {url}\nERROR: {e}")
+        return None
+
+
+def get_tag_list(url: str, tag: str) -> list[str] | None:
+    """Get values for the configured attribute of a supported tag."""
+    if tag not in SUPPORTED_TAG_ATTRIBUTES:
+        print(f"Unsupported tag: {tag}. Call print_allowed_tags() first.")
+        return None
+
+    try:
+        response = requests.get(url, timeout=10)
+        soup = BeautifulSoup(response.content, "html.parser")
+        value_attr = SUPPORTED_TAG_ATTRIBUTES[tag]
+        values: list[str] = []
+        for item in soup.find_all(tag):
+            value = item.get(value_attr)
+            if value:
+                values.append(value)
+        return values
     except Exception as e:
         print(f"Something went wrong with {url}\nERROR: {e}")
         return None

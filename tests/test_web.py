@@ -2,7 +2,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
-from py_simple_package.src.py_simple.easy_web import get_page_content, is_page_up
+from py_simple_package.src.py_simple.easy_web import (
+    get_page_content, is_page_up, count_tags, get_tag_list,
+)
 
 
 class TestEasyWeb:
@@ -77,3 +79,23 @@ class TestEasyWeb:
         result = is_page_up("https://example.com/created")
         assert result is False
         mock_get.assert_called_once_with("https://example.com/created", timeout=10)
+
+    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    def test_count_tags(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.content = b"<html><body><a href='/one'></a><a href='/two'></a><img src='a.png' /></body></html>"
+        mock_get.return_value = mock_response
+
+        assert count_tags("https://example.com", "a") == 2
+        assert count_tags("https://example.com", "img") == 1
+        assert count_tags("https://example.com", "script") is None
+
+    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    def test_get_tag_list(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.content = b"<html><body><a href='/one'></a><a href='/two'></a><img src='a.png' /><img src='' /></body></html>"
+        mock_get.return_value = mock_response
+
+        assert get_tag_list("https://example.com", "a") == ["/one", "/two"]
+        assert get_tag_list("https://example.com", "img") == ["a.png"]
+        assert get_tag_list("https://example.com", "script") is None
