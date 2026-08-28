@@ -34,6 +34,7 @@ nav:
       - Module Tutorials:
         - Quickstart: tutorial/quickstart.md
         - Easy Async: tutorial/easy_async.md
+        - Easy Archive: tutorial/easy_archive.md
         - Easy Colors: tutorial/easy_colors.md
         - Easy Config: tutorial/easy_config.md
         - Easy Converter: tutorial/easy_converter.md
