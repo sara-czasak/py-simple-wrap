@@ -231,3 +231,16 @@ def divisors(n: int) -> list:
     small = [number for number in range(1, int(math.sqrt(n)) + 1) if n % number == 0]
     large = [n // number for number in reversed(small) if n // number != number]
     return small + large
+
+
+def celsius_to_fahrenheit(celsius: float) -> float:
+    """Convert temperature from Celsius to Fahrenheit.
+
+    Args:
+        celsius (float): Temperature in degrees Celsius.
+
+    Returns:
+        float: Temperature in degrees Fahrenheit.
+    """
+    return (celsius * 9 / 5) + 32
+

@@ -1,6 +1,7 @@
 import pytest
 
 from py_simple_package.src.py_simple.easy_math import (
+    celsius_to_fahrenheit,
     divisors,
     factorial,
     fibonacci,
@@ -125,3 +126,18 @@ def test_divisors(n, expected):
 def test_divisors_rejects_less_than_one(n):
     with pytest.raises(ValueError):
         divisors(n)
+
+
+@pytest.mark.parametrize(
+    "celsius, expected",
+    [
+        (0.0, 32.0),
+        (100.0, 212.0),
+        (-40.0, -40.0),
+        (25.0, 77.0),
+        (37.0, 98.6),
+    ],
+)
+def test_celsius_to_fahrenheit(celsius, expected):
+    assert celsius_to_fahrenheit(celsius) == pytest.approx(expected)
+
