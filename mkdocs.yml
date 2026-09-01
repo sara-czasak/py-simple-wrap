@@ -47,9 +47,10 @@ nav:
         - Easy Game: tutorial/easy_game.md
         - Easy Generator: tutorial/easy_generator.md
         - Easy Images: tutorial/easy_images.md
-        - Easy Json:
+                - Easy Json:
             - Tutorial 1: tutorial/easy_json.md
             - Tutorial 2: tutorial/easy_json2.md
+            - Get Nested: tutorial/test_get_nested.md
         - Easy Lists: tutorial/easy_lists.md
         - Easy Math:
             - Tutorial 1: tutorial/easy_math.md
