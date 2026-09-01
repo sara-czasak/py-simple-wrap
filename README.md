@@ -5,7 +5,10 @@
 </div>
 
 <div align="center">
-
+<!-- Once you have a logo/wordmark image, this pair auto-swaps by GitHub theme:
+![py-simple-wrap](docs/assets/logo-dark.png#gh-dark-mode-only)
+![py-simple-wrap](docs/assets/logo-light.png#gh-light-mode-only)
+-->
  
 # py-simple-wrap
  
