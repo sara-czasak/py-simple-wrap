@@ -7,7 +7,9 @@ from py_simple_package.src.py_simple.easy_validator import (
     is_valid_url,
     is_password_secure,
     is_valid_creditcard,
-    is_valid_phone_number)
+    is_valid_phone_number,
+    is_valid_json,
+    is_valid_ipv4)
 
 class TestEasyValidator:
 
@@ -132,3 +134,37 @@ class TestEasyValidator:
 
     def test_phone_number_validation(self, phone_number, expected):
         assert is_valid_phone_number(phone_number) is expected
+    @pytest.mark.parametrize(
+        "json_string, expected",
+        [
+            ('{"key": "value"}', True),
+            ('[1, 2, 3]', True),
+            ('"just a string"', True),
+            ('123', True),
+            ('{key: "value"}', False),
+            ('{"key": "value",}', False),
+            ('', False),
+            ("{'key': 'value'}", False),
+        ],
+    )
+
+    def test_json_validation(self, json_string, expected):
+        assert is_valid_json(json_string) is expected
+
+    @pytest.mark.parametrize(
+        "ip, expected",
+        [
+            ("192.168.1.1", True),
+            ("0.0.0.0", True),
+            ("255.255.255.255", True),
+            ("256.1.1.1", False),
+            ("192.168.1", False),
+            ("192.168.1.1.1", False),
+            ("192.168.01.1", False),
+            ("", False),
+            ("abc.def.ghi.jkl", False),
+        ],
+    )
+
+    def test_ipv4_validation(self, ip, expected):
+        assert is_valid_ipv4(ip) is expected
