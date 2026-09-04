@@ -103,7 +103,14 @@ from .easy_random import (
     roll_dice, flip_coin, pick_random_item, shuffle_list, random_int,
 )
 from .easy_sql import (
-    open_db,run_update,
+    EasySqlError,
+    conditional_run_select,
+    delete_all_from_table,
+    open_db,
+    run_delete,
+    run_insert,
+    run_select,
+    run_update,
 )
 from .easy_archive import (
     zip_folder, zip_files, unzip_file, list_zip_contents, add_to_zip,
