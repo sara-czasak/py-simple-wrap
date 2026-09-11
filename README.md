@@ -156,6 +156,10 @@ print(get_page_title("https://github.com"))
  
 <br>
 
+## 📣 Share what you build
+
+Made something with py-simple-wrap? Post about it and tag **#py-simple-wrap**. I'd love to see it!
+
 ## ⭐ If py-simple-wrap made something easier for you
  
 Consider giving it a **star** — it helps other beginners find it. And if there's a function you wish existed, **fork it** and add it; this project grew because other people did exactly that.
