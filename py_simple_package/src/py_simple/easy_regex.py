@@ -179,3 +179,319 @@ def extract_hex_colors(text: str) -> list | None:
         r'[0-9a-fA-F]{4}|[0-9a-fA-F]{3})\b'
     )
     return re.findall(pattern, text)
+
+"""
+easy_regex is built to simplify pulling common patterns (emails, URLs,
+numbers) out of text without writing your own regex.
+"""
+
+import re
+
+def extract_emails(text: str) -> list | None:
+    r"""
+    Returns a list of all email addresses found in the text.
+
+    Arguments:
+        text (str): Text to search for email addresses.
+
+    Returns:
+        list: All email addresses found in the text. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_emails
+
+            result = extract_emails("Contact us at hello@example.com or support@test.org")
+            # -> ['hello@example.com', 'support@test.org']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'[a-zA-Z_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+'
+            result = re.findall(pattern, "Contact us at hello@example.com or support@test.org")
+            # -> ['hello@example.com', 'support@test.org']
+            ```
+    """
+    pattern = r'[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+'
+    return re.findall(pattern, text)
+
+def extract_ipv4_addresses(text: str) -> list:
+    r"""
+    Returns a list of all IPv4 addresses found in the text.
+
+    Matches the standard dotted-decimal format (e.g., 192.168.1.1).
+    Rejects partial matches like 192.168.1 or 192.168.1.1.1.1.
+
+    Arguments:
+        text (str): Text to search for IPv4 addresses.
+
+    Returns:
+        list: All IPv4 addresses found. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_ipv4_addresses
+
+            result = extract_ipv4_addresses("Server 192.168.1.1 connected to 10.0.0.5")
+            # -> ['192.168.1.1', '10.0.0.5']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])'
+            result = re.findall(pattern, "Server 192.168.1.1 connected to 10.0.0.5")
+            # -> ['192.168.1.1', '10.0.0.5']
+            ```
+    """
+    # (?<![\d.]) ensures IP is NOT preceded by a digit or dot
+    # (?![\d.]) ensures IP is NOT followed by a digit or dot
+    pattern = r'(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])'
+    return re.findall(pattern, text)
+    
+    
+def extract_number_sequences(text: str) -> list | None:
+    r"""
+    Returns a list of number sequences found in the text, where numbers are
+    joined by a separator such as -, _, : or . (e.g. dates, times, IP addresses,
+    version numbers, or IDs).
+
+    Arguments:
+        text (str): Text to search for number sequences.
+
+    Returns:
+        list: All number sequences found in the text. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_number_sequences
+
+            result = extract_number_sequences("Server 192.168.1.1 logged in at 14:32 on 04-08-2026")
+            # -> ['192.168.1.1', '14:32', '04-08-2026']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'[0-9]+(?:(?:-|_|:|\.)?[0-9]+)+'
+            result = re.findall(pattern, "Server 192.168.1.1 logged in at 14:32 on 04-08-2026")
+            # -> ['192.168.1.1', '14:32', '04-08-2026']
+            ```
+    """
+    pattern = r'[0-9]+(?:(?:-|_|:|\.)?[0-9]+)+'
+    return re.findall(pattern, text)
+
+def extract_numbers(text: str) -> list | None:
+    r"""
+    Returns a list of all standalone digit sequences found in the text.
+
+    Arguments:
+        text (str): Text to search for numbers.
+
+    Returns:
+        list: All digit sequences found in the text. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_numbers
+
+            result = extract_numbers("I have 3 cats and 12 fish")
+            # -> ['3', '12']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'[0-9]+'
+            result = re.findall(pattern, "I have 3 cats and 12 fish")
+            # -> ['3', '12']
+            ```
+    """
+    pattern = r'[0-9]+'
+    return re.findall(pattern, text)
+
+def extract_hex_colors(text: str) -> list | None:
+    r"""
+    Returns a list of CSS-style hexadecimal color codes found in the text.
+
+    Supports the 3, 4, 6, and 8 digit forms, including their leading `#`.
+
+    Arguments:
+        text (str): Text to search for hexadecimal color codes.
+
+    Returns:
+        list: All hexadecimal color codes found in the text. Empty list if
+            none are found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_hex_colors
+
+            result = extract_hex_colors("Use #fff on #1a2b3c")
+            # -> ['#fff', '#1a2b3c']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = (
+                r'(?<![w#])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|'
+                r'[0-9a-fA-F]{4}|[0-9a-fA-F]{3})b'
+            )
+            result = re.findall(pattern, "Use #fff on #1a2b3c")
+            # -> ['#fff', '#1a2b3c']
+            ```
+    """
+    pattern = (
+        r'(?<![\w#])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|'
+        r'[0-9a-fA-F]{4}|[0-9a-fA-F]{3})\b'
+    )
+    return re.findall(pattern, text)
+
+
+def extract_hashtags(text: str) -> list:
+    r"""
+    Returns a list of all hashtags found in the text.
+
+    A hashtag is defined as a hash symbol (#) followed by one or more 
+    alphanumeric characters or underscores.
+
+    Arguments:
+        text (str): Text to search for hashtags.
+
+    Returns:
+        list: All hashtags found in the text. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_hashtags
+
+            result = extract_hashtags("Loving #Python and #OpenSource!")
+            # -> ['#Python', '#OpenSource']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'#\w+'
+            result = re.findall(pattern, "Loving #Python and #OpenSource!")
+            # -> ['#Python', '#OpenSource']
+            ```
+    """
+    pattern = r'#\w+'
+    return re.findall(pattern, text)
+
+
+def extract_mentions(text: str) -> list:
+    r"""
+    Returns a list of all username mentions found in the text.
+
+    A mention is defined as an @ symbol followed by one or more 
+    alphanumeric characters or underscores.
+
+    Arguments:
+        text (str): Text to search for mentions.
+
+    Returns:
+        list: All mentions found in the text. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_mentions
+
+            result = extract_mentions("Hey @alice, please review @dev_team's code")
+            # -> ['@alice', '@dev_team']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'@\w+'
+            result = re.findall(pattern, "Hey @alice, please review @dev_team's code")
+            # -> ['@alice', '@dev_team']
+            ```
+    """
+    pattern = r'@\w+'
+    return re.findall(pattern, text)
+
+
+def extract_ipv4_addresses(text: str) -> list:
+    r"""
+    Returns a list of all IPv4 addresses found in the text.
+
+    Matches the standard dotted-decimal format (e.g., 192.168.1.1).
+
+    Arguments:
+        text (str): Text to search for IPv4 addresses.
+
+    Returns:
+        list: All IPv4 addresses found. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_ipv4_addresses
+
+            result = extract_ipv4_addresses("Server 192.168.1.1 connected to 10.0.0.5")
+            # -> ['192.168.1.1', '10.0.0.5']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
+            result = re.findall(pattern, "Server 192.168.1.1 connected to 10.0.0.5")
+            # -> ['192.168.1.1', '10.0.0.5']
+            ```
+    """
+    pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
+    return re.findall(pattern, text)
+
+
+def clean_extra_whitespace(text: str) -> str:
+    r"""
+    Returns the text with all extra whitespace replaced by a single space.
+
+    This removes multiple spaces, tabs, and newlines, and strips leading/trailing whitespace.
+
+    Arguments:
+        text (str): Text to clean.
+
+    Returns:
+        str: The cleaned text.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import clean_extra_whitespace
+
+            result = clean_extra_whitespace("Hello    world\n\nthis is Python")
+            # -> 'Hello world this is Python'
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            text = "Hello    world\n\nthis is Python"
+            result = re.sub(r'\s+', ' ', text).strip()
+            # -> 'Hello world this is Python'
+            ```
+    """
+    return re.sub(r'\s+', ' ', text).strip()
