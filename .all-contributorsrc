@@ -549,6 +549,8 @@
       "avatar_url": "https://github.com/Yuvrajup.png",
       "profile": "https://github.com/Yuvrajup",
       "contributions": [
+        "test",
+        "infra",
         "test"
       ]
     },

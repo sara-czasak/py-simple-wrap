@@ -600,6 +600,14 @@ Every tile below is a real person who showed up for this project. 💛
       </a>
     </td>
   </tr>
+  <tr>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/Yuvrajup">
+        <img src="https://github.com/Yuvrajup.png" width="100px;" alt="Yuvrajup"/><br />
+        <sub><b>Yuvrajup</b></sub>
+      </a>
+    </td>
+  </tr>
 </table>
 
 *(This tile is lonely. Found a bug? [Open an issue](https://github.com/sara-czasak/py-simple-wrap/issues) and claim your spot here!)*
@@ -621,6 +629,12 @@ Every tile below is a real person who showed up for this project. 💛
       <a href="https://github.com/jbsilva">
         <img src="https://github.com/jbsilva.png" width="100px;" alt="ghostfix-pm"/><br />
         <sub><b>Julio Batista Silva</b></sub>
+      </a>
+    </td>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/Yuvrajup">
+        <img src="https://github.com/Yuvrajup.png" width="100px;" alt="Yuvrajup"/><br />
+        <sub><b>Yuvrajup</b></sub>
       </a>
     </td>
   </tr>
@@ -777,7 +791,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/UroojFatima-052"><img src="https://github.com/UroojFatima-052.png?s=80" width="80px;" alt="Urooj Fatima"/><br /><sub><b>Urooj Fatima</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=UroojFatima-052" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=UroojFatima-052" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Yuvrajup"><img src="https://github.com/Yuvrajup.png?s=80" width="80px;" alt="Yuvrajup"/><br /><sub><b>Yuvrajup</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=Yuvrajup" title="Tests">🧪</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Yuvrajup"><img src="https://github.com/Yuvrajup.png?s=80" width="80px;" alt="Yuvrajup"/><br /><sub><b>Yuvrajup</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=Yuvrajup" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=Yuvrajup" title="Infrastructure">🚇</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=Yuvrajup" title="Tests">🧪</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SpaceShaman"><img src="https://github.com/SpaceShaman.png?s=80" width="80px;" alt="SpaceShaman"/><br /><sub><b>SpaceShaman</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=SpaceShaman" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=SpaceShaman" title="Docs">📖</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=SpaceShaman" title="Code">💻</a> <a href="https://github.com/SpaceShaman" title="module-author">🪶</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/yuktheshwarbhat"><img src="https://github.com/yuktheshwarbhat.png?s=80" width="80px;" alt="Yuktheshwarbhat"/><br /><sub><b>Yuktheshwarbhat</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=yuktheshwarbhat" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=yuktheshwarbhat" title="Code">💻</a></td>
     </tr>
