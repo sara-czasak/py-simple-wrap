@@ -35,8 +35,7 @@ def seconds_to_hh_mm_ss(seconds: int) -> str:
     return str(timedelta(seconds=seconds))
 
 
-def hh_mm_ss_to_seconds(hours: int = 0, minutes: int = 0, seconds: int = 0) \
-        -> int:
+def hh_mm_ss_to_seconds(hours: int = 0, minutes: int = 0, seconds: int = 0) -> int:
     """
     Returns hours, minutes and seconds converted to seconds.
 
@@ -122,7 +121,7 @@ def miles_to_km(miles: float) -> float:
     return float(f"{miles * 1.60934:.2f}")
 
 
-def fluid_oz_to_ml(oz: float, standard='us') -> float | None:
+def fluid_oz_to_ml(oz: float, standard="us") -> float | None:
     """
     Converts fluid ounces to milliliters. Returns milliliters as a float.
 
@@ -158,7 +157,7 @@ def fluid_oz_to_ml(oz: float, standard='us') -> float | None:
     return None
 
 
-def ml_to_fluid_oz(milliliters: float, standard='us') -> float | None:
+def ml_to_fluid_oz(milliliters: float, standard="us") -> float | None:
     """
     Converts milliliters to fluid ounces. Returns fluid ounces as a float.
 

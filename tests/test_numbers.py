@@ -1,19 +1,18 @@
+import pytest
+
 from py_simple_package.src.py_simple.easy_numbers import (
-    is_even,
-    is_odd,
-    is_evenly_divisible,
-    is_positive,
-    is_negative,
     average,
+    clamp,
+    greatest_common_divisor,
+    is_even,
+    is_evenly_divisible,
+    is_negative,
+    is_odd,
+    is_positive,
     is_prime,
     percentage_of,
     round_to_nearest,
-    greatest_common_divisor,
-    clamp,
 )
-
-import pytest
-
 
 # even
 
@@ -38,7 +37,6 @@ def test_is_even_with_negative_odd():
     assert is_even(-7) is False
 
 
-
 # odd
 
 
@@ -60,7 +58,6 @@ def test_is_odd_with_negative_odd():
 
 def test_is_odd_with_negative_even():
     assert is_odd(-4) is False
-
 
 
 # evenly_divisible
@@ -109,7 +106,6 @@ def test_is_positive_zero():
     assert is_positive(0) is False
 
 
-
 # negative
 
 
@@ -147,7 +143,9 @@ def test_average_negative_numbers():
 def test_average_rounding():
     assert average([1, 2, 2]) == 1.67
 
+
 # prime
+
 
 def test_is_prime_two():
     assert is_prime(2) is True
@@ -189,8 +187,6 @@ def test_is_prime_odd_composite_square():
     assert is_prime(25) is False
 
 
-
-
 # percentage
 
 
@@ -208,6 +204,7 @@ def test_percentage_zero():
 
 def test_percentage_decimal():
     assert percentage_of(19, 0.4) == 7.6
+
 
 # round_to_nearest
 

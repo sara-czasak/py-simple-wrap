@@ -2,18 +2,20 @@
 
 import os
 import tempfile
+
 import pytest
+
 from py_simple_package.src.py_simple.easy_file_manager import (
-    make_blank_file,
-    is_file_there,
+    VALID_EXTENSIONS,
+    EasyFileManagerError,
     add_a_line,
+    copy_file,
+    is_file_there,
+    list_files,
+    make_blank_file,
     read_file_to_list,
     remove_file,
     rename_file,
-    list_files,
-    copy_file,
-    VALID_EXTENSIONS,
-    EasyFileManagerError,
 )
 
 

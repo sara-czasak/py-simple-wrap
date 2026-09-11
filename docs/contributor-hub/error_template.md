@@ -26,6 +26,7 @@ class ModuleNameError(Exception):
         message (str): Description of what went wrong, usually
             including the original error message.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -64,6 +65,7 @@ class EasyColorsError(Exception):
     Args:
         message (str): Description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -73,7 +75,7 @@ def hex_to_rgb(hex_code: str) -> tuple:
     """... docstring ..."""
     try:
         hex_code = hex_code.lstrip("#")
-        return tuple(int(hex_code[i:i+2], 16) for i in (0, 2, 4))
+        return tuple(int(hex_code[i : i + 2], 16) for i in (0, 2, 4))
     except (ValueError, IndexError) as e:
         raise EasyColorsError(f"'{hex_code}' isn't a valid hex color: {e}") from None
 ```

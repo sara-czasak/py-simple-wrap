@@ -1,6 +1,8 @@
 import pytest
-from py_simple_package.src.py_simple import is_perfect_square as public_is_perfect_square
 
+from py_simple_package.src.py_simple import (
+    is_perfect_square as public_is_perfect_square,
+)
 from py_simple_package.src.py_simple.easy_math import (
     divisors,
     factorial,
@@ -9,6 +11,18 @@ from py_simple_package.src.py_simple.easy_math import (
     is_perfect_square,
     prime_factorization,
     sum_of_digits,
+    is_armstrong_number,
+    calculate_simple_interest,
+    collatz_sequence,
+    count_digits,
+    distance_between_points,
+    is_abundant_number,
+    is_harshad_number,
+    is_triangular_number,
+    midpoint,
+    reverse_digits,
+    sum_of_squares,
+    
 )
 
 
@@ -153,3 +167,156 @@ def test_is_perfect_square_is_available_from_public_api():
 def test_is_perfect_square_rejects_invalid_input(n):
     with pytest.raises(ValueError):
         is_perfect_square(n)
+
+@pytest.mark.parametrize(
+    "n, expected",
+    [
+        (0, True),       # 0^1 = 0
+        (1, True),       # 1^1 = 1
+        (153, True),     # 1^3 + 5^3 + 3^3 = 153
+        (370, True),     # 3^3 + 7^3 + 0^3 = 370
+        (371, True),     # 3^3 + 7^3 + 1^3 = 371
+        (407, True),     # 4^3 + 0^3 + 7^3 = 407
+        (1634, True),    # 1^4 + 6^4 + 3^4 + 4^4 = 1634
+        (10, False),     # 1^2 + 0^2 = 1 != 10
+        (154, False),    # Not an Armstrong number
+    ],
+)
+def test_is_armstrong_number(n, expected):
+    assert is_armstrong_number(n) is expected
+
+@pytest.mark.parametrize("n", [-1, -153, 15.3, "153"])
+def test_is_armstrong_number_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        is_armstrong_number(n)
+        
+# --- 1. is_triangular_number ---
+@pytest.mark.parametrize(
+    "n, expected",
+    [(0, True), (1, True), (3, True), (6, True), (10, True), (15, True), (5, False), (14, False)],
+)
+def test_is_triangular_number(n, expected):
+    assert is_triangular_number(n) is expected
+
+@pytest.mark.parametrize("n", [-1, -5, 2.5, "10"])
+def test_is_triangular_number_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        is_triangular_number(n)
+
+
+# --- 2. is_harshad_number ---
+@pytest.mark.parametrize(
+    "n, expected", [(1, True), (18, True), (20, True), (21, True), (19, False), (25, False)]
+)
+def test_is_harshad_number(n, expected):
+    assert is_harshad_number(n) is expected
+
+@pytest.mark.parametrize("n", [0, -1, -18, 18.5, "18"])
+def test_is_harshad_number_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        is_harshad_number(n)
+
+
+# --- 3. count_digits ---
+@pytest.mark.parametrize(
+    "n, expected", [(0, 1), (5, 1), (42, 2), (12345, 5), (-9, 1), (-1234, 4)]
+)
+def test_count_digits(n, expected):
+    assert count_digits(n) == expected
+
+@pytest.mark.parametrize("n", [12.34, "123", None])
+def test_count_digits_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        count_digits(n)
+
+
+# --- 4. reverse_digits ---
+@pytest.mark.parametrize(
+    "n, expected", [(0, 0), (5, 5), (123, 321), (120, 21), (-45, -54), (-123, -321)]
+)
+def test_reverse_digits(n, expected):
+    assert reverse_digits(n) == expected
+
+@pytest.mark.parametrize("n", [12.34, "123", None])
+def test_reverse_digits_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        reverse_digits(n)
+
+
+# --- 5. is_abundant_number ---
+@pytest.mark.parametrize(
+    "n, expected", [(12, True), (18, True), (20, True), (24, True), (1, False), (10, False)]
+)
+def test_is_abundant_number(n, expected):
+    assert is_abundant_number(n) is expected
+
+@pytest.mark.parametrize("n", [0, -1, -12, 12.5, "12"])
+def test_is_abundant_number_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        is_abundant_number(n)
+
+
+# --- 6. distance_between_points ---
+@pytest.mark.parametrize(
+    "x1, y1, x2, y2, expected",
+    [(0, 0, 3, 4, 5.0), (1, 1, 1, 1, 0.0), (-1, -1, 2, 3, 5.0), (0, 0, 0, 5, 5.0)],
+)
+def test_distance_between_points(x1, y1, x2, y2, expected):
+    assert distance_between_points(x1, y1, x2, y2) == expected
+
+
+# --- 7. midpoint ---
+@pytest.mark.parametrize(
+    "x1, y1, x2, y2, expected",
+    [(0, 0, 4, 6, (2.0, 3.0)), (1, 1, 1, 1, (1.0, 1.0)), (-2, 4, 2, -4, (0.0, 0.0)), (0, 0, 5, 5, (2.5, 2.5))],
+)
+def test_midpoint(x1, y1, x2, y2, expected):
+    assert midpoint(x1, y1, x2, y2) == expected
+
+
+# --- 8. sum_of_squares ---
+@pytest.mark.parametrize(
+    "numbers, expected", [([1, 2, 3], 14.0), ([0, 0, 0], 0.0), ([-1, -2], 5.0), ([2.5], 6.25)]
+)
+def test_sum_of_squares(numbers, expected):
+    assert sum_of_squares(numbers) == expected
+
+@pytest.mark.parametrize("numbers", ["123", 123, None])
+def test_sum_of_squares_rejects_invalid_input(numbers):
+    with pytest.raises(ValueError):
+        sum_of_squares(numbers)
+
+
+# --- 9. calculate_simple_interest ---
+@pytest.mark.parametrize(
+    "principal, rate, time, expected",
+    [(1000, 5, 2, 100.0), (500, 10, 1, 50.0), (0, 5, 2, 0.0), (1000, 0, 2, 0.0)],
+)
+def test_calculate_simple_interest(principal, rate, time, expected):
+    assert calculate_simple_interest(principal, rate, time) == expected
+
+@pytest.mark.parametrize(
+    "principal, rate, time", [("1000", 5, 2), (1000, "5", 2), (1000, 5, "2"), (None, 5, 2)]
+)
+def test_calculate_simple_interest_rejects_invalid_input(principal, rate, time):
+    with pytest.raises(ValueError):
+        calculate_simple_interest(principal, rate, time)
+
+
+# --- 10. collatz_sequence ---
+@pytest.mark.parametrize(
+    "n, expected",
+    [
+        (1, [1]),
+        (2, [2, 1]),
+        (3, [3, 10, 5, 16, 8, 4, 2, 1]),
+        (6, [6, 3, 10, 5, 16, 8, 4, 2, 1]),
+    ],
+)
+def test_collatz_sequence(n, expected):
+    assert collatz_sequence(n) == expected
+
+@pytest.mark.parametrize("n", [0, -1, -6, 6.5, "6"])
+def test_collatz_sequence_rejects_invalid_input(n):
+    with pytest.raises(ValueError):
+        collatz_sequence(n)

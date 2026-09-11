@@ -50,26 +50,26 @@ print(read_file_to_list("todo.txt"))
  
 ```python
 from py_simple import get_pretty_date, dd_mm_yyyy
- 
-print(get_pretty_date())     # e.g. "July 31, 2026"
-print(dd_mm_yyyy())          # e.g. "31-07-2026"
+
+print(get_pretty_date())  # e.g. "July 31, 2026"
+print(dd_mm_yyyy())  # e.g. "31-07-2026"
 ```
  
 ### 🔄 Unit conversion — `easy_converter`
  
 ```python
 from py_simple import celsius_to_fahrenheit, kg_to_lb
- 
+
 print(celsius_to_fahrenheit(20))  # 68.0
-print(kg_to_lb(70))               # 154.32...
+print(kg_to_lb(70))  # 154.32...
 ```
  
 ### 🔢 Numbers — `easy_numbers`
  
 ```python
 from py_simple import is_prime, average
- 
-print(is_prime(17))          # True
+
+print(is_prime(17))  # True
 print(average([4, 8, 15, 16, 23, 42]))
 ```
  
@@ -77,9 +77,9 @@ print(average([4, 8, 15, 16, 23, 42]))
  
 ```python
 from py_simple import is_password_secure, is_valid_url
- 
-print(is_password_secure("hunter2"))          # False
-print(is_valid_url("https://example.com"))    # True
+
+print(is_password_secure("hunter2"))  # False
+print(is_valid_url("https://example.com"))  # True
 ```
  
 ### 🌐 Web — `easy_web`
@@ -94,9 +94,9 @@ print(is_page_up("https://python.org"))  # True
  
 ```python
 from py_simple import to_snake_case, is_palindrome
- 
+
 print(to_snake_case("Hello World"))  # "hello_world"
-print(is_palindrome("racecar"))      # True
+print(is_palindrome("racecar"))  # True
 ```
  
 ## Next Steps

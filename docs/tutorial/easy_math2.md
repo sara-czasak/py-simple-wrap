@@ -58,7 +58,7 @@ from py_simple import (
     fibonacci,
     prime_factorization,
     sum_of_digits,
-    divisors
+    divisors,
 )
 
 print(get_least_common_multiple(4, 6))

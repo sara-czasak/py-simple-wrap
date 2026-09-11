@@ -5,7 +5,6 @@ building games.
 
 import pygame
 
-
 ALLOWED_KEYS = [i for i in dir(pygame) if i.startswith("K_")]
 
 
@@ -21,6 +20,7 @@ class EasyGameError(Exception):
     Args:
         message (str): Human-readable description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)

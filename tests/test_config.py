@@ -1,6 +1,10 @@
 import git
 import pytest
-from py_simple_package.src.py_simple.easy_config import EasyConfigError, gh_workflow_config
+
+from py_simple_package.src.py_simple.easy_config import (
+    EasyConfigError,
+    gh_workflow_config,
+)
 
 
 def test_gh_workflow_config_writes_template_at_current_directory(tmp_path, monkeypatch):
@@ -46,8 +50,8 @@ def test_gh_workflow_config_wraps_template_errors(tmp_path, monkeypatch):
         raise FileNotFoundError("template missing")
 
     monkeypatch.setattr(
-        "py_simple_package.src.py_simple.easy_config.files",
-        missing_template)
+        "py_simple_package.src.py_simple.easy_config.files", missing_template
+    )
 
     with pytest.raises(EasyConfigError, match="template missing"):
         gh_workflow_config("broken")

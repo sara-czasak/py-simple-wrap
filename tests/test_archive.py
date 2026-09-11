@@ -3,13 +3,13 @@ import zipfile
 import pytest
 
 from py_simple_package.src.py_simple.easy_archive import (
-    zip_folder,
-    zip_files,
-    unzip_file,
-    list_zip_contents,
+    EasyArchiveError,
     add_to_zip,
     is_zip_file,
-    EasyArchiveError,
+    list_zip_contents,
+    unzip_file,
+    zip_files,
+    zip_folder,
 )
 
 
@@ -108,7 +108,9 @@ def test_unzip_file_round_trip(tmp_path):
 
     assert result == destination
     assert (tmp_path / "restored" / "a.txt").read_text(encoding="utf-8") == "hello"
-    assert (tmp_path / "restored" / "sub" / "b.txt").read_text(encoding="utf-8") == "world"
+    assert (tmp_path / "restored" / "sub" / "b.txt").read_text(
+        encoding="utf-8"
+    ) == "world"
 
 
 def test_unzip_file_extracts_into_existing_destination(tmp_path):
@@ -281,8 +283,7 @@ def test_zip_files_disambiguates_colliding_basenames(tmp_path, capsys):
     destination = str(tmp_path / "extracted")
     unzip_file(zip_name, destination)
     extracted_texts = {
-        p.read_text(encoding="utf-8")
-        for p in (tmp_path / "extracted").iterdir()
+        p.read_text(encoding="utf-8") for p in (tmp_path / "extracted").iterdir()
     }
     assert extracted_texts == {"from dir1", "from dir2"}
 

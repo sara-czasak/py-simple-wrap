@@ -1,4 +1,5 @@
 """Render .github/star-history.json into a full-width, animated SVG line chart."""
+
 import json
 import math
 from pathlib import Path
@@ -37,9 +38,9 @@ def build_svg(history: list[dict]) -> str:
     polyline_points = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
 
     # total path length, for the draw-on animation
-    total_length = sum(
-        math.dist(points[i], points[i + 1]) for i in range(len(points) - 1)
-    ) or 1
+    total_length = (
+        sum(math.dist(points[i], points[i + 1]) for i in range(len(points) - 1)) or 1
+    )
 
     circles = "\n".join(
         f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.5" fill="#2f81f7">'

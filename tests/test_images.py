@@ -5,15 +5,15 @@ import tempfile
 
 import pytest
 from PIL import Image
-from py_simple_package.src.py_simple import create_thumbnail as public_create_thumbnail
 
+from py_simple_package.src.py_simple import create_thumbnail as public_create_thumbnail
 from py_simple_package.src.py_simple.easy_images import (
-    create_thumbnail,
-    resize_image,
-    convert_image,
-    rotate_image,
-    get_image_info,
     ImageProcessingError,
+    convert_image,
+    create_thumbnail,
+    get_image_info,
+    resize_image,
+    rotate_image,
 )
 
 
@@ -75,13 +75,9 @@ class TestCreateThumbnail:
         "max_width, max_height",
         [(0, 20), (20, -1), (20.5, 20), (True, 20)],
     )
-    def test_rejects_invalid_dimensions(
-        self, sample_png, max_width, max_height
-    ):
+    def test_rejects_invalid_dimensions(self, sample_png, max_width, max_height):
         with pytest.raises(ValueError):
-            create_thumbnail(
-                sample_png, "thumbnail.png", max_width, max_height
-            )
+            create_thumbnail(sample_png, "thumbnail.png", max_width, max_height)
 
     def test_missing_input_raises(self, tmp_workdir):
         with pytest.raises(ImageProcessingError):

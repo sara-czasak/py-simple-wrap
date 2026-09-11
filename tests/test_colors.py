@@ -1,15 +1,15 @@
 import pytest
 
 from py_simple_package.src.py_simple.easy_colors import (
+    contrast_ratio,
     hex_to_rgb,
+    hex_to_rgba,
     hsl_to_rgb,
+    is_light_color,
     is_valid_hex,
+    random_hex_color,
     rgb_to_hex,
     rgb_to_hsl,
-    random_hex_color,
-    is_light_color,
-    hex_to_rgba,
-    contrast_ratio,
 )
 
 

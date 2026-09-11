@@ -5,8 +5,7 @@ easy_file_manager is meant to simplify working with files.
 import os
 import shutil
 
-
-VALID_EXTENSIONS = ['txt', 'md', 'log', 'csv']
+VALID_EXTENSIONS = ["txt", "md", "log", "csv"]
 
 
 class EasyFileManagerError(Exception):
@@ -15,6 +14,7 @@ class EasyFileManagerError(Exception):
     Args:
         message (str): Description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -27,7 +27,7 @@ def _is_valid_extension(extension):
 
 def _get_extension(filename: str) -> str:
     """Extract the lowercased extension from a filename."""
-    return filename.split('.')[-1].lower()
+    return filename.split(".")[-1].lower()
 
 
 def is_file_there(filename: str) -> bool:
@@ -89,9 +89,10 @@ def make_blank_file(filename: str, file_extension: str):
     if _is_valid_extension(file_extension.lower()):
         file = f"{filename}.{file_extension.lower()}"
         if is_file_there(file):
-            raise EasyFileManagerError(f"\n\n\nERROR: File {file} already"
-                                       f" exists in current working directory.")
-        with open(file, 'w', encoding='utf-8'):
+            raise EasyFileManagerError(
+                f"\n\n\nERROR: File {file} already exists in current working directory."
+            )
+        with open(file, "w", encoding="utf-8"):
             pass
     else:
         raise EasyFileManagerError(
@@ -125,8 +126,8 @@ def add_a_line(filename: str, line: str):
     """
     ext = _get_extension(filename)
     if _is_valid_extension(ext):
-        with open(filename, 'a', encoding='utf-8') as f:
-            f.write(line + '\n')
+        with open(filename, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
     else:
         raise EasyFileManagerError(
             f"\n\n\n'{ext}' is not a valid extension.\n"
@@ -165,11 +166,10 @@ def read_file_to_list(filename: str) -> list:
     ext = _get_extension(filename)
     if _is_valid_extension(ext):
         try:
-            with open(filename, 'r', encoding='utf-8') as f:
-                return [line.strip() for line in f.readlines()]
+            with open(filename, "r", encoding="utf-8") as f:
+                return [line.strip() for line in f]
         except FileNotFoundError as e:
-            raise EasyFileManagerError(f"\n\n\nERROR: {e}") \
-                from None
+            raise EasyFileManagerError(f"\n\n\nERROR: {e}") from None
     else:
         raise EasyFileManagerError(
             f"\n\n\nERROR: '{ext}' is not a valid extension.\n"
@@ -207,8 +207,7 @@ def remove_file(filename: str):
         if is_file_there(filename):
             os.remove(filename)
         else:
-            raise EasyFileManagerError(f"\n\n\nERROR: File {filename} "
-                                       f"does not exist!")
+            raise EasyFileManagerError(f"\n\n\nERROR: File {filename} does not exist!")
     else:
         raise EasyFileManagerError(
             f"\n\n\nERROR: '{ext}' is not a valid extension.\n"
@@ -249,13 +248,17 @@ def rename_file(old_name: str, new_name: str):
             if not is_file_there(new_name):
                 os.rename(old_name, new_name)
             else:
-                raise EasyFileManagerError(f"\n\n\nERROR: File '{new_name}'"
-                                           f" already exists in current "
-                                           f"working directory.")
+                raise EasyFileManagerError(
+                    f"\n\n\nERROR: File '{new_name}'"
+                    f" already exists in current "
+                    f"working directory."
+                )
         else:
-            raise EasyFileManagerError(f"\n\n\nERROR: File {old_name} does "
-                                       f"not exist in current working "
-                  f"directory.")
+            raise EasyFileManagerError(
+                f"\n\n\nERROR: File {old_name} does "
+                f"not exist in current working "
+                f"directory."
+            )
     else:
         raise EasyFileManagerError(
             f"\n\n\nERROR: '{ext_old}' or '{ext_new}' is not a valid "
@@ -265,7 +268,7 @@ def rename_file(old_name: str, new_name: str):
         )
 
 
-def list_files(extension: str = None) -> list:
+def list_files(extension: str | None = None) -> list:
     """
     List files in the current working directory that have valid extensions.
     Optionally filter by a specific extension.
@@ -306,7 +309,7 @@ def list_files(extension: str = None) -> list:
         )
 
     matches = []
-    for fname in os.listdir('.'):
+    for fname in os.listdir("."):
         if os.path.isfile(fname):
             ext = _get_extension(fname)
             if _is_valid_extension(ext):
@@ -354,9 +357,9 @@ def copy_file(source: str, destination: str):
             f"\nVALID EXTENSIONS: {VALID_EXTENSIONS}"
         )
     if not is_file_there(source):
-        raise EasyFileManagerError(f"\n\n\nERROR: File '{source}' does "
-                                   f"not exist.")
+        raise EasyFileManagerError(f"\n\n\nERROR: File '{source}' does not exist.")
     if is_file_there(destination):
-        raise EasyFileManagerError(f"\n\n\nERROR: File '{destination}' "
-                                   f"already exists — not overwriting.")
+        raise EasyFileManagerError(
+            f"\n\n\nERROR: File '{destination}' already exists — not overwriting."
+        )
     shutil.copy2(source, destination)

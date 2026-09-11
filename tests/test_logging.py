@@ -8,10 +8,9 @@ from py_simple_package.src.py_simple.easy_logging import log_function, log_step
 
 
 def test_log_step_logs_start_and_finish(caplog):
-    with caplog.at_level(logging.INFO):
-        with log_step("Calculate total"):
-            assert caplog.messages == ["Starting: Calculate total"]
-            total = sum([10, 20, 30])
+    with caplog.at_level(logging.INFO), log_step("Calculate total"):
+        assert caplog.messages == ["Starting: Calculate total"]
+        total = sum([10, 20, 30])
 
     assert total == 60
     assert [(record.levelno, record.message) for record in caplog.records] == [
@@ -23,10 +22,9 @@ def test_log_step_logs_start_and_finish(caplog):
 def test_log_step_logs_error_and_reraises(caplog):
     error = ValueError("Operation failed")
 
-    with caplog.at_level(logging.INFO):
-        with pytest.raises(ValueError) as exc_info:
-            with log_step("Calculate total"):
-                raise error
+    with caplog.at_level(logging.INFO), pytest.raises(ValueError) as exc_info:
+        with log_step("Calculate total"):
+            raise error
 
     assert exc_info.value is error
     assert caplog.messages == [
@@ -68,9 +66,8 @@ def test_log_function_logs_error_and_reraises(caplog):
     def process(value):
         raise error
 
-    with caplog.at_level(logging.INFO):
-        with pytest.raises(ValueError) as exc_info:
-            process(5)
+    with caplog.at_level(logging.INFO), pytest.raises(ValueError) as exc_info:
+        process(5)
 
     assert exc_info.value is error
     assert caplog.messages == ["Starting: Process 5", "Error during: Process 5"]
@@ -97,9 +94,8 @@ def test_log_function_missing_message_field_does_not_run_function(caplog):
     def process(value):
         calls.append(value)
 
-    with caplog.at_level(logging.INFO):
-        with pytest.raises(KeyError, match="missing"):
-            process(5)
+    with caplog.at_level(logging.INFO), pytest.raises(KeyError, match="missing"):
+        process(5)
 
     assert calls == []
     assert caplog.messages == []

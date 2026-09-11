@@ -16,7 +16,7 @@
  
 [![PyPI](https://img.shields.io/pypi/v/py-simple-wrap?style=flat-square&logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/py-simple-wrap/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/sara-czasak/py-simple-wrap/tests.yml?style=flat-square&logo=github&label=tests)](https://github.com/sara-czasak/py-simple-wrap/actions/workflows/tests.yml)
-[![Contributors](https://img.shields.io/badge/contributors-50-orange?style=flat-square)](CONTRIBUTORS.md)
+[![Contributors](https://img.shields.io/badge/contributors-51-orange?style=flat-square)](CONTRIBUTORS.md)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/py-simple-wrap?period=total&units=NONE&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/py-simple-wrap)
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](LICENSE.md)
 [![Discord](https://img.shields.io/discord/1533803449895092245?style=flat-square&logo=discord&logoColor=white&label=discord&color=5865F2)](https://discord.gg/Ge5HnVw2p)
@@ -122,9 +122,9 @@ pip install py-simple-wrap
  
 ```python
 from py_simple import make_blank_file, miles_to_km, is_valid_email
- 
+
 make_blank_file("notes.txt")
-print(miles_to_km(26.2))                    # 42.16...
+print(miles_to_km(26.2))  # 42.16...
 print(is_valid_email("hello@example.com"))  # True
 ```
  
@@ -137,11 +137,11 @@ print(is_valid_email("hello@example.com"))  # True
 ```python
 import requests
 from bs4 import BeautifulSoup
- 
+
 try:
-    response = requests.get('https://github.com', timeout=10)
+    response = requests.get("https://github.com", timeout=10)
     response.raise_for_status()
-    page = BeautifulSoup(response.content, 'html.parser')
+    page = BeautifulSoup(response.content, "html.parser")
     title = page.title.string
 except Exception as e:
     print("The site is down or address is invalid.")
@@ -155,6 +155,10 @@ print(get_page_title("https://github.com"))
 ```
  
 <br>
+
+## 📣 Share what you build
+
+Made something with py-simple-wrap? Post about it and tag **#py-simple-wrap**. I'd love to see it!
 
 ## ⭐ If py-simple-wrap made something easier for you
  
@@ -170,6 +174,6 @@ gets built next. **[Take the 2-minute survey →](https://docs.google.com/forms/
 
 **[Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [License](LICENSE.md)**
  
-<sub>Built for beginners, grown by 40+ contributors ✨</sub>
+<sub>Built for beginners, grown by 50+ contributors ✨</sub>
  
 </div>

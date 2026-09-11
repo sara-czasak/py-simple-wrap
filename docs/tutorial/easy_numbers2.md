@@ -42,13 +42,7 @@ False
 You can also calculate averages, percentages, rounding values, greatest common divisors, and check whether a number is prime.
 
 ```python
-from py_simple import (
-    is_odd,
-    is_evenly_divisible,
-    is_positive,
-    is_negative,
-    is_prime
-)
+from py_simple import is_odd, is_evenly_divisible, is_positive, is_negative, is_prime
 
 print(is_odd(67))
 # True
@@ -80,7 +74,7 @@ from py_simple import (
     percentage_of,
     round_to_nearest,
     greatest_common_divisor,
-    clamp
+    clamp,
 )
 
 print(is_even(90))

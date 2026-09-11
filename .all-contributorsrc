@@ -549,6 +549,8 @@
       "avatar_url": "https://github.com/Yuvrajup.png",
       "profile": "https://github.com/Yuvrajup",
       "contributions": [
+        "test",
+        "infra",
         "test"
       ]
     },
@@ -562,6 +564,16 @@
         "documentation",
         "code",
         "module-author"
+      ]
+    },
+    {
+      "login": "yuktheshwarbhat",
+      "name": "Yuktheshwarbhat",
+      "avatar_url": "https://github.com/yuktheshwarbhat.png",
+      "profile": "https://github.com/yuktheshwarbhat",
+      "contributions": [
+        "test",
+        "code"
       ]
     }
   ]

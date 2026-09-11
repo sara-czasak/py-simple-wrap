@@ -112,7 +112,7 @@ def test_is_alphanumeric(text, expected):
 )
 def test_count_words(text, expected):
     assert count_words(text) == expected
-    
+
 
 @pytest.mark.parametrize(
     "text, expected",

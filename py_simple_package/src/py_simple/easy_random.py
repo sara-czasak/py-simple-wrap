@@ -3,7 +3,8 @@ easy_random is built to simplify common random choices, numbers, and shuffling.
 """
 
 import random
-from typing import Any, Sequence, List
+from collections.abc import Sequence
+from typing import Any
 
 
 def roll_dice(sides: int = 6) -> int:
@@ -91,7 +92,7 @@ def pick_random_item(items: Sequence[Any]) -> Any:
     return random.choice(items)
 
 
-def pick_random_items(items: Sequence[Any], count: int) -> List[Any]:
+def pick_random_items(items: Sequence[Any], count: int) -> list[Any]:
     """
     Picks several unique positions from a list or tuple without changing it.
 
@@ -131,7 +132,7 @@ def pick_random_items(items: Sequence[Any], count: int) -> List[Any]:
     return random.sample(items, k=count)
 
 
-def shuffle_list(items: Sequence[Any]) -> List[Any]:
+def shuffle_list(items: Sequence[Any]) -> list[Any]:
     """
     Returns a new list with the items shuffled in random order.
 

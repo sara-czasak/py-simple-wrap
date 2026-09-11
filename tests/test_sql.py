@@ -13,6 +13,7 @@ from py_simple_package.src.py_simple.easy_sql import (
     run_update,
 )
 
+
 def test_open_db_success():
     """Test if the database opens successfully."""
     # SQLite has a cool trick: using ":memory:" creates a temporary

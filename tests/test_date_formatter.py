@@ -37,13 +37,13 @@ class TestPrettyDates:
     def test_get_pretty_date_format(self):
         """Should return 'Weekday, Month Day, Year' format."""
         result = get_pretty_date()
-        assert re.match(r'[A-Z][a-z]+, [A-Z][a-z]+ \d{1,2}, \d{4}', result)
+        assert re.match(r"[A-Z][a-z]+, [A-Z][a-z]+ \d{1,2}, \d{4}", result)
 
     def test_get_past_pretty_date_returns_string(self):
         """Should return a string for valid input."""
         result = get_past_pretty_date(7)
         assert isinstance(result, str)
-        assert re.match(r'[A-Z][a-z]+, [A-Z][a-z]+ \d{1,2}, \d{4}', result)
+        assert re.match(r"[A-Z][a-z]+, [A-Z][a-z]+ \d{1,2}, \d{4}", result)
 
     def test_get_past_pretty_date_zero_days(self):
         """Zero days ago should equal today."""
@@ -82,19 +82,19 @@ class TestHyphenatedDates:
     def test_dd_mm_yyyy_format(self):
         """Should return DD-MM-YYYY pattern."""
         result = dd_mm_yyyy()
-        assert re.match(r'\d{2}-\d{2}-\d{4}', result)
+        assert re.match(r"\d{2}-\d{2}-\d{4}", result)
 
     def test_mm_dd_yyyy_format(self):
         """Should return MM-DD-YYYY pattern."""
         result = mm_dd_yyyy()
-        assert re.match(r'\d{2}-\d{2}-\d{4}', result)
+        assert re.match(r"\d{2}-\d{2}-\d{4}", result)
 
     def test_dd_mm_yyyy_vs_mm_dd_yyyy_are_different(self):
         """Should generally produce different values (unless day==month)."""
         d = dd_mm_yyyy()
         m = mm_dd_yyyy()
-        parts_d = d.split('-')
-        parts_m = m.split('-')
+        parts_d = d.split("-")
+        parts_m = m.split("-")
         # DD-MM-YYYY first two are day,month; MM-DD-YYYY first two are month,day
         if parts_d[0] != parts_m[0]:  # day may equal month on same numbers
             assert parts_d[0] == parts_m[1]
@@ -103,13 +103,13 @@ class TestHyphenatedDates:
     def test_past_dd_mm_yyyy(self):
         """Past date should differ from current and have correct format."""
         result = past_dd_mm_yyyy(30)
-        assert re.match(r'\d{2}-\d{2}-\d{4}', result)
+        assert re.match(r"\d{2}-\d{2}-\d{4}", result)
         assert result != dd_mm_yyyy()
 
     def test_future_dd_mm_yyyy(self):
         """Future date should differ from current."""
         result = future_dd_mm_yyyy(30)
-        assert re.match(r'\d{2}-\d{2}-\d{4}', result)
+        assert re.match(r"\d{2}-\d{2}-\d{4}", result)
         assert result != dd_mm_yyyy()
 
     def test_past_vs_future_symmetry(self):
@@ -123,12 +123,12 @@ class TestSlashDates:
     def test_slash_dd_mm_yyyy_format(self):
         """Should return DD/MM/YYYY pattern."""
         result = slash_dd_mm_yyyy()
-        assert re.match(r'\d{2}/\d{2}/\d{4}', result)
+        assert re.match(r"\d{2}/\d{2}/\d{4}", result)
 
     def test_slash_mm_dd_yyyy_format(self):
         """Should return MM/DD/YYYY pattern."""
         result = slash_mm_dd_yyyy()
-        assert re.match(r'\d{2}/\d{2}/\d{4}', result)
+        assert re.match(r"\d{2}/\d{2}/\d{4}", result)
 
     def test_past_slash_vs_current(self):
         """Past slash date should differ from current slash date."""
@@ -167,13 +167,13 @@ class TestUtilityFunctions:
     def test_various_past_periods(self, days):
         """Should produce valid dates for various periods."""
         result = past_dd_mm_yyyy(days)
-        assert re.match(r'\d{2}-\d{2}-\d{4}', result)
+        assert re.match(r"\d{2}-\d{2}-\d{4}", result)
 
     @pytest.mark.parametrize("days", [1, 3, 7, 30, 365])
     def test_various_future_periods(self, days):
         """Should produce valid dates for various future periods."""
         result = future_dd_mm_yyyy(days)
-        assert re.match(r'\d{2}-\d{2}-\d{4}', result)
+        assert re.match(r"\d{2}-\d{2}-\d{4}", result)
 
     @pytest.mark.parametrize(
         "fmt_key, pattern",
@@ -202,6 +202,7 @@ class TestUtilityFunctions:
         mock_datetime.now.return_value = dt.datetime(2026, 7, 20, 12, 34, 56)
         assert _get_future_date(7) == dt.datetime(2026, 7, 27, 12, 34, 56)
 
+
 def test_mm_dd_yyyy():
     # ARRANGE
     expected_output = dt.datetime.now().strftime("%m-%d-%Y")
@@ -209,7 +210,7 @@ def test_mm_dd_yyyy():
     # ACT
     result = mm_dd_yyyy()
 
-    #ASSERT
+    # ASSERT
     assert result == expected_output, f"Expected {expected_output} but got {result}"
 
 
@@ -220,7 +221,7 @@ def test_dd_mm_yyyy():
     # ACT
     result = dd_mm_yyyy()
 
-    #ASSERT
+    # ASSERT
     assert result == expected_output, f"Expected {expected_output} but got {result}"
 
 
@@ -252,8 +253,8 @@ def test_past_pretty_date():
     expected_output = [
         (datetime.now() - timedelta(days=1)).strftime("%A, %B %d, %Y"),
         (datetime.now() - timedelta(days=4)).strftime("%A, %B %d, %Y"),
-         (datetime.now() - timedelta(days=9)).strftime("%A, %B %d, %Y"),
-          (datetime.now() - timedelta(days=30)).strftime("%A, %B %d, %Y"),
+        (datetime.now() - timedelta(days=9)).strftime("%A, %B %d, %Y"),
+        (datetime.now() - timedelta(days=30)).strftime("%A, %B %d, %Y"),
     ]
 
     result = [
@@ -271,7 +272,7 @@ def test_past_dd_mm_yyyy():
         (dt.datetime.now() - timedelta(1)).strftime("%d-%m-%Y"),
         (dt.datetime.now() - timedelta(25)).strftime("%d-%m-%Y"),
         (dt.datetime.now() - timedelta(13)).strftime("%d-%m-%Y"),
-        (dt.datetime.now() - timedelta(53)).strftime("%d-%m-%Y")
+        (dt.datetime.now() - timedelta(53)).strftime("%d-%m-%Y"),
     ]
 
     result = [
@@ -289,7 +290,7 @@ def test_past_mm_dd_yyyy():
         (dt.datetime.now() - timedelta(1)).strftime("%m-%d-%Y"),
         (dt.datetime.now() - timedelta(25)).strftime("%m-%d-%Y"),
         (dt.datetime.now() - timedelta(13)).strftime("%m-%d-%Y"),
-        (dt.datetime.now() - timedelta(53)).strftime("%m-%d-%Y")
+        (dt.datetime.now() - timedelta(53)).strftime("%m-%d-%Y"),
     ]
 
     result = [
@@ -307,7 +308,7 @@ def test_past_slash_dd_mm_yyyy():
         (dt.datetime.now() - timedelta(1)).strftime("%d/%m/%Y"),
         (dt.datetime.now() - timedelta(25)).strftime("%d/%m/%Y"),
         (dt.datetime.now() - timedelta(13)).strftime("%d/%m/%Y"),
-        (dt.datetime.now() - timedelta(53)).strftime("%d/%m/%Y")
+        (dt.datetime.now() - timedelta(53)).strftime("%d/%m/%Y"),
     ]
 
     result = [
@@ -325,7 +326,7 @@ def test_past_slash_mm_dd_yyyy():
         (dt.datetime.now() - timedelta(1)).strftime("%m/%d/%Y"),
         (dt.datetime.now() - timedelta(25)).strftime("%m/%d/%Y"),
         (dt.datetime.now() - timedelta(13)).strftime("%m/%d/%Y"),
-        (dt.datetime.now() - timedelta(53)).strftime("%m/%d/%Y")
+        (dt.datetime.now() - timedelta(53)).strftime("%m/%d/%Y"),
     ]
 
     result = [
@@ -361,7 +362,7 @@ def test_future_dd_mm_yyyy():
         (dt.datetime.now() + timedelta(1)).strftime("%d-%m-%Y"),
         (dt.datetime.now() + timedelta(25)).strftime("%d-%m-%Y"),
         (dt.datetime.now() + timedelta(13)).strftime("%d-%m-%Y"),
-        (dt.datetime.now() + timedelta(53)).strftime("%d-%m-%Y")
+        (dt.datetime.now() + timedelta(53)).strftime("%d-%m-%Y"),
     ]
 
     result = [
@@ -379,7 +380,7 @@ def test_future_mm_dd_yyyy():
         (dt.datetime.now() + timedelta(1)).strftime("%m-%d-%Y"),
         (dt.datetime.now() + timedelta(25)).strftime("%m-%d-%Y"),
         (dt.datetime.now() + timedelta(13)).strftime("%m-%d-%Y"),
-        (dt.datetime.now() + timedelta(53)).strftime("%m-%d-%Y")
+        (dt.datetime.now() + timedelta(53)).strftime("%m-%d-%Y"),
     ]
 
     result = [
@@ -397,7 +398,7 @@ def test_future_slash_dd_mm_yyyy():
         (dt.datetime.now() + timedelta(1)).strftime("%d/%m/%Y"),
         (dt.datetime.now() + timedelta(25)).strftime("%d/%m/%Y"),
         (dt.datetime.now() + timedelta(13)).strftime("%d/%m/%Y"),
-        (dt.datetime.now() + timedelta(53)).strftime("%d/%m/%Y")
+        (dt.datetime.now() + timedelta(53)).strftime("%d/%m/%Y"),
     ]
 
     result = [
@@ -415,7 +416,7 @@ def test_future_slash_mm_dd_yyyy():
         (dt.datetime.now() + timedelta(1)).strftime("%m/%d/%Y"),
         (dt.datetime.now() + timedelta(25)).strftime("%m/%d/%Y"),
         (dt.datetime.now() + timedelta(13)).strftime("%m/%d/%Y"),
-        (dt.datetime.now() + timedelta(53)).strftime("%m/%d/%Y")
+        (dt.datetime.now() + timedelta(53)).strftime("%m/%d/%Y"),
     ]
 
     result = [
@@ -433,4 +434,3 @@ def test_future_slash_mm_dd_yyyy():
     assert result == expected_output, f"Expected {expected_output} but got {result}"
 
     assert result == expected_output, f"Expected {expected_output} but got {result}"
-

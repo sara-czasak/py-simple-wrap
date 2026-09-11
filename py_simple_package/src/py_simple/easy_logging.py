@@ -8,11 +8,11 @@ example with logging.basicConfig(level=logging.INFO).
 """
 
 import logging
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from functools import wraps
 from inspect import signature
-from typing import Callable, ParamSpec, TypeVar
+from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")

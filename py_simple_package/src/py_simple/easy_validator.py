@@ -1,9 +1,10 @@
 """
 easy_validator is built to simplify validation.
 """
+
+import json
 import re
 from string import punctuation
-import json
 
 
 def is_valid_email(email: str) -> bool:
@@ -34,7 +35,7 @@ def is_valid_email(email: str) -> bool:
                 print("Looks good!")
             ```
     """
-    pattern = r'[a-zA-Z_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+'
+    pattern = r"[a-zA-Z_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+"
     return bool(re.fullmatch(pattern, email))
 
 
@@ -64,7 +65,7 @@ def is_valid_username(username: str) -> bool:
             result = bool(re.fullmatch(pattern, "user_name"))
             ```
     """
-    pattern = r'^[a-zA-Z0-9_]+'
+    pattern = r"^[a-zA-Z0-9_]+"
     return bool(re.fullmatch(pattern, username))
 
 
@@ -94,7 +95,7 @@ def is_valid_zipcode(zipcode: int) -> bool:
             result = bool(re.fullmatch(pattern, str(12345)))
             ```
     """
-    pattern = r'^[0-9]{5}$'
+    pattern = r"^[0-9]{5}$"
     return bool(re.fullmatch(pattern, str(zipcode)))
 
 
@@ -126,9 +127,11 @@ def is_valid_url(url: str) -> bool:
             result = bool(re.fullmatch(pattern, "www.google.com"))
             ```
     """
-    pattern = (r'(?:https?://(?:www\.)?|www\.)[a-zA-Z0-9-]+\.'
-               r'(?:(?:[a-zA-Z0-9-]+\.)*)?(?:(?:[a-zA-Z0-9-]+\\)*)'
-               r'?[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?(?:/\S*)?')
+    pattern = (
+        r"(?:https?://(?:www\.)?|www\.)[a-zA-Z0-9-]+\."
+        r"(?:(?:[a-zA-Z0-9-]+\.)*)?(?:(?:[a-zA-Z0-9-]+\\)*)"
+        r"?[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?(?:/\S*)?"
+    )
     return bool(re.fullmatch(pattern, url))
 
 
@@ -210,7 +213,7 @@ def is_password_secure(password: str) -> bool:
     lower_letters = 0
     digits = 0
     special_characters = 0
-    last_char = ''
+    last_char = ""
 
     if len(password) > min_length:
         for char in password:
@@ -241,11 +244,12 @@ def is_password_secure(password: str) -> bool:
                     last_char = char
             else:
                 pass
-        if (upper_letters >= 1 and lower_letters >= 2 and digits >= 2 and
-                special_characters >= 1):
-            return True
-        else:
-            return False
+        return bool(
+            upper_letters >= 1
+            and lower_letters >= 2
+            and digits >= 2
+            and special_characters >= 1
+        )
     else:
         return False
 
@@ -317,58 +321,60 @@ def is_valid_creditcard(card_num: str):
 
 def is_valid_phone_number(phone_number: str) -> bool:
     r"""
-    Returns true if the phone number is a valid US-style phone number.
+        Returns true if the phone number is a valid US-style phone number.
 
-    Accepts an optional leading "+1" country code, an optional area code
-    in parentheses, and digit groups separated by spaces, dashes, or dots
-    (or no separator at all).
+        Accepts an optional leading "+1" country code, an optional area code
+        in parentheses, and digit groups separated by spaces, dashes, or dots
+        (or no separator at all).
 
-    Args:
-        phone_number (str): The phone number to validate.
+        Args:
+            phone_number (str): The phone number to validate.
 
-    Returns:
-        bool: True if the phone number is valid, False otherwise.
+        Returns:
+            bool: True if the phone number is valid, False otherwise.
 
-    Example:
-        === "The Py_simple Way"
-```python
-            from py_simple import is_valid_phone_number
+        Example:
+            === "The Py_simple Way"
+    ```python
+                from py_simple import is_valid_phone_number
 
-            result = is_valid_phone_number("(123) 456-7890")  # -> True
-```
+                result = is_valid_phone_number("(123) 456-7890")  # -> True
+    ```
 
-        === "The Traditional Way"
-```python
-            import re
+            === "The Traditional Way"
+    ```python
+                import re
 
-            pattern = r'^(\+1[\s.-]?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$'
-            result = bool(re.fullmatch(pattern, "(123) 456-7890"))
-```
+                pattern = r'^(\+1[\s.-]?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$'
+                result = bool(re.fullmatch(pattern, "(123) 456-7890"))
+    ```
     """
-    pattern = r'^(\+1[\s.-]?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$'
+    pattern = r"^(\+1[\s.-]?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$"
     return bool(re.fullmatch(pattern, phone_number))
+
+
 def is_valid_json(json_string: str) -> bool:
     r"""
     Returns true if the string is valid JSON.
- 
+
     Arguments:
         json_string (str): the string to validate.
- 
+
     Returns:
         bool: True if the string parses as valid JSON, False otherwise.
- 
+
     Example:
         === "The Py_simple Way"
             ```python
             from py_simple import is_valid_json
- 
+
             result = is_valid_json('{"key": "value"}')  # -> True
             ```
- 
+
         === "The Traditional Way"
             ```python
             import json
- 
+
             try:
                 json.loads('{"key": "value"}')
                 result = True
@@ -381,26 +387,26 @@ def is_valid_json(json_string: str) -> bool:
         return True
     except (ValueError, TypeError):
         return False
- 
- 
+
+
 def is_valid_ipv4(ip: str) -> bool:
     r"""
     Returns true if the string is a valid IPv4 address.
- 
+
     Arguments:
         ip (str): the IP address to validate.
- 
+
     Returns:
         bool: True if the IP address is valid, False otherwise.
- 
+
     Example:
         === "The Py_simple Way"
             ```python
             from py_simple import is_valid_ipv4
- 
+
             result = is_valid_ipv4("192.168.1.1")  # -> True
             ```
- 
+
         === "The Traditional Way"
             ```python
             pattern = r'(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
@@ -408,21 +414,20 @@ def is_valid_ipv4(ip: str) -> bool:
             result = bool(match) and all(0 <= int(g) <= 255 for g in match.groups())
             ```
     """
-    pattern = r'(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
+    pattern = r"(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})"
     match = re.fullmatch(pattern, ip)
- 
+
     if not match:
         return False
- 
+
     # regex only checks digit count, not range or leading zeros
     for octet in match.groups():
-        if len(octet) > 1 and octet[0] == '0':
+        if len(octet) > 1 and octet[0] == "0":
             return False
         if not 0 <= int(octet) <= 255:
             return False
- 
-    return True
 
+    return True
 
 
 def is_valid_ipv6(ip: str) -> bool:
@@ -459,6 +464,7 @@ def is_valid_ipv6(ip: str) -> bool:
             ```
     """
     import ipaddress
+
     try:
         ipaddress.IPv6Address(ip)
         return True

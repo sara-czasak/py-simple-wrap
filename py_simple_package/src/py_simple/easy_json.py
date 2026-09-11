@@ -4,6 +4,7 @@ easy_json is built to simplify working with json files
 
 import json
 import os
+
 from benedict import benedict
 
 
@@ -18,6 +19,7 @@ class EasyJsonError(Exception):
     Args:
         message (str): Human-readable description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -135,7 +137,7 @@ def save_json_data(filepath: str, data: dict) -> None:
         raise EasyJsonError(f"\n\n\nERROR: {e}") from None
 
 
-def pretty_json(data: dict = None, filepath: str = None) -> str | None:
+def pretty_json(data: dict | None = None, filepath: str | None = None) -> str | None:
     """
     Returns a pretty-printed, indented JSON string from a dictionary or
     a JSON file. Provide exactly one of `data` or `filepath` — not both.
@@ -161,11 +163,11 @@ def pretty_json(data: dict = None, filepath: str = None) -> str | None:
             ```
     """
     if data is None and filepath is None:
-        raise EasyJsonError("\n\n\nERROR: Either data or filepath "
-                            "must be provided.") from None
+        raise EasyJsonError(
+            "\n\n\nERROR: Either data or filepath must be provided."
+        ) from None
     if data is not None and filepath is not None:
-        raise EasyJsonError(f"\n\n\nERROR: Please provide data OR "
-                            f"filepath.") from None
+        raise EasyJsonError("\n\n\nERROR: Please provide data OR filepath.") from None
     elif data:
         return json.dumps(data, indent=2)
     else:
@@ -247,15 +249,12 @@ def is_json_file(filepath: str) -> bool:
     """
     is_file = os.path.isfile(filepath)
     if is_file:
-        if filepath.split(".")[-1] == "json":
-            return True
-        else:
-            return False
+        return filepath.split(".")[-1] == "json"
     else:
         return False
 
 
-def get_json_keys(data: dict = None, filepath: str = None) -> list[str]:
+def get_json_keys(data: dict | None = None, filepath: str | None = None) -> list[str]:
     """
     Returns the top-level keys in a dictionary or JSON file.
 
@@ -291,11 +290,11 @@ def get_json_keys(data: dict = None, filepath: str = None) -> list[str]:
             ```
     """
     if data is None and filepath is None:
-        raise EasyJsonError("\n\n\nERROR: Either data or filepath "
-                            "must be provided.") from None
+        raise EasyJsonError(
+            "\n\n\nERROR: Either data or filepath must be provided."
+        ) from None
     if data is not None and filepath is not None:
-        raise EasyJsonError("\n\n\nERROR: Please provide data OR "
-                            "filepath.") from None
+        raise EasyJsonError("\n\n\nERROR: Please provide data OR filepath.") from None
 
     json_data = open_json(filepath) if filepath is not None else data
     if not isinstance(json_data, dict):
@@ -304,7 +303,9 @@ def get_json_keys(data: dict = None, filepath: str = None) -> list[str]:
     return list(json_data.keys())
 
 
-def is_nested_json(data: dict = None, filepath: str = None) -> bool | None:
+def is_nested_json(
+    data: dict | None = None, filepath: str | None = None
+) -> bool | None:
     """
     Checks whether a dictionary or JSON file contains any nested
     dictionaries or lists at the top level.
@@ -342,18 +343,18 @@ def is_nested_json(data: dict = None, filepath: str = None) -> bool | None:
             ```
     """
     if data is None and filepath is None:
-        raise EasyJsonError("\n\n\nERROR: Either data or filepath "
-                            "must be provided.") from None
+        raise EasyJsonError(
+            "\n\n\nERROR: Either data or filepath must be provided."
+        ) from None
     if data is not None and filepath is not None:
-        raise EasyJsonError(f"\n\n\nERROR: Please provide data OR "
-                            f"filepath.") from None
+        raise EasyJsonError("\n\n\nERROR: Please provide data OR filepath.") from None
     if filepath:
         to_check = open_json(filepath)
     else:
         to_check = data
     try:
-        for _, value in to_check.items():
-            if isinstance(value, dict) or isinstance(value, list):
+        for value in to_check.values():
+            if isinstance(value, (dict, list)):
                 return True
             else:
                 continue
@@ -361,8 +362,9 @@ def is_nested_json(data: dict = None, filepath: str = None) -> bool | None:
         raise EasyJsonError(f"\n\n\nERROR: {e}") from None
 
 
-def flatten_json(seperator: str = "-", data: dict = None,
-                 filepath: str = None) -> dict | None:
+def flatten_json(
+    seperator: str = "-", data: dict | None = None, filepath: str | None = None
+) -> dict | None:
     """
     Flattens a nested dictionary or JSON file into a single-level
     dictionary, joining nested keys with `seperator`.
@@ -403,13 +405,13 @@ def flatten_json(seperator: str = "-", data: dict = None,
             flat = dict(d.flatten("-"))
             # still need to manually unwrap dicts/lists further
             ```
-        """
+    """
     if data is None and filepath is None:
-        raise EasyJsonError("\n\n\nERROR: Either data or filepath "
-                            "must be provided.") from None
+        raise EasyJsonError(
+            "\n\n\nERROR: Either data or filepath must be provided."
+        ) from None
     if data is not None and filepath is not None:
-        raise EasyJsonError(f"\n\n\nERROR: Please provide data OR "
-                            f"filepath.") from None
+        raise EasyJsonError("\n\n\nERROR: Please provide data OR filepath.") from None
     if filepath:
         nested = open_json(filepath)
     else:
@@ -425,7 +427,7 @@ def flatten_json(seperator: str = "-", data: dict = None,
                         for key2, value2 in item.items():
                             flat[f"{key}{seperator}{index}{seperator}{key2}"] = value2
                     else:
-                        flat[f"{key}{seperator}{index}"] = value[index]
+                        flat[f"{key}{seperator}{index}"] = item
             else:
                 flat[key] = value
         if is_nested_json(flat):
@@ -437,10 +439,13 @@ def flatten_json(seperator: str = "-", data: dict = None,
         raise EasyJsonError(f"\n\n\nERROR: {e}") from None
 
 
-
-def compare_json(data1: dict | list = None, data2: dict | list = None,
-                filepath1: str = None, filepath2: str = None,
-                path: str = "") -> dict:
+def compare_json(
+    data1: dict | list | None = None,
+    data2: dict | list | None = None,
+    filepath1: str | None = None,
+    filepath2: str | None = None,
+    path: str = "",
+) -> dict:
     """
     Compares two JSON objects or files and returns a dictionary describing
     the differences: added keys, removed keys, and changed values.
@@ -499,9 +504,13 @@ def compare_json(data1: dict | list = None, data2: dict | list = None,
             ```
     """
     # Validate inputs
-    if (data1 is None and filepath1 is None) or (data1 is not None and filepath1 is not None):
+    if (data1 is None and filepath1 is None) or (
+        data1 is not None and filepath1 is not None
+    ):
         raise EasyJsonError("\n\n\nERROR: Provide data1 OR filepath1.") from None
-    if (data2 is None and filepath2 is None) or (data2 is not None and filepath2 is not None):
+    if (data2 is None and filepath2 is None) or (
+        data2 is not None and filepath2 is not None
+    ):
         raise EasyJsonError("\n\n\nERROR: Provide data2 OR filepath2.") from None
 
     d1 = open_json(filepath1) if filepath1 else data1

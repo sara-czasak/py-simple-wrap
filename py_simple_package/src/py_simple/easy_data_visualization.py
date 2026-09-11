@@ -3,12 +3,13 @@ easy_data_visualization aims to simplify data visualization.
 without requiring users to memorize every chart type or matplotlib function.
 """
 
-import matplotlib.pyplot as plt
-from typing import Literal
 from collections import Counter
+from typing import Literal
+
+import matplotlib.pyplot as plt
 
 
-def plot_data(X:list, Y: list = None):
+def plot_data(X: list, Y: list | None = None):
     """
     Infers the type of the given data (quantitative or categorical) and
     automatically plots the most appropriate chart(s) for it, handling
@@ -70,25 +71,25 @@ def plot_data(X:list, Y: list = None):
     }
 
     charts = CHART_SUGGESTIONS[(type_X, type_Y)]
-    chart_index = 0 # tracks which subplot slot to draw into next
+    chart_index = 0  # tracks which subplot slot to draw into next
 
-    fig, axes = plt.subplots(1,2, figsize=(10,5))
+    _fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 
-    if 'histogram' in charts:
+    if "histogram" in charts:
         ax = axes.flat[chart_index]
         ax.hist(X)
         ax.set_title("Histogram")
-        ax.spines[['top', 'right']].set_visible(False)
+        ax.spines[["top", "right"]].set_visible(False)
         chart_index += 1
 
-    if 'line' in charts:
+    if "line" in charts:
         ax = axes.flat[chart_index]
         ax.plot(X)
         ax.set_title("Line chart")
-        ax.spines[['top', 'right']].set_visible(False)
+        ax.spines[["top", "right"]].set_visible(False)
         chart_index += 1
 
-    if 'barchart' in charts:
+    if "barchart" in charts:
         ax = axes.flat[chart_index]
 
         if Y is None:
@@ -98,23 +99,23 @@ def plot_data(X:list, Y: list = None):
             # Two series: put the categorical one on the x-axis and the
             # quantitative one as the bar height, regardless of which
             # argument (X or Y) is which.
-            if((type_X, type_Y) == ("categorical", "quantitative")):
+            if (type_X, type_Y) == ("categorical", "quantitative"):
                 ax.bar(X, Y)
             else:
                 ax.bar(Y, X)
 
         ax.set_title("Bar chart")
-        ax.spines[['top', 'right']].set_visible(False)
+        ax.spines[["top", "right"]].set_visible(False)
         chart_index += 1
 
-    if 'pie' in charts:
+    if "pie" in charts:
         ax = axes.flat[chart_index]
         counts = Counter(X)
-        ax.pie(counts.values(), labels=counts.keys(), autopct='%1.1f%%')
+        ax.pie(counts.values(), labels=counts.keys(), autopct="%1.1f%%")
         ax.set_title("Pie chart")
         chart_index += 1
 
-    if 'scatter' in charts:
+    if "scatter" in charts:
         ax = axes.flat[chart_index]
         ax.scatter(X, Y)
         ax.set_title("Scatter plot")
@@ -127,6 +128,7 @@ def plot_data(X:list, Y: list = None):
 
     print("Plotting data...")
     plt.show()
+
 
 def _infer_type(series) -> Literal["quantitative", "categorical"]:
     """
@@ -173,8 +175,6 @@ def _infer_type(series) -> Literal["quantitative", "categorical"]:
         raise ValueError("The series cannot be empty.")
 
     is_quantitative = all(
-        isinstance(x, (int, float)) and not isinstance(x, bool)
-        for x in series
+        isinstance(x, (int, float)) and not isinstance(x, bool) for x in series
     )
     return "quantitative" if is_quantitative else "categorical"
-

@@ -9,16 +9,21 @@ Imagine you are building a tool that needs to perform several independent calcul
 ```python
 from py_simple import run_at_the_same_time_no_params
 
+
 def download_file():
     return "File downloaded"
+
 
 def update_database():
     return "Database updated"
 
-results = run_at_the_same_time_no_params([
-    download_file,
-    update_database,
-])
+
+results = run_at_the_same_time_no_params(
+    [
+        download_file,
+        update_database,
+    ]
+)
 
 print(results)
 ```
@@ -43,16 +48,21 @@ If your functions need arguments, you can use:
 ```python
 from py_simple import run_at_the_same_time_with_params
 
+
 def add(a, b):
     return a + b
+
 
 def multiply(a, b):
     return a * b
 
-results = run_at_the_same_time_with_params([
-    (add, 2, 3),
-    (multiply, 4, 5),
-])
+
+results = run_at_the_same_time_with_params(
+    [
+        (add, 2, 3),
+        (multiply, 4, 5),
+    ]
+)
 
 print(results)
 ```
@@ -73,19 +83,23 @@ Example output:
 Instead of manually creating thread pools and handling results every time, you can simply write:
 
 ```python
-run_at_the_same_time_no_params([
-    task_one,
-    task_two,
-])
+run_at_the_same_time_no_params(
+    [
+        task_one,
+        task_two,
+    ]
+)
 ```
 
 or:
 
 ```python
-run_at_the_same_time_with_params([
-    (task_one, value),
-    (task_two, value),
-])
+run_at_the_same_time_with_params(
+    [
+        (task_one, value),
+        (task_two, value),
+    ]
+)
 ```
 
 These helpers keep asynchronous code simple, readable, and beginner-friendly while providing consistent error handling when tasks fail.

@@ -60,8 +60,7 @@ def remove_punctuation(text: str) -> str:
             ```
     """
     return "".join(
-        character for character in text
-        if character.isalnum() or character.isspace()
+        character for character in text if character.isalnum() or character.isspace()
     )
 
 

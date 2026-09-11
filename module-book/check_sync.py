@@ -84,8 +84,10 @@ def parse_modules_js(text: str) -> dict:
         icon_match = re.search(r'icon:\s*"([^"]+)"', chunk)
         category_match = re.search(r'category:\s*"([^"]+)"', chunk)
         summary_match = re.search(r'summary:\s*"([^"]*)"', chunk)
-        docs_match = re.search(r'label:\s*"Docs".*?url:\s*"([^"]+)"', chunk, re.S)
-        tutorial_match = re.search(r'label:\s*"Tutorial".*?url:\s*"([^"]+)"', chunk, re.S)
+        docs_match = re.search(r'label:\s*"Docs".*?url:\s*"([^"]+)"', chunk, re.DOTALL)
+        tutorial_match = re.search(
+            r'label:\s*"Tutorial".*?url:\s*"([^"]+)"', chunk, re.DOTALL
+        )
 
         entries[id_match.group(1)] = {
             "icon": icon_match.group(1) if icon_match else None,

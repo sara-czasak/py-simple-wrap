@@ -2,11 +2,11 @@
 easy_ai wraps common LangChain functionality to make it easier to use.
 """
 
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from pydantic import SecretStr
-from typing import Any
 
 
 class EasyAIError(Exception):
@@ -15,6 +15,7 @@ class EasyAIError(Exception):
     Args:
         message (str): Description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -34,8 +35,13 @@ def _is_exit_command(text: str) -> bool:
     return text.lower() in ("exit", "quit", "stop", "bye")
 
 
-def get_model(provider: str, model_name: str, api_key: str=None,
-              base_url: str=None, timeout: int=30) -> BaseChatModel:
+def get_model(
+    provider: str,
+    model_name: str,
+    api_key: str | None = None,
+    base_url: str | None = None,
+    timeout: int = 30,
+) -> BaseChatModel:
     """
     Returns a LangChain chat model instance for the given provider,
     without you having to remember each provider's import path and
@@ -86,46 +92,45 @@ def get_model(provider: str, model_name: str, api_key: str=None,
 
     if provider == "openai":
         from langchain_openai import ChatOpenAI
-        model = ChatOpenAI(model=model_name, api_key=api_key,
-                          base_url=base_url)
+
+        model = ChatOpenAI(model=model_name, api_key=api_key, base_url=base_url)
         return model
 
     elif provider == "ollama":
         from langchain_ollama import ChatOllama
+
         url = base_url if base_url else "http://localhost:11434"
         model = ChatOllama(model=model_name, base_url=url)
         return model
 
     elif provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
+
         api_key = SecretStr(api_key) if api_key is not None else None
         model = ChatAnthropic(
-            model_name=model_name,
-            api_key=api_key,
-            timeout=timeout,
-            stop=None
+            model_name=model_name, api_key=api_key, timeout=timeout, stop=None
         )
         return model
 
     elif provider == "google":
         from langchain_google_genai import ChatGoogleGenerativeAI
-        model = ChatGoogleGenerativeAI(model=model_name,
-                                      google_api_key=api_key)
+
+        model = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key)
         return model
 
     elif provider == "mistral":
         from langchain_mistralai import ChatMistralAI
-        model = ChatMistralAI(api_key=api_key,
-                              model_name=model_name)
+
+        model = ChatMistralAI(api_key=api_key, model_name=model_name)
         return model
 
     else:
-        raise EasyAIError(f"\n\n\nERROR: Provider '{provider}' "
-                          f"is not supported yet!")
+        raise EasyAIError(f"\n\n\nERROR: Provider '{provider}' is not supported yet!")
 
 
-def ask_ai(ai_model: BaseChatModel, question: str | list) -> (
-        str | list[str | dict[Any, Any]]):
+def ask_ai(
+    ai_model: BaseChatModel, question: str | list
+) -> str | list[str | dict[Any, Any]]:
     """
     Sends a question to a LangChain chat model and returns the
     content of the response, without you having to reach into the
@@ -282,7 +287,9 @@ def summarize_text(ai_model: BaseChatModel, text: str) -> str:
         raise EasyAIError(f"\n\n\nERROR: {e}") from None
 
 
-def translate_text(ai_model: BaseChatModel, text: str, target_lang: str = "English") -> str:
+def translate_text(
+    ai_model: BaseChatModel, text: str, target_lang: str = "English"
+) -> str:
     """
     Sends a request to translate the provided text into the target
     language using the given LangChain chat model, without you having
@@ -328,13 +335,16 @@ def translate_text(ai_model: BaseChatModel, text: str, target_lang: str = "Engli
     except Exception as e:
         raise EasyAIError(f"\n\n\nERROR: {e}") from None
 
+
 # ⚠️️ WORK IN PROGRESS ⚠️
 # This class will eventually take the complexity of setting up an agent
 # with LangChain and turning it into something simple.
 
+
 class EasyAgent:
-    def __init__(self, prompt_path: str, toolbox: list = None,
-                 history: list = None):
+    def __init__(
+        self, prompt_path: str, toolbox: list | None = None, history: list | None = None
+    ):
         self.toolbox = toolbox
         self.history = history
 
@@ -344,12 +354,12 @@ class EasyAgent:
     def init_prompt(self, path):
         if path.split(".")[-1].lower() == "txt":
             try:
-                with open(path, 'r', encoding='utf-8') as f:
+                with open(path, "r", encoding="utf-8") as f:
                     prompt = f.read().rstrip()
                 self.master_prompt = prompt
             except (FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
                 raise EasyAIError(f"\n\n\nERROR: {e}") from None
         else:
-            raise EasyAIError(f"\n\n\nERROR: {path} not supported. "
-                              f"Only `.txt` files are supported.") \
-                from None
+            raise EasyAIError(
+                f"\n\n\nERROR: {path} not supported. Only `.txt` files are supported."
+            ) from None

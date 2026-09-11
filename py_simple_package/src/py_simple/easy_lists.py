@@ -97,7 +97,7 @@ def chunk_list(items: list, size: int) -> list:
     if size < 1:
         raise ValueError("'size' must be at least 1.")
 
-    return [items[i:i + size] for i in range(0, len(items), size)]
+    return [items[i : i + size] for i in range(0, len(items), size)]
 
 
 def flatten_list(items: list) -> list:
@@ -260,8 +260,8 @@ def alternate_lists(list_a: list, list_b: list) -> list:
     for first, second in zip(list_a, list_b):
         alternated.append(first)
         alternated.append(second)
-    alternated.extend(list_a[len(list_b):])
-    alternated.extend(list_b[len(list_a):])
+    alternated.extend(list_a[len(list_b) :])
+    alternated.extend(list_b[len(list_a) :])
     return alternated
 
 

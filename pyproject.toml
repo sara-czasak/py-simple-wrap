@@ -82,6 +82,7 @@ python_files = "test_*.py"
 addopts = "-v --tb=short"
 filterwarnings = [
     "ignore::DeprecationWarning",
+
 ]
 
 [tool.setuptools]
@@ -89,3 +90,7 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 "*" = ["docs/*.md", "config_templates/*.yml"]
+
+[tool.ruff.lint]
+select = ["E", "F"]
+ignore = ["E501", "F403", "F405", "F401", "E721"]
