@@ -122,9 +122,9 @@ pip install py-simple-wrap
  
 ```python
 from py_simple import make_blank_file, miles_to_km, is_valid_email
- 
+
 make_blank_file("notes.txt")
-print(miles_to_km(26.2))                    # 42.16...
+print(miles_to_km(26.2))  # 42.16...
 print(is_valid_email("hello@example.com"))  # True
 ```
  
@@ -137,11 +137,11 @@ print(is_valid_email("hello@example.com"))  # True
 ```python
 import requests
 from bs4 import BeautifulSoup
- 
+
 try:
-    response = requests.get('https://github.com', timeout=10)
+    response = requests.get("https://github.com", timeout=10)
     response.raise_for_status()
-    page = BeautifulSoup(response.content, 'html.parser')
+    page = BeautifulSoup(response.content, "html.parser")
     title = page.title.string
 except Exception as e:
     print("The site is down or address is invalid.")

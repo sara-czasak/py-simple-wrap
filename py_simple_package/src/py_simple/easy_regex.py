@@ -3,7 +3,6 @@ easy_regex is built to simplify pulling common patterns (emails, URLs,
 numbers) out of text without writing your own regex.
 """
 
-
 import re
 
 
@@ -35,7 +34,7 @@ def extract_emails(text: str) -> list | None:
             # -> ['hello@example.com', 'support@test.org']
             ```
     """
-    pattern = r'[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+'
+    pattern = r"[a-zA-Z0-9_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+"
     return re.findall(pattern, text)
 
 
@@ -69,8 +68,10 @@ def extract_urls(text: str) -> list | None:
             # -> ['https://www.example.com', 'www.test.org']
             ```
     """
-    pattern = (r'(?:https?://(?:www\.)?|www\.)[a-zA-Z0-9-]+\.(?:(?:[a-zA-Z0-9-]+\.)*)?(?:(?:[a-zA-Z0-9-]+\\)*)?[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?'
-               r'(?:/\S*)?')
+    pattern = (
+        r"(?:https?://(?:www\.)?|www\.)[a-zA-Z0-9-]+\.(?:(?:[a-zA-Z0-9-]+\.)*)?(?:(?:[a-zA-Z0-9-]+\\)*)?[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?"
+        r"(?:/\S*)?"
+    )
     return re.findall(pattern, text)
 
 
@@ -104,7 +105,7 @@ def extract_number_sequences(text: str) -> list | None:
             # -> ['192.168.1.1', '14:32', '04-08-2026']
             ```
     """
-    pattern = r'[0-9]+(?:(?:-|_|:|\.)?[0-9]+)+'
+    pattern = r"[0-9]+(?:(?:-|_|:|\.)?[0-9]+)+"
     return re.findall(pattern, text)
 
 
@@ -136,7 +137,7 @@ def extract_numbers(text: str) -> list | None:
             # -> ['3', '12']
             ```
     """
-    pattern = r'[0-9]+'
+    pattern = r"[0-9]+"
     return re.findall(pattern, text)
 
 
@@ -175,7 +176,7 @@ def extract_hex_colors(text: str) -> list | None:
             ```
     """
     pattern = (
-        r'(?<![\w#])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|'
-        r'[0-9a-fA-F]{4}|[0-9a-fA-F]{3})\b'
+        r"(?<![\w#])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|"
+        r"[0-9a-fA-F]{4}|[0-9a-fA-F]{3})\b"
     )
     return re.findall(pattern, text)

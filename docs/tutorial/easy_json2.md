@@ -11,14 +11,9 @@ Imagine you're creating an application that stores its configuration in a JSON f
 ```python
 from py_simple import save_json_data, open_json, update_json
 
-save_json_data("config.json", {
-    "name": "Sara",
-    "theme": "dark"
-})
+save_json_data("config.json", {"name": "Sara", "theme": "dark"})
 
-update_json("config.json", {
-    "theme": "light"
-})
+update_json("config.json", {"theme": "light"})
 
 config = open_json("config.json")
 
@@ -56,12 +51,7 @@ print(is_nested_json(data={"name": "Sara", "settings": {"theme": "dark"}}))
 ## The Py_simple Way
 
 ```python
-from py_simple import (
-    save_json_data,
-    open_json,
-    update_json,
-    pretty_json
-)
+from py_simple import save_json_data, open_json, update_json, pretty_json
 
 save_json_data("config.json", {"name": "Sara"})
 
@@ -104,12 +94,7 @@ print(json.dumps(data, indent=2))
 ```python
 from py_simple import pretty_json
 
-print(pretty_json(data={
-    "name": "Sara",
-    "settings": {
-        "theme": "dark"
-    }
-}))
+print(pretty_json(data={"name": "Sara", "settings": {"theme": "dark"}}))
 ```
 
 Example output:
@@ -143,12 +128,7 @@ from py_simple import is_nested_json
 print(is_nested_json(data={"name": "Sara", "age": 25}))
 # False
 
-print(is_nested_json(data={
-    "name": "Sara",
-    "settings": {
-        "theme": "dark"
-    }
-}))
+print(is_nested_json(data={"name": "Sara", "settings": {"theme": "dark"}}))
 # True
 ```
 
@@ -157,12 +137,7 @@ print(is_nested_json(data={
 ```python
 from py_simple import flatten_json
 
-data = {
-    "user": {
-        "name": "Sara",
-        "age": 25
-    }
-}
+data = {"user": {"name": "Sara", "age": 25}}
 
 print(flatten_json(data=data))
 ```

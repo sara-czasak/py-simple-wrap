@@ -1,14 +1,16 @@
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pytest
+
 from py_simple_package.src.py_simple.easy_data_visualization import (
     _infer_type,
     plot_data,
 )
 
-
 # --- Tests for _infer_type ---
+
 
 def test_infer_type_quantitative_int():
     assert _infer_type([1, 2, 3, 4]) == "quantitative"
@@ -40,6 +42,7 @@ def test_infer_type_empty_list_raises_value_error():
 
 
 # --- Tests for plot_data ---
+
 
 @pytest.fixture(autouse=True)
 def mock_plt_show(monkeypatch):

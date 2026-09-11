@@ -38,10 +38,12 @@ def test_run_at_the_same_time_with_params():
     def subtract(a, b):
         return a - b
 
-    result = run_at_the_same_time_with_params([
-        (add, 5, 3),
-        (subtract, 5, 3),
-    ])
+    result = run_at_the_same_time_with_params(
+        [
+            (add, 5, 3),
+            (subtract, 5, 3),
+        ]
+    )
 
     assert result == [
         ("add", 8),
@@ -54,13 +56,12 @@ def test_run_at_the_same_time_with_params_error():
         raise ValueError("Something went wrong")
 
     with pytest.raises(EasyAsyncError):
-        run_at_the_same_time_with_params([
-            (failing_function, 10)
-        ])
+        run_at_the_same_time_with_params([(failing_function, 10)])
 
 
 def test_run_with_timeout_success():
     """It should execute the function with arguments and return its name and result."""
+
     def sample_func(x):
         return x * 2
 

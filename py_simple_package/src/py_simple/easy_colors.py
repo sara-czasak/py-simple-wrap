@@ -3,7 +3,6 @@
 import random
 import re
 
-
 LUMINANCE_WEIGHTS: tuple[float, float, float] = (0.2126, 0.7152, 0.0722)
 LUMINANCE_LIGHT_THRESHOLD: float = 0.179
 SRGB_LINEAR_THRESHOLD: float = 0.03928
@@ -446,7 +445,7 @@ def _relative_luminance(hex_code: str) -> float:
             ```
     """
     r, g, b = hex_to_rgb(hex_code)
-    
+
     def adjust(channel: int) -> float:
         c = channel / 255.0
         return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
@@ -494,7 +493,7 @@ def hex_to_rgba(hex_code: str, alpha: float) -> tuple[int, int, int, float]:
     """
     if not (0.0 <= alpha <= 1.0):
         raise ValueError("Alpha must be between 0.0 and 1.0")
-    
+
     r, g, b = hex_to_rgb(hex_code)
     return (r, g, b, alpha)
 
@@ -536,8 +535,8 @@ def contrast_ratio(hex1: str, hex2: str) -> float:
     """
     lum1 = _relative_luminance(hex1)
     lum2 = _relative_luminance(hex2)
-    
+
     lighter = max(lum1, lum2)
     darker = min(lum1, lum2)
-    
+
     return (lighter + 0.05) / (darker + 0.05)

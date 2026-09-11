@@ -2,13 +2,13 @@ import pytest
 
 from py_simple_package.src.py_simple.easy_stats import (
     data_range,
+    interquartile_range,
     median,
     mode,
     percentile,
     standard_deviation,
     variance,
     z_score,
-    interquartile_range,
 )
 
 
@@ -151,7 +151,8 @@ def test_z_score(nums, value, expected):
 @pytest.mark.parametrize("nums", [[], [1]])
 def test_z_score_rejects_too_few_numbers(nums):
     with pytest.raises(ValueError):
-        z_score(nums, 1) 
+        z_score(nums, 1)
+
 
 @pytest.mark.parametrize(
     "nums, expected",

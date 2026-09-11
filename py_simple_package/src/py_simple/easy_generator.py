@@ -2,14 +2,15 @@
 easy_generator helps generate things faster.
 """
 
-import re
-import unicodedata
-import string
-import random
-import qrcode
 import os
-import uuid
+import random
+import re
 import secrets
+import string
+import unicodedata
+import uuid
+
+import qrcode
 
 
 class EasyGeneratorError(Exception):
@@ -24,14 +25,19 @@ class EasyGeneratorError(Exception):
 
     Args:
         message (str): Human-readable description of what went wrong.
-        """
+    """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
 
-def generate_password(pass_length: int = 12, uppercase_chars: int = 2,
-                      digit_chars: int = 2, special_chars: int = 2) -> str:
+def generate_password(
+    pass_length: int = 12,
+    uppercase_chars: int = 2,
+    digit_chars: int = 2,
+    special_chars: int = 2,
+) -> str:
     """
     Generates a randomized password of a given length in one call,
     handling the character-pool selection, shuffling, and
@@ -84,19 +90,17 @@ def generate_password(pass_length: int = 12, uppercase_chars: int = 2,
             password = ''.join(chars)
             ```
     """
-    lowercase_chars = (pass_length -
-                       (special_chars + digit_chars + uppercase_chars))
-    lower_chars = [secrets.choice(string.ascii_lowercase)
-                   for _ in range(lowercase_chars)]
-    upper_chars = [secrets.choice(string.ascii_uppercase)
-                   for _ in range(uppercase_chars)]
-    digit_chars = [secrets.choice(string.digits)
-                   for _ in range(digit_chars)]
-    special_chars = [secrets.choice(string.punctuation)
-                     for _ in range(special_chars)]
+    lowercase_chars = pass_length - (special_chars + digit_chars + uppercase_chars)
+    lower_chars = [
+        secrets.choice(string.ascii_lowercase) for _ in range(lowercase_chars)
+    ]
+    upper_chars = [
+        secrets.choice(string.ascii_uppercase) for _ in range(uppercase_chars)
+    ]
+    digit_chars = [secrets.choice(string.digits) for _ in range(digit_chars)]
+    special_chars = [secrets.choice(string.punctuation) for _ in range(special_chars)]
 
-    pass_chars = [i for i in lower_chars + upper_chars +
-                  digit_chars + special_chars]
+    pass_chars = [i for i in lower_chars + upper_chars + digit_chars + special_chars]
 
     all_clear = False
     while not all_clear:
@@ -110,12 +114,12 @@ def generate_password(pass_length: int = 12, uppercase_chars: int = 2,
                 last_char = char
             all_clear = True
 
-    return ''.join(pass_chars)
+    return "".join(pass_chars)
 
 
 def generate_slug(text: str) -> str:
     """
-    Generates a slug(URL-friendly string) from string. 
+    Generates a slug(URL-friendly string) from string.
 
     Args:
         text (str): The text to be converted to a slug.
@@ -124,14 +128,14 @@ def generate_slug(text: str) -> str:
         str: A URL-friendly slug.
 
     Raises:
-        EasyGeneratorError: If `str` is empty, or if the 
+        EasyGeneratorError: If `str` is empty, or if the
         slug conversion fails.
 
     Example:
         === "The Py_simple Way"
             ```python
             from py_simple import generate_slug
-            
+
             text = "Hello This-Becomes_A slug"
             slug = generate_slug(text)
             print(slug)  # 'hello-this-becomes-a-slug'
@@ -152,7 +156,9 @@ def generate_slug(text: str) -> str:
     if not isinstance(text, str):
         raise EasyGeneratorError("You need to provide a string.")
     # Unicode Normalization Form KD (NFKD) is the most aggressive normalization form
-    normalized_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    normalized_text = (
+        unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    )
     lowercased_text = normalized_text.lower()
     slug = re.sub(r"[^a-z0-9]+", "-", lowercased_text).strip("-")
     if not slug:
@@ -211,11 +217,11 @@ def generate_qr_code(data_to_encode: str) -> None:
         num = 0
         good_filename = False
         while not good_filename:
-            if os.path.exists(f'qrcode{num}.png'):
+            if os.path.exists(f"qrcode{num}.png"):
                 num += 1
             else:
                 good_filename = True
-        img.save(f'qrcode{num}.png')
+        img.save(f"qrcode{num}.png")
     except Exception as e:
         raise EasyGeneratorError(f"\n\n\nERROR: {e}")
 
@@ -322,5 +328,4 @@ def generate_otp(length: int = 4, with_letters: bool = False) -> str:
                 otp += str(secrets.randbelow(10))
         return otp
     else:
-        raise EasyGeneratorError("\n\n\nERROR: OTP length must be at least "
-                                 "4") from None
+        raise EasyGeneratorError("\n\n\nERROR: OTP length must be at least 4") from None

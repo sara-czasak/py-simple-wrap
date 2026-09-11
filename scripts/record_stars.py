@@ -1,7 +1,8 @@
 """Fetch today's star count for the repo and append it to the history file."""
+
 import json
 import os
-from datetime import date, timezone, datetime
+from datetime import date
 from pathlib import Path
 
 import requests
@@ -15,7 +16,9 @@ def fetch_star_count() -> int:
     headers = {"Accept": "application/vnd.github+json"}
     if TOKEN:
         headers["Authorization"] = f"Bearer {TOKEN}"
-    response = requests.get(f"https://api.github.com/repos/{REPO}", headers=headers, timeout=10)
+    response = requests.get(
+        f"https://api.github.com/repos/{REPO}", headers=headers, timeout=10
+    )
     response.raise_for_status()
     return response.json()["stargazers_count"]
 

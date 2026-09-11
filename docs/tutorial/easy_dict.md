@@ -29,13 +29,7 @@ You can also retrieve values from nested dictionaries without manually checking 
 ```python
 from py_simple import get_nested_value
 
-data = {
-    "user": {
-        "profile": {
-            "name": "Ana"
-        }
-    }
-}
+data = {"user": {"profile": {"name": "Ana"}}}
 
 name = get_nested_value(data, "user.profile.name")
 

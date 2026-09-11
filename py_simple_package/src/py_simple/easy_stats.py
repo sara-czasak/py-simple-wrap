@@ -228,37 +228,37 @@ def percentile(nums: list[float], percent: float) -> float:
 
 def z_score(nums: list[float], value: float) -> float:
     """
-    Returns how many standard deviations a value is from the average.
+        Returns how many standard deviations a value is from the average.
 
-    A positive result means the value is above average, negative means
-    below average.
+        A positive result means the value is above average, negative means
+        below average.
 
-    Args:
-        nums (list[float]): List of numbers used to calculate the average
-            and spread.
-        value (float): The number to measure against the list.
+        Args:
+            nums (list[float]): List of numbers used to calculate the average
+                and spread.
+            value (float): The number to measure against the list.
 
-    Returns:
-        float: The z-score, rounded to 2 decimal places.
+        Returns:
+            float: The z-score, rounded to 2 decimal places.
 
-    Raises:
-        ValueError: If the list has fewer than two numbers.
+        Raises:
+            ValueError: If the list has fewer than two numbers.
 
-    Example:
-        === "The Py_simple Way"
-```python
-            from py_simple import z_score
+        Example:
+            === "The Py_simple Way"
+    ```python
+                from py_simple import z_score
 
-            result = z_score([1, 2, 3, 4, 5], 5)  # -> 1.26
-```
+                result = z_score([1, 2, 3, 4, 5], 5)  # -> 1.26
+    ```
 
-        === "The Traditional Way"
-```python
-            from statistics import mean, stdev
+            === "The Traditional Way"
+    ```python
+                from statistics import mean, stdev
 
-            nums, value = [1, 2, 3, 4, 5], 5
-            result = round((value - mean(nums)) / stdev(nums), 2)
-```
+                nums, value = [1, 2, 3, 4, 5], 5
+                result = round((value - mean(nums)) / stdev(nums), 2)
+    ```
     """
     if len(nums) < 2:
         raise ValueError("z_score needs at least two numbers.")
@@ -266,44 +266,45 @@ def z_score(nums: list[float], value: float) -> float:
     mean = sum(nums) / len(nums)
     return round((value - mean) / standard_deviation(nums), 2)
 
+
 def interquartile_range(nums: list[float]) -> float:
     """
-    Returns the spread of the middle 50% of a list of numbers.
+        Returns the spread of the middle 50% of a list of numbers.
 
-    This is the difference between the 75th percentile (Q3) and the
-    25th percentile (Q1). Unlike variance or standard deviation, it
-    isn't affected by extreme outliers.
+        This is the difference between the 75th percentile (Q3) and the
+        25th percentile (Q1). Unlike variance or standard deviation, it
+        isn't affected by extreme outliers.
 
-    Args:
-        nums (list[float]): List of numbers.
+        Args:
+            nums (list[float]): List of numbers.
 
-    Returns:
-        float: The difference between the 75th and 25th percentiles.
+        Returns:
+            float: The difference between the 75th and 25th percentiles.
 
-    Raises:
-        ValueError: If the list is empty.
+        Raises:
+            ValueError: If the list is empty.
 
-    Example:
-        === "The Py_simple Way"
-```python
-            from py_simple import interquartile_range
+        Example:
+            === "The Py_simple Way"
+    ```python
+                from py_simple import interquartile_range
 
-            result = interquartile_range([1, 2, 3, 4])  # -> 2
-```
+                result = interquartile_range([1, 2, 3, 4])  # -> 2
+    ```
 
-        === "The Traditional Way"
-```python
-            import math
+            === "The Traditional Way"
+    ```python
+                import math
 
-            nums = [1, 2, 3, 4]
-            ordered = sorted(nums)
+                nums = [1, 2, 3, 4]
+                ordered = sorted(nums)
 
-            def _percentile(ordered, percent):
-                position = math.ceil(len(ordered) * percent / 100)
-                return ordered[max(0, position - 1)]
+                def _percentile(ordered, percent):
+                    position = math.ceil(len(ordered) * percent / 100)
+                    return ordered[max(0, position - 1)]
 
-            result = _percentile(ordered, 75) - _percentile(ordered, 25)
-```
+                result = _percentile(ordered, 75) - _percentile(ordered, 25)
+    ```
     """
     if not nums:
         raise ValueError("Cannot find the interquartile range of an empty list.")

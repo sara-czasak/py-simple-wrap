@@ -19,6 +19,7 @@ class ImageProcessingError(Exception):
     Args:
         message (str): Description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -142,7 +143,9 @@ def convert_image(input_path: str, output_path: str):
     with _open_image(input_path) as img:
         # JPEG has no alpha channel; converting to RGB first avoids Pillow
         # raising on images that have one (e.g. a PNG with transparency).
-        if img.mode in ("RGBA", "P") and output_path.lower().endswith((".jpg", ".jpeg")):
+        if img.mode in ("RGBA", "P") and output_path.lower().endswith(
+            (".jpg", ".jpeg")
+        ):
             img = img.convert("RGB")
         img.save(output_path)
 

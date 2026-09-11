@@ -9,11 +9,7 @@ The `easy_validator` module provides simple helpers for common validation tasks,
 Imagine you're creating a registration form where users need to provide an email address, username, and password.
 
 ```python id="h4x8sd"
-from py_simple import (
-    is_valid_email,
-    is_valid_username,
-    is_password_secure
-)
+from py_simple import is_valid_email, is_valid_username, is_password_secure
 
 email = "hello@example.com"
 username = "user_name"
@@ -64,7 +60,7 @@ from py_simple import (
     is_valid_username,
     is_valid_zipcode,
     is_valid_url,
-    is_password_secure
+    is_password_secure,
 )
 
 print(is_valid_email("hello@example.com"))
@@ -81,21 +77,15 @@ Without `py_simple`, you would normally need to write the appropriate regular ex
 ```python id="r5k1zp"
 import re
 
-email_pattern = r'[a-zA-Z_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+'
-username_pattern = r'^[a-zA-Z0-9_]+'
-zipcode_pattern = r'^[0-9]{5}$'
+email_pattern = r"[a-zA-Z_.%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+"
+username_pattern = r"^[a-zA-Z0-9_]+"
+zipcode_pattern = r"^[0-9]{5}$"
 
-email_valid = bool(
-    re.fullmatch(email_pattern, "hello@example.com")
-)
+email_valid = bool(re.fullmatch(email_pattern, "hello@example.com"))
 
-username_valid = bool(
-    re.fullmatch(username_pattern, "user_name")
-)
+username_valid = bool(re.fullmatch(username_pattern, "user_name"))
 
-zipcode_valid = bool(
-    re.fullmatch(zipcode_pattern, str(12345))
-)
+zipcode_valid = bool(re.fullmatch(zipcode_pattern, str(12345)))
 ```
 
 For password validation, you would additionally need to manually count characters, check their types, and make sure characters aren't repeated.
@@ -204,7 +194,7 @@ from py_simple import is_valid_creditcard
 # Valid test numbers provided by Stripe
 # https://docs.stripe.com/testing?testing-method=card-numbers#cards
 visa = "4242-4242-4242-4242"
-visa_error = "4242-4242-4242-4241" # last digit changed!
+visa_error = "4242-4242-4242-4241"  # last digit changed!
 
 print(is_valid_creditcard(visa))
 print(is_valid_creditcard(visa_error))

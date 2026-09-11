@@ -17,6 +17,7 @@ class EasyAsyncError(Exception):
     Args:
         message (str): Human-readable description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -84,8 +85,7 @@ def run_at_the_same_time_no_params(functions: list) -> list:
         raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
 
 
-def run_at_the_same_time_with_params(functions_and_args: list[tuple]) \
-        -> list:
+def run_at_the_same_time_with_params(functions_and_args: list[tuple]) -> list:
     """
     Runs multiple functions at the same time, each with its own
     arguments, and returns their results.
@@ -153,6 +153,8 @@ def run_at_the_same_time_with_params(functions_and_args: list[tuple]) \
         return results
     except Exception as e:
         raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
+
+
 def run_with_timeout(func, timeout: float, *args) -> tuple:
     """
     Runs a function asynchronously with a timeout limit.

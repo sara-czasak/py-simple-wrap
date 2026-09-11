@@ -4,6 +4,7 @@ Uses the special `starred_at` media type to get the exact date each star was giv
 If this fails (403/422), GitHub's restriction is still affecting this endpoint too —
 fall back to manual entries in .github/star-history.json (see bottom of file).
 """
+
 import json
 import os
 from collections import Counter
@@ -53,7 +54,9 @@ def main() -> None:
     try:
         star_dates = fetch_all_stargazers_with_dates()
     except requests.HTTPError as exc:
-        print(f"Backfill failed ({exc}). GitHub may still be restricting this endpoint.")
+        print(
+            f"Backfill failed ({exc}). GitHub may still be restricting this endpoint."
+        )
         print('Fall back to manual entries: {"date": "2026-06-01", "stars": 5}')
         return
 

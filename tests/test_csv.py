@@ -16,7 +16,6 @@ def write_people_csv(path):
 
 
 class TestReadCsvToList:
-
     def test_read_dicts(self, tmp_path):
         csv_file = tmp_path / "people.csv"
         write_people_csv(csv_file)
@@ -61,7 +60,6 @@ class TestReadCsvToList:
 
 
 class TestWriteCsvFromList:
-
     def test_write_dicts(self, tmp_path):
         csv_file = tmp_path / "out.csv"
         data = [
@@ -71,21 +69,15 @@ class TestWriteCsvFromList:
 
         write_csv_from_list(str(csv_file), data=data)
 
-        assert csv_file.read_text(encoding="utf-8") == (
-            "Name,Age\nAlice,24\nBob,31\n"
-        )
+        assert csv_file.read_text(encoding="utf-8") == ("Name,Age\nAlice,24\nBob,31\n")
 
     def test_write_lists_with_headers(self, tmp_path):
         csv_file = tmp_path / "out.csv"
         data = [["Alice", "24"], ["Bob", "31"]]
 
-        write_csv_from_list(
-            str(csv_file), data=data, headers=["Name", "Age"]
-        )
+        write_csv_from_list(str(csv_file), data=data, headers=["Name", "Age"])
 
-        assert csv_file.read_text(encoding="utf-8") == (
-            "Name,Age\nAlice,24\nBob,31\n"
-        )
+        assert csv_file.read_text(encoding="utf-8") == ("Name,Age\nAlice,24\nBob,31\n")
 
     def test_write_lists_without_headers(self, tmp_path):
         csv_file = tmp_path / "out.csv"
@@ -93,9 +85,7 @@ class TestWriteCsvFromList:
 
         write_csv_from_list(str(csv_file), data=data)
 
-        assert csv_file.read_text(encoding="utf-8") == (
-            "Alice,24\nBob,31\n"
-        )
+        assert csv_file.read_text(encoding="utf-8") == ("Alice,24\nBob,31\n")
 
     def test_write_custom_delimiter(self, tmp_path):
         csv_file = tmp_path / "out.csv"
@@ -112,7 +102,6 @@ class TestWriteCsvFromList:
 
 
 class TestGetCsvColumns:
-
     def test_get_columns(self, tmp_path):
         csv_file = tmp_path / "people.csv"
         write_people_csv(csv_file)
@@ -134,7 +123,6 @@ class TestGetCsvColumns:
 
 
 class TestFilterCsvRows:
-
     def test_filter_dicts(self, tmp_path):
         csv_file = tmp_path / "people.csv"
         write_people_csv(csv_file)

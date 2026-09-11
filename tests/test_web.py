@@ -1,8 +1,10 @@
 from unittest.mock import MagicMock, patch
+
 import pytest
 import requests
 
 from py_simple_package.src.py_simple.easy_web import (
+    SomethingWentWrongError,
     count_links,
     count_tags,
     get_all_headers,
@@ -13,12 +15,10 @@ from py_simple_package.src.py_simple.easy_web import (
     get_tag_list,
     is_page_up,
     print_allowed_tags,
-    SomethingWentWrongError,
 )
 
 
 class TestEasyWeb:
-
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_page_content_success(self, mock_get):
         mock_response = MagicMock()
@@ -94,11 +94,11 @@ class TestEasyWeb:
     def test_get_meta_description_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><head>'
+            b"<html><head>"
             b'<meta name="description" content="A simple test page">'
             b'<meta name="keywords" content="python, pytest">'
             b'<meta name="viewport">'
-            b'</head></html>'
+            b"</head></html>"
         )
         mock_get.return_value = mock_response
 
@@ -109,7 +109,7 @@ class TestEasyWeb:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_meta_description_empty(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><head><title>No meta</title></head></html>'
+        mock_response.content = b"<html><head><title>No meta</title></head></html>"
         mock_get.return_value = mock_response
 
         result = get_meta_description("https://example.com")
@@ -128,10 +128,10 @@ class TestEasyWeb:
     def test_get_all_headers_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
-            b'<header>\n  Welcome to Py_simple  \n</header>'
-            b'<header>Documentation Header</header>'
-            b'</body></html>'
+            b"<html><body>"
+            b"<header>\n  Welcome to Py_simple  \n</header>"
+            b"<header>Documentation Header</header>"
+            b"</body></html>"
         )
         mock_get.return_value = mock_response
 
@@ -142,7 +142,7 @@ class TestEasyWeb:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_all_headers_empty(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><body><div>No header tag</div></body></html>'
+        mock_response.content = b"<html><body><div>No header tag</div></body></html>"
         mock_get.return_value = mock_response
 
         result = get_all_headers("https://example.com")
@@ -159,14 +159,11 @@ class TestEasyWeb:
 
 
 class TestGetPageTitle:
-
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_page_title_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><head>'
-            b'<title>Example Title</title>'
-            b'</head></html>'
+            b"<html><head><title>Example Title</title></head></html>"
         )
         mock_get.return_value = mock_response
 
@@ -177,7 +174,7 @@ class TestGetPageTitle:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_page_title_no_title_tag(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><body><p>No title here</p></body></html>'
+        mock_response.content = b"<html><body><p>No title here</p></body></html>"
         mock_get.return_value = mock_response
 
         with pytest.raises(SomethingWentWrongError):
@@ -194,17 +191,16 @@ class TestGetPageTitle:
 
 
 class TestCountTags:
-
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_count_tags_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
+            b"<html><body>"
             b'<a href="/one">One</a>'
             b'<a href="/two">Two</a>'
             b'<a href="/three">Three</a>'
             b'<img src="logo.png">'
-            b'</body></html>'
+            b"</body></html>"
         )
         mock_get.return_value = mock_response
 
@@ -216,10 +212,7 @@ class TestCountTags:
     def test_count_tags_img(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
-            b'<img src="logo.png">'
-            b'<img src="banner.png">'
-            b'</body></html>'
+            b'<html><body><img src="logo.png"><img src="banner.png"></body></html>'
         )
         mock_get.return_value = mock_response
 
@@ -230,7 +223,7 @@ class TestCountTags:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_count_tags_none_found(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><body><p>No links here</p></body></html>'
+        mock_response.content = b"<html><body><p>No links here</p></body></html>"
         mock_get.return_value = mock_response
 
         result = count_tags("https://example.com", "a")
@@ -251,16 +244,15 @@ class TestCountTags:
 
 
 class TestCountLinks:
-
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_count_links_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
+            b"<html><body>"
             b'<a href="/one">One</a>'
             b'<a href="/two">Two</a>'
             b'<a href="/three">Three</a>'
-            b'</body></html>'
+            b"</body></html>"
         )
         mock_get.return_value = mock_response
 
@@ -271,7 +263,7 @@ class TestCountLinks:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_count_links_none_found(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><body><p>No links here</p></body></html>'
+        mock_response.content = b"<html><body><p>No links here</p></body></html>"
         mock_get.return_value = mock_response
 
         result = count_links("https://example.com")
@@ -288,16 +280,15 @@ class TestCountLinks:
 
 
 class TestGetTagList:
-
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_tag_list_hrefs(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
+            b"<html><body>"
             b'<a href="/one">One</a>'
             b'<a href="/two">Two</a>'
             b'<img src="logo.png">'
-            b'</body></html>'
+            b"</body></html>"
         )
         mock_get.return_value = mock_response
 
@@ -309,11 +300,11 @@ class TestGetTagList:
     def test_get_tag_list_srcs(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
+            b"<html><body>"
             b'<img src="logo.png">'
             b'<img src="banner.png">'
             b'<a href="/one">One</a>'
-            b'</body></html>'
+            b"</body></html>"
         )
         mock_get.return_value = mock_response
 
@@ -324,7 +315,7 @@ class TestGetTagList:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_tag_list_none_found(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><body><p>No images</p></body></html>'
+        mock_response.content = b"<html><body><p>No images</p></body></html>"
         mock_get.return_value = mock_response
 
         result = get_tag_list("https://example.com", "img")
@@ -345,15 +336,11 @@ class TestGetTagList:
 
 
 class TestGetLinkList:
-
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_link_list_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
-            b'<html><body>'
-            b'<a href="/one">One</a>'
-            b'<a href="/two">Two</a>'
-            b'</body></html>'
+            b'<html><body><a href="/one">One</a><a href="/two">Two</a></body></html>'
         )
         mock_get.return_value = mock_response
 
@@ -364,7 +351,7 @@ class TestGetLinkList:
     @patch("py_simple_package.src.py_simple.easy_web.requests.get")
     def test_get_link_list_none_found(self, mock_get):
         mock_response = MagicMock()
-        mock_response.content = b'<html><body><p>No links here</p></body></html>'
+        mock_response.content = b"<html><body><p>No links here</p></body></html>"
         mock_get.return_value = mock_response
 
         result = get_link_list("https://example.com")
@@ -381,7 +368,6 @@ class TestGetLinkList:
 
 
 class TestPrintAllowedTags:
-
     def test_print_allowed_tags(self, capsys):
         result = print_allowed_tags()
         captured = capsys.readouterr()

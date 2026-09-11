@@ -1,13 +1,15 @@
 import pytest
-from py_simple_package.src.py_simple import pick_random_items as public_pick_random_items
 
+from py_simple_package.src.py_simple import (
+    pick_random_items as public_pick_random_items,
+)
 from py_simple_package.src.py_simple.easy_random import (
-    roll_dice,
     flip_coin,
     pick_random_item,
     pick_random_items,
-    shuffle_list,
     random_int,
+    roll_dice,
+    shuffle_list,
 )
 
 
@@ -66,8 +68,9 @@ def test_shuffle_list():
     assert len(shuffled) == len(original)
     assert set(shuffled) == set(original)
     assert original == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    
+
     assert shuffle_list([]) == []
+
 
 def test_random_int():
     for _ in range(50):

@@ -17,10 +17,13 @@ from py_simple_package.src.py_simple.easy_flow import (
 
 
 class TestRunPyString:
-    @pytest.mark.parametrize("code_string,expected_output", [
-        ("print('hello world')", "hello world\n"),
-        ("a = 1 + 1\nprint(a)", "2\n"),
-    ])
+    @pytest.mark.parametrize(
+        "code_string,expected_output",
+        [
+            ("print('hello world')", "hello world\n"),
+            ("a = 1 + 1\nprint(a)", "2\n"),
+        ],
+    )
     def test_runs_successfully(self, capsys, code_string, expected_output):
         run_py_string(code_string)
         captured = capsys.readouterr()
@@ -33,7 +36,6 @@ class TestRunPyString:
 
 
 class TestEasyFlowError:
-    
     def test_is_exception(self):
         """Tests if it is an exception."""
         assert issubclass(EasyFlowError, Exception)
@@ -141,6 +143,7 @@ class TestTimeFunctionCall:
 
     def test_function_error_raises_easyflowerror(self):
         """Checks if exception are wrapped correctly."""
+
         def boom():
             raise ValueError("bad function")
 
@@ -152,6 +155,7 @@ class TestTimeFunctionCall:
 class TestTimeIt:
     def test_returns_original_result(self):
         """Should return whatever the wrapped function returns."""
+
         @time_it
         def add(a, b):
             return a + b
@@ -160,6 +164,7 @@ class TestTimeIt:
 
     def test_prints_timing(self, capsys):
         """Should print the function's name and elapsed time."""
+
         @time_it
         def add(a, b):
             return a + b
@@ -171,6 +176,7 @@ class TestTimeIt:
 
     def test_supports_args_and_kwargs(self):
         """Should forward both positional and keyword arguments."""
+
         @time_it
         def greet(name, greeting="Hello"):
             return f"{greeting}, {name}!"

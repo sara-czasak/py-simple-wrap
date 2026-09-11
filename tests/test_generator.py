@@ -1,3 +1,4 @@
+import itertools
 import string
 import uuid
 
@@ -9,8 +10,8 @@ from py_simple_package.src.py_simple.easy_generator import (
     generate_otp,
     generate_password,
     generate_qr_code,
-    generate_uuid,
     generate_slug,
+    generate_uuid,
 )
 
 
@@ -51,23 +52,15 @@ def test_generate_password_character_counts(length, uppercase, digits, special):
         special_chars=special,
     )
 
-    assert sum(
-        char in string.ascii_uppercase for char in password
-    ) == uppercase
+    assert sum(char in string.ascii_uppercase for char in password) == uppercase
 
-    assert sum(
-        char in string.digits for char in password
-    ) == digits
+    assert sum(char in string.digits for char in password) == digits
 
-    assert sum(
-        char in string.punctuation for char in password
-    ) == special
+    assert sum(char in string.punctuation for char in password) == special
 
     lowercase = length - (uppercase + digits + special)
 
-    assert sum(
-        char in string.ascii_lowercase for char in password
-    ) == lowercase
+    assert sum(char in string.ascii_lowercase for char in password) == lowercase
 
 
 @pytest.mark.parametrize(
@@ -77,10 +70,7 @@ def test_generate_password_character_counts(length, uppercase, digits, special):
 def test_generate_password_no_adjacent_duplicates(length):
     password = generate_password(length)
 
-    assert all(
-        first != second
-        for first, second in zip(password, password[1:])
-    )
+    assert all(first != second for first, second in itertools.pairwise(password))
 
 
 @pytest.mark.parametrize(
@@ -113,6 +103,7 @@ def test_generate_slug_passing(text, expected_slug):
 def test_generate_slug_rejects_invalid_string(text):
     with pytest.raises(EasyGeneratorError):
         generate_slug(text)
+
 
 @pytest.mark.parametrize(
     "data",
@@ -181,10 +172,7 @@ def test_generate_api_key():
 
     assert isinstance(api_key, str)
     assert len(api_key) > 0
-    assert all(
-        char.isalnum() or char in "-_="
-        for char in api_key
-    )
+    assert all(char.isalnum() or char in "-_=" for char in api_key)
 
 
 def test_generate_api_key_uses_64_bytes(monkeypatch):
@@ -222,10 +210,7 @@ def test_generate_otp_with_letters(length):
     otp = generate_otp(length, with_letters=True)
 
     assert len(otp) == length
-    assert all(
-        char in string.ascii_letters + string.digits
-        for char in otp
-    )
+    assert all(char in string.ascii_letters + string.digits for char in otp)
 
 
 @pytest.mark.parametrize(

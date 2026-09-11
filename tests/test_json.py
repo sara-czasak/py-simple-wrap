@@ -1,4 +1,5 @@
 import json
+
 import pytest
 
 from py_simple_package.src.py_simple.easy_json import (
@@ -6,18 +7,17 @@ from py_simple_package.src.py_simple.easy_json import (
     compare_json,
     flatten_json,
     get_json_keys,
+    get_nested,
     is_json_file,
     is_nested_json,
     open_json,
     pretty_json,
     save_json_data,
     update_json,
-    get_nested,
 )
 
 
 class TestEasyJson:
-
     def test_open_json_success(self, tmp_path):
         json_file = tmp_path / "sample.json"
         data = {"name": "Sara", "role": "Maintainer", "active": True}
@@ -285,8 +285,7 @@ class TestEasyJson:
 
     def test_get_json_keys_with_filepath(self, tmp_path):
         json_file = tmp_path / "sample.json"
-        json_file.write_text('{"name": "Sara", "role": "Maintainer"}',
-                             encoding="utf-8")
+        json_file.write_text('{"name": "Sara", "role": "Maintainer"}', encoding="utf-8")
 
         assert get_json_keys(filepath=str(json_file)) == ["name", "role"]
 
@@ -302,10 +301,12 @@ class TestEasyJson:
 
         assert "must be a dictionary" in str(exc_info.value)
 
+
 def test_get_nested_dict():
     data = {"a": {"b": {"c": 42}}}
     assert get_nested(data, "a.b.c") == 42
     assert get_nested(data, "a.x.y", "missing") == "missing"
+
 
 def test_get_nested_list():
     data = {"users": [{"name": "Alice"}, {"name": "Bob"}]}
@@ -332,57 +333,53 @@ def test_get_nested_stops_when_path_continues_past_scalar():
 
 
 def test_compare_json_added_keys():
-    result = compare_json(
-        data1={"name": "Sara"},
-        data2={"name": "Sara", "city": "NYC"}
-    )
+    result = compare_json(data1={"name": "Sara"}, data2={"name": "Sara", "city": "NYC"})
     assert result["added"] == {"city": "NYC"}
     assert result["removed"] == {}
     assert result["changed"] == {}
 
+
 def test_compare_json_removed_keys():
-    result = compare_json(
-        data1={"name": "Sara", "age": 25},
-        data2={"name": "Sara"}
-    )
+    result = compare_json(data1={"name": "Sara", "age": 25}, data2={"name": "Sara"})
     assert result["removed"] == {"age": 25}
     assert result["added"] == {}
 
+
 def test_compare_json_changed_values():
     result = compare_json(
-        data1={"name": "Sara", "age": 25},
-        data2={"name": "Sara", "age": 26}
+        data1={"name": "Sara", "age": 25}, data2={"name": "Sara", "age": 26}
     )
     assert result["changed"] == {"age": (25, 26)}
     assert result["added"] == {}
     assert result["removed"] == {}
 
+
 def test_compare_json_nested():
     result = compare_json(
         data1={"user": {"name": "Sara", "age": 25}},
-        data2={"user": {"name": "Sara", "age": 26, "city": "NYC"}}
+        data2={"user": {"name": "Sara", "age": 26, "city": "NYC"}},
     )
     assert result["added"] == {"user.city": "NYC"}
     assert result["removed"] == {}
     assert result["changed"] == {"user.age": (25, 26)}
 
+
 def test_compare_json_no_differences():
     result = compare_json(
         data1={"name": "Sara", "nested": {"a": 1, "b": 2}},
-        data2={"name": "Sara", "nested": {"a": 1, "b": 2}}
+        data2={"name": "Sara", "nested": {"a": 1, "b": 2}},
     )
     assert result["added"] == {}
     assert result["removed"] == {}
     assert result["changed"] == {}
 
+
 def test_compare_json_lists():
-    result = compare_json(
-        data1=[1, 2, 3],
-        data2=[1, 2, 4, 5]
-    )
+    result = compare_json(data1=[1, 2, 3], data2=[1, 2, 4, 5])
     assert result["changed"] == {"[2]": (3, 4)}
     assert result["added"] == {"[3]": 5}
     assert result["removed"] == {}
+
 
 def test_compare_json_invalid_input_raises():
     with pytest.raises(EasyJsonError):
@@ -390,3 +387,41 @@ def test_compare_json_invalid_input_raises():
 
     with pytest.raises(EasyJsonError):
         compare_json(data1={"key": "value"}, data2="not a dict")
+
+
+def test_get_json_keys_both_args_raises_easy_json_error():
+    from py_simple_package.src.py_simple.easy_json import get_json_keys, EasyJsonError
+    import pytest
+
+    with pytest.raises(EasyJsonError):
+        get_json_keys(data={"a": 1}, filepath="dummy.json")
+
+
+def test_compare_json_missing_data1_raises():
+    from py_simple_package.src.py_simple.easy_json import compare_json, EasyJsonError
+    import pytest
+
+    with pytest.raises(EasyJsonError):
+        compare_json(data2={"a": 1})
+
+
+def test_compare_json_missing_data2_raises():
+    from py_simple_package.src.py_simple.easy_json import compare_json, EasyJsonError
+    import pytest
+
+    with pytest.raises(EasyJsonError):
+        compare_json(data1={"a": 1})
+
+
+def test_compare_json_different_types():
+    from py_simple_package.src.py_simple.easy_json import compare_json
+
+    result = compare_json(data1={"a": 1}, data2={"a": "1"})
+    assert result["changed"]["a"] == (1, "1")
+
+
+def test_compare_json_left_list_longer():
+    from py_simple_package.src.py_simple.easy_json import compare_json
+
+    result = compare_json(data1=[1, 2], data2=[1])
+    assert result["removed"]["[1]"] == 2

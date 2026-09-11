@@ -21,7 +21,7 @@ class EasyArchiveError(Exception):
 
 def _ensure_zip_extension(zip_name: str) -> str:
     """Raise EasyArchiveError unless zip_name ends in '.zip'."""
-    if not zip_name.lower().endswith('.zip'):
+    if not zip_name.lower().endswith(".zip"):
         raise EasyArchiveError(
             f"\n'{zip_name}' does not end in '.zip'.\n"
             f"easy_archive only works with .zip files."
@@ -29,7 +29,7 @@ def _ensure_zip_extension(zip_name: str) -> str:
     return zip_name
 
 
-def zip_folder(folder_path: str, zip_name: str = None) -> str:
+def zip_folder(folder_path: str, zip_name: str | None = None) -> str:
     """
     Zips an entire folder (including subfolders) into a single .zip file.
 
@@ -65,17 +65,18 @@ def zip_folder(folder_path: str, zip_name: str = None) -> str:
             ```
     """
     if not os.path.isdir(folder_path):
-        raise EasyArchiveError(f"\n\n\nERROR: Folder '{folder_path}' "
-                               f"does not exist.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: Folder '{folder_path}' does not exist."
+        ) from None
 
     if zip_name is None:
-        folder_name = os.path.basename(os.path.abspath(folder_path)) or 'folder'
-        zip_name = folder_name + '.zip'
+        folder_name = os.path.basename(os.path.abspath(folder_path)) or "folder"
+        zip_name = folder_name + ".zip"
     _ensure_zip_extension(zip_name)
 
     zip_abspath = os.path.abspath(zip_name)
 
-    with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zf:
         for root, _, files in os.walk(folder_path):
             for file in files:
                 full_path = os.path.join(root, file)
@@ -127,20 +128,20 @@ def zip_files(file_paths: list, zip_name: str) -> str:
     existing = [p for p in file_paths if os.path.isfile(p)]
     missing = [p for p in file_paths if not os.path.isfile(p)]
     if missing:
-        raise EasyArchiveError(f"\n\n\nERROR: File '{missing[0]}' "
-                               f"does not exist.")
+        raise EasyArchiveError(f"\n\n\nERROR: File '{missing[0]}' does not exist.")
 
     if not existing:
-        raise EasyArchiveError("\n\n\nERROR: No valid files to zip.") \
-            from None
+        raise EasyArchiveError("\n\n\nERROR: No valid files to zip.") from None
 
-    with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zf:
         used_names = set()
         for path in existing:
             arcname = os.path.basename(path)
             if arcname in used_names:
                 stem, ext = os.path.splitext(arcname)
-                parent = os.path.basename(os.path.dirname(os.path.abspath(path))) or "file"
+                parent = (
+                    os.path.basename(os.path.dirname(os.path.abspath(path))) or "file"
+                )
                 candidate = f"{stem}_{parent}{ext}"
                 counter = 2
                 while candidate in used_names:
@@ -157,7 +158,7 @@ def zip_files(file_paths: list, zip_name: str) -> str:
     return zip_name
 
 
-def unzip_file(zip_path: str, destination: str = '.') -> str:
+def unzip_file(zip_path: str, destination: str = ".") -> str:
     """
     Extracts every file in a .zip archive into a destination folder.
     The destination folder is created automatically if it doesn't exist.
@@ -190,20 +191,22 @@ def unzip_file(zip_path: str, destination: str = '.') -> str:
             ```
     """
     if not os.path.isfile(zip_path):
-        raise EasyArchiveError(f"\n\n\nERROR: Zip file '{zip_path}' "
-                               f"does not exist.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: Zip file '{zip_path}' does not exist."
+        ) from None
 
     if not zipfile.is_zipfile(zip_path):
-        raise EasyArchiveError(f"\n\n\nERROR: '{zip_path}' is not a valid"
-                               f" zip file.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: '{zip_path}' is not a valid zip file."
+        ) from None
 
     if os.path.isfile(destination):
-        raise EasyArchiveError(f"\n\n\nERROR: '{destination}' already "
-                               f"exists as a file, not a folder.")\
-            from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: '{destination}' already exists as a file, not a folder."
+        ) from None
 
     os.makedirs(destination, exist_ok=True)
-    with zipfile.ZipFile(zip_path, 'r') as zf:
+    with zipfile.ZipFile(zip_path, "r") as zf:
         zf.extractall(destination)
 
     return destination
@@ -236,14 +239,16 @@ def list_zip_contents(zip_path: str) -> list:
             ```
     """
     if not os.path.isfile(zip_path):
-        raise EasyArchiveError(f"\n\n\nERROR: Zip file '{zip_path}' "
-                               f"does not exist.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: Zip file '{zip_path}' does not exist."
+        ) from None
 
     if not zipfile.is_zipfile(zip_path):
-        raise EasyArchiveError(f"\n\n\nERROR: '{zip_path}' is not a "
-                               f"valid zip file.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: '{zip_path}' is not a valid zip file."
+        ) from None
 
-    with zipfile.ZipFile(zip_path, 'r') as zf:
+    with zipfile.ZipFile(zip_path, "r") as zf:
         return zf.namelist()
 
 
@@ -275,15 +280,21 @@ def add_to_zip(zip_path: str, file_to_add: str) -> bool:
             ```
     """
     if not os.path.isfile(zip_path):
-        raise EasyArchiveError(f"\n\n\nERROR: Zip file '{zip_path}' does not exist.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: Zip file '{zip_path}' does not exist."
+        ) from None
 
     if not zipfile.is_zipfile(zip_path):
-        raise EasyArchiveError(f"\n\n\nERROR: '{zip_path}' is not a valid zip file.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: '{zip_path}' is not a valid zip file."
+        ) from None
 
     if not os.path.isfile(file_to_add):
-        raise EasyArchiveError(f"\n\n\nERROR: File '{file_to_add}' does not exist.") from None
+        raise EasyArchiveError(
+            f"\n\n\nERROR: File '{file_to_add}' does not exist."
+        ) from None
 
-    with zipfile.ZipFile(zip_path, 'a', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(zip_path, "a", zipfile.ZIP_DEFLATED) as zf:
         zf.write(file_to_add, os.path.basename(file_to_add))
 
     return True

@@ -2,9 +2,9 @@
 easy_config aims to simplify creating configuration files.
 """
 
-
 import os
 from importlib.resources import files
+
 import git
 
 
@@ -17,6 +17,7 @@ class EasyConfigError(Exception):
     Args:
         message (str): Description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -73,19 +74,20 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
             ```
     """
     if at_root:
-        workflow_path = f'.github/workflows/{filename}.yml'
+        workflow_path = f".github/workflows/{filename}.yml"
     else:
         git_repo = git.Repo(os.getcwd(), search_parent_directories=True)
         git_root = git_repo.git.rev_parse("--show-toplevel")
         workflow_path = f"{git_root}/.github/workflows/{filename}.yml"
     try:
         if not os.path.exists(workflow_path):
-            template_path = files(
-                "py_simple") / "config_templates" / "workflow-template.yml"
-            with template_path.open(encoding='utf-8') as f:
+            template_path = (
+                files("py_simple") / "config_templates" / "workflow-template.yml"
+            )
+            with template_path.open(encoding="utf-8") as f:
                 template = f.readlines()
             os.makedirs(os.path.dirname(workflow_path), exist_ok=True)
-            with open(workflow_path, 'w', encoding='utf-8') as f:
+            with open(workflow_path, "w", encoding="utf-8") as f:
                 for line in template:
                     if "[NAME]" in line:
                         f.write(line.replace("[NAME]", filename))

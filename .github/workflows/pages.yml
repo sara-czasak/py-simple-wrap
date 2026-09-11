@@ -24,16 +24,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
       - name: Install docs dependencies
-        run: pip install -e .[docs]
+        run: uv sync --all-extras
 
       - name: Build docs
-        run: mkdocs build -d site-build/docs
+        run: uv run mkdocs build -d site-build/docs
 
       - name: Setup Node
         uses: actions/setup-node@v7

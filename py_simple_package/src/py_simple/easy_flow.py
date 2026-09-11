@@ -18,6 +18,7 @@ class EasyFlowError(Exception):
     Args:
         message (str): Human-readable description of what went wrong.
     """
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -55,6 +56,7 @@ def run_py_file(filename: str):
         runpy.run_path(filename)
     except Exception as e:
         raise EasyFlowError(f"\n\n\nERROR: {e}") from None
+
 
 def run_py_file_safe(filename: str):
     """
@@ -99,7 +101,7 @@ def run_py_file_safe(filename: str):
         return False, str(e)
 
 
-def time_function_call(function, args: list = None) -> float:
+def time_function_call(function, args: list | None = None) -> float:
     """
     Runs a function once and returns how long it took to run, in
     seconds.
@@ -151,6 +153,7 @@ def time_function_call(function, args: list = None) -> float:
     except Exception as e:
         raise EasyFlowError(f"\n\n\nERROR: {e}") from None
 
+
 def time_it(func):
     """
     Decorator that measures how long a function takes to run,
@@ -188,6 +191,7 @@ def time_it(func):
             print(f"add took {elapsed:.2f}s")
             ```
     """
+
     def wrapper(*args, **kwargs):
         start = time.time()
         result = func(*args, **kwargs)
@@ -196,6 +200,7 @@ def time_it(func):
         return result
 
     return wrapper
+
 
 def retry(func, attempts=3, delay=1):
     """
@@ -251,11 +256,13 @@ def retry(func, attempts=3, delay=1):
         try:
             result = func()
             return result
-        except Exception as e:
+        except Exception:
             if i == attempts - 1:
-                raise e
+                raise
             time.sleep(delay)
     return None
+
+
 def run_py_string(code_string: str) -> None:
     """
     Executes a string of Python code in the current global scope,

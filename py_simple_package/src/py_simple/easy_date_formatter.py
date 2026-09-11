@@ -60,6 +60,7 @@ def _get_future_date(num_days_from_now: int):
 
 # ── Pretty dates ────────────────────────────────────────────────────
 
+
 def get_pretty_date():
     """
     Returns the current date in a human-friendly format.
@@ -147,6 +148,7 @@ def get_future_pretty_date(num_days_from_now: int):
 
 
 # ── Hyphenated formats (DD-MM-YYYY or MM-DD-YYYY) ───────────────────
+
 
 def dd_mm_yyyy():
     """
@@ -319,6 +321,7 @@ def future_mm_dd_yyyy(num_days_from_now: int):
 
 
 # ── Slashed formats (DD/MM/YYYY or MM/DD/YYYY) ──────────────────────
+
 
 def slash_dd_mm_yyyy():
     """

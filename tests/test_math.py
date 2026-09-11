@@ -1,6 +1,8 @@
 import pytest
-from py_simple_package.src.py_simple import is_perfect_square as public_is_perfect_square
 
+from py_simple_package.src.py_simple import (
+    is_perfect_square as public_is_perfect_square,
+)
 from py_simple_package.src.py_simple.easy_math import (
     divisors,
     factorial,

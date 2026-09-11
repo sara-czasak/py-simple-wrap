@@ -4,7 +4,6 @@ Beginner friendly helpers for handling databases.
 
 import re
 import sqlite3
-import warnings
 
 
 class ExperimentalWarning(UserWarning):

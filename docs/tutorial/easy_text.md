@@ -8,11 +8,11 @@ Imagine you're preparing a social media post for a report. You want to clean the
 
 ```python
 from py_simple import (
-	remove_punctuation,
-	count_letters,
-	count_digits,
-	extract_hashtags,
-	word_frequency,
+    remove_punctuation,
+    count_letters,
+    count_digits,
+    extract_hashtags,
+    word_frequency,
 )
 
 post = "Python 101: #coding makes text work! #coding"
@@ -108,7 +108,7 @@ from py_simple import count_digits, count_letters
 
 text = "Order 123!"
 print(count_letters(text))  # 5
-print(count_digits(text))   # 3
+print(count_digits(text))  # 3
 ```
 
 ### Masking sensitive text
@@ -189,9 +189,9 @@ Instead of repeatedly writing slicing expressions, character checks, regular exp
 
 ```python
 summary = {
-	"title": capitalize_title("my text report"),
-	"tags": extract_hashtags("#python #text"),
-	"words": word_frequency("Text text tools"),
+    "title": capitalize_title("my text report"),
+    "tags": extract_hashtags("#python #text"),
+    "words": word_frequency("Text text tools"),
 }
 ```
 

@@ -198,7 +198,7 @@ def is_prime(number: int) -> bool:
             ```
     """
     if number > 0:
-        limit = int((number ** 0.5) + 1)
+        limit = int((number**0.5) + 1)
     else:
         return False
     if number < 2:
