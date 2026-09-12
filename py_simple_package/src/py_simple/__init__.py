@@ -205,6 +205,7 @@ from .easy_sql import (
     run_update,
 )
 from .easy_stats import (
+    correlation_coefficient,
     data_range,
     interquartile_range,
     median,
