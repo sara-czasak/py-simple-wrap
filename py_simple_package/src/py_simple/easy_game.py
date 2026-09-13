@@ -303,3 +303,36 @@ def is_key_pressed(key_name: str) -> bool:
         if isinstance(e, EasyGameError):
             raise
         raise EasyGameError(str(e)) from None
+    
+def update_display() -> None:
+    """
+    Updates the entire game window to display whatever has been drawn,
+    saving you from remembering pygame's display flip mechanics.
+
+    Returns:
+        None
+
+    Raises:
+        EasyGameError: If pygame fails to update the display.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple.easy_game import update_display
+
+            # Inside your game loop after drawing:
+            update_display()
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import pygame
+
+            # Inside your game loop after drawing:
+            pygame.display.flip()
+            ```
+    """
+    try:
+        pygame.display.flip()
+    except Exception as e:
+        raise EasyGameError(str(e)) from None

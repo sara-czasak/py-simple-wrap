@@ -14,6 +14,7 @@ from py_simple_package.src.py_simple.easy_game import (
     is_left_mouse_button_clicked,
     is_middle_mouse_button_clicked,
     is_right_mouse_button_clicked,
+    update_display,
 )
 
 
@@ -158,3 +159,18 @@ def test_allowed_keys_contains_pygame_key_constants():
     assert len(easy_game.ALLOWED_KEYS) > 0
     assert all(k.startswith("K_") for k in easy_game.ALLOWED_KEYS)
     assert "K_SPACE" in easy_game.ALLOWED_KEYS or "K_SPACE" in dir(easy_game.pygame)
+
+
+def test_update_display(monkeypatch):
+    """Updating display should call pygame.display.flip and wrap errors."""
+    called = []
+    monkeypatch.setattr(easy_game.pygame.display, "flip", lambda: called.append(True))
+    update_display()
+    assert called == [True]
+
+    def fail_flip():
+        raise RuntimeError("display flip failed")
+
+    monkeypatch.setattr(easy_game.pygame.display, "flip", fail_flip)
+    with pytest.raises(EasyGameError, match="display flip failed"):
+        update_display()
