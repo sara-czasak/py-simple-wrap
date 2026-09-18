@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -620,6 +620,16 @@
       "profile": "https://github.com/HarshRajSinghania",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "lui01212",
+      "name": "Lui Lui",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40736418?v=4",
+      "profile": "https://github.com/lui01212",
+      "contributions": [
+        "code",
+        "test"
       ]
     }
   ]

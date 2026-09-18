@@ -268,6 +268,14 @@ Every tile below is a real person who showed up for this project. 💛
       </a>
     </td>
   </tr>
+  <tr>
+    <td align="center" valign="top" width="16.6%">
+      <a href="https://github.com/lui01212">
+        <img src="https://github.com/lui01212.png" width="100px;" alt="Lui Lui"/><br />
+        <sub><b>Lui Lui</b></sub>
+      </a>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -527,6 +535,14 @@ Every tile below is a real person who showed up for this project. 💛
       <a href="https://github.com/HarshRajSinghania">
         <img src="https://github.com/HarshRajSinghania.png" width="100px;" alt="Harsh Raj Singhania"/><br />
         <sub><b>Harsh Raj Singhania</b></sub>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="16.6%">
+      <a href="https://github.com/lui01212">
+        <img src="https://github.com/lui01212.png" width="100px;" alt="Lui Lui"/><br />
+        <sub><b>Lui Lui</b></sub>
       </a>
     </td>
   </tr>
@@ -853,6 +869,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/HarshRajSinghania"><img src="https://github.com/HarshRajSinghania.png?s=80" width="80px;" alt="Harsh Raj Singhania"/><br /><sub><b>Harsh Raj Singhania</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=HarshRajSinghania" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lui01212"><img src="https://avatars.githubusercontent.com/u/40736418?v=4?s=80" width="80px;" alt="Lui Lui"/><br /><sub><b>Lui Lui</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=lui01212" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=lui01212" title="Tests">🧪</a></td>
     </tr>
   </tbody>
 </table>
