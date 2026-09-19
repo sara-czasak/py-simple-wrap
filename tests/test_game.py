@@ -13,6 +13,7 @@ from py_simple_package.src.py_simple.easy_game import (
     get_mouse_position,
     is_left_mouse_button_clicked,
     is_middle_mouse_button_clicked,
+    is_key_pressed,
     is_right_mouse_button_clicked,
     update_screen,
 )
@@ -145,6 +146,46 @@ def test_fill_background(monkeypatch):
     bad_screen = SimpleNamespace(fill=fail_fill)
     with pytest.raises(EasyGameError, match="surface error"):
         fill_background(bad_screen, (255, 0, 0))
+
+
+@pytest.mark.parametrize(
+    ("pressed", "expected"),
+    [
+        ([False, True], True),
+        ([True, False], False),
+    ],
+)
+def test_is_key_pressed_returns_key_state(monkeypatch, pressed, expected):
+    """Key state should be read from the pygame key-state sequence."""
+    monkeypatch.setattr(easy_game.pygame, "K_SPACE", 1)
+    monkeypatch.setattr(
+        easy_game.pygame.key,
+        "get_pressed",
+        lambda: pressed,
+    )
+
+    assert is_key_pressed("space") is expected
+
+
+def test_is_key_pressed_rejects_unknown_key():
+    """Unknown key names should raise the module's consistent exception."""
+    with pytest.raises(EasyGameError, match="Invalid key name: 'NOPE'"):
+        is_key_pressed("NOPE")
+
+
+def test_is_key_pressed_wraps_pygame_errors(monkeypatch):
+    """Failures while reading key state should be wrapped consistently."""
+    monkeypatch.setattr(easy_game.pygame, "K_SPACE", 1)
+
+    def fail_get_pressed():
+        raise RuntimeError("keyboard unavailable")
+
+    monkeypatch.setattr(easy_game.pygame.key, "get_pressed", fail_get_pressed)
+
+    with pytest.raises(EasyGameError, match="keyboard unavailable") as exc_info:
+        is_key_pressed("SPACE")
+
+    assert exc_info.value.__cause__ is None
 
 
 def test_update_screen_calls_pygame_display_flip(monkeypatch):
