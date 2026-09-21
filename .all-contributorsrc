@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -641,6 +641,16 @@
         "code",
         "test",
         "documentation"
+      ]
+    },
+    {
+      "login": "jeslinstephy-sys",
+      "name": "jeslinstephy-sys",
+      "avatar_url": "https://avatars.githubusercontent.com/u/231153818?v=4",
+      "profile": "https://github.com/jeslinstephy-sys",
+      "contributions": [
+        "code",
+        "test"
       ]
     }
   ]
