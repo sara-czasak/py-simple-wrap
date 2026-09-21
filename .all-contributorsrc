@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -651,6 +651,17 @@
       "contributions": [
         "code",
         "test"
+      ]
+    },
+    {
+      "login": "hajar-benhadj",
+      "name": "Hajar Benhadj",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91633258?v=4",
+      "profile": "https://hajar-benhadj.github.io/my-portfolio/",
+      "contributions": [
+        "code",
+        "test",
+        "documentation"
       ]
     }
   ]
