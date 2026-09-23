@@ -300,6 +300,14 @@ Every tile below is a real person who showed up for this project. 💛
       </a>
     </td>
   </tr>
+  <tr>
+    <td align="center" valign="top" width="16.6%">
+      <a href="https://github.com/Akkii50">
+        <img src="https://github.com/Akkii50.png" width="100px;" alt="Akkii50"/><br />
+        <sub><b>Akkii50</b></sub>
+      </a>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -591,6 +599,14 @@ Every tile below is a real person who showed up for this project. 💛
       <a href="https://github.com/unfinished-summer">
         <img src="https://github.com/unfinished-summer.png" width="100px;" alt="luyijun"/><br />
         <sub><b>luyijun</b></sub>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="16.6%">
+      <a href="https://github.com/Akkii50">
+        <img src="https://github.com/Akkii50.png" width="100px;" alt="Akkii50"/><br />
+        <sub><b>Akkii50</b></sub>
       </a>
     </td>
   </tr>
@@ -934,6 +950,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jeslinstephy-sys"><img src="https://github.com/jeslinstephy-sys.png?s=80" width="80px;" alt="jeslinstephy-sys"/><br /><sub><b>jeslinstephy-sys</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=jeslinstephy-sys" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=jeslinstephy-sys" title="Tests">🧪</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hajar-benhadj"><img src="https://github.com/hajar-benhadj.png?s=80" width="80px;" alt="Hajar Benhadj"/><br /><sub><b>Hajar Benhadj</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=hajar-benhadj" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=hajar-benhadj" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=hajar-benhadj" title="Docs">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/unfinished-summer"><img src="https://github.com/unfinished-summer.png?s=80" width="80px;" alt="luyijun"/><br /><sub><b>luyijun</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=unfinished-summer" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=unfinished-summer" title="Tests">🧪</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Akkii50"><img src="https://avatars.githubusercontent.com/u/84828370?v=4?s=80" width="80px;" alt="Akkii50"/><br /><sub><b>Akkii50</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=Akkii50" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=Akkii50" title="Tests">🧪</a></td>
     </tr>
   </tbody>
 </table>

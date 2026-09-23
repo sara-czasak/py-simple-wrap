@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -669,6 +669,16 @@
       "name": "luyijun",
       "avatar_url": "https://github.com/unfinished-summer.png",
       "profile": "https://github.com/unfinished-summer",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "Akkii50",
+      "name": "Akkii50",
+      "avatar_url": "https://avatars.githubusercontent.com/u/84828370?v=4",
+      "profile": "https://github.com/Akkii50",
       "contributions": [
         "code",
         "test"
