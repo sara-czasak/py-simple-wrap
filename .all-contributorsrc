@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -669,6 +669,16 @@
       "name": "luyijun",
       "avatar_url": "https://github.com/unfinished-summer.png",
       "profile": "https://github.com/unfinished-summer",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "ShivanshShukla",
+      "name": "Shivansh Shukla",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92143295?v=4",
+      "profile": "https://github.com/ShivanshShukla",
       "contributions": [
         "code",
         "test"
