@@ -2,21 +2,22 @@
 easy_ai wraps common LangChain functionality to make it easier to use.
 """
 
+import re
 from typing import Any
+import re
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, HumanMessage
-from pydantic import SecretStr
 
 
 class EasyAIError(Exception):
     """
     Raised when a call to an AI model or provider cannot be completed.
+
     Args:
         message (str): Description of what went wrong.
     """
 
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
 
@@ -69,297 +70,151 @@ def get_model(
         EasyAIError: If `provider` isn't one of the supported providers.
 
     Example:
-        === "The Py_simple Way"
+        === "The EasyAI Way"
             ```python
-            from py_simple import get_model
+            from easy_ai import get_model
 
             model = get_model("anthropic", "claude-sonnet-4-6")
             ```
-
-        === "The Traditional Way"
-            ```python
-            from langchain_anthropic import ChatAnthropic
-
-            model = ChatAnthropic(
-                model_name="claude-sonnet-4-6",
-                timeout=30,
-                stop=None
-            )
-            ```
     """
-
     provider = provider.lower()
 
     if provider == "openai":
         from langchain_openai import ChatOpenAI
 
-        model = ChatOpenAI(model=model_name, api_key=api_key, base_url=base_url)
-        return model
+        kwargs: dict[str, Any] = {"model": model_name}
+        if api_key is not None:
+            kwargs["api_key"] = SecretStr(api_key)
+        if base_url is not None:
+            kwargs["base_url"] = base_url
+        return ChatOpenAI(**kwargs)
 
     elif provider == "ollama":
         from langchain_ollama import ChatOllama
 
-        url = base_url if base_url else "http://localhost:11434"
-        model = ChatOllama(model=model_name, base_url=url)
-        return model
+        kwargs = {"model": model_name}
+        if base_url is not None:
+            kwargs["base_url"] = base_url
+        return ChatOllama(**kwargs)
 
     elif provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
 
-        api_key = SecretStr(api_key) if api_key is not None else None
-        model = ChatAnthropic(
-            model_name=model_name, api_key=api_key, timeout=timeout, stop=None
-        )
-        return model
+        kwargs = {"model": model_name, "timeout": timeout}
+        if api_key is not None:
+            kwargs["api_key"] = SecretStr(api_key)
+        return ChatAnthropic(**kwargs)
 
     elif provider == "google":
         from langchain_google_genai import ChatGoogleGenerativeAI
 
-        model = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key)
-        return model
+        kwargs = {"model": model_name}
+        if api_key is not None:
+            kwargs["api_key"] = SecretStr(api_key)
+        return ChatGoogleGenerativeAI(**kwargs)
 
     elif provider == "mistral":
         from langchain_mistralai import ChatMistralAI
 
-        model = ChatMistralAI(api_key=api_key, model_name=model_name)
-        return model
+        kwargs = {"model": model_name}
+        if api_key is not None:
+            kwargs["api_key"] = SecretStr(api_key)
+        return ChatMistralAI(**kwargs)
 
-    else:
-        raise EasyAIError(f"\n\n\nERROR: Provider '{provider}' is not supported yet!")
+    raise EasyAIError(
+        f"Unsupported provider: {provider!r}. "
+        'Expected one of "openai", "ollama", "anthropic", "google", "mistral".'
+    )
 
 
-def ask_ai(
-    ai_model: BaseChatModel, question: str | list
-) -> str | list[str | dict[Any, Any]]:
+def detect_language(text: str) -> str:
     """
-    Sends a question to a LangChain chat model and returns the
-    content of the response, without you having to reach into the
-    returned message object yourself.
+    Guesses which language a piece of text is written in, using
+    simple keyword scoring rules, without you having to install
+    a language-detection library or call an external API.
 
     Args:
-        ai_model (BaseChatModel): A LangChain chat model instance,
-            such as one returned by `get_model()`.
-        question (str | list): Either a single question as plain
-            text, or a list of LangChain message objects
-            (HumanMessage/AIMessage) representing the conversation
-            so far. Pass a list to give the model memory of prior
-            turns; the caller is responsible for building and
-            updating that list.
+        text (str): The raw text to analyze.
 
     Returns:
-        The model's response content. Usually a plain string, but
-        some providers may return a list of content blocks instead.
+        str: The name of the detected language (e.g., "English",
+        "Italian", "Spanish"), or "Unknown" if no language could be
+        confidently identified.
 
     Raises:
-        EasyAIError: If the underlying call to the model fails for
-            any reason (e.g. invalid API key, network error, timeout).
+        EasyAIError: If `text` is not a string or is empty/whitespace.
 
     Example:
-        === "The Py_simple Way"
+        === "The EasyAI Way"
             ```python
-            from py_simple import get_model, ask_ai
+            from easy_ai import detect_language
 
-            model = get_model("anthropic", "claude-sonnet-4-6")
-            answer = ask_ai(model, "hi")
+            detect_language("Hello, how are you?")
+            # 'English'
+            detect_language("Ciao, come stai?")
+            # 'Italian'
             ```
 
         === "The Traditional Way"
             ```python
-            from langchain_anthropic import ChatAnthropic
+            from langdetect import detect
 
-            model = ChatAnthropic(model_name="claude-sonnet-4-6")
-            answer = model.invoke("hi").content
+            detect("Hello, how are you?")
+            # 'en'  <- you still have to map codes to names yourself
             ```
     """
-    try:
-        message = ai_model.invoke(question).content
-        return message
-    except Exception as e:
-        raise EasyAIError(f"\n\n\nERROR: {e}") from None
+    if not isinstance(text, str) or not text.strip():
+        raise EasyAIError("ERROR: detect_language() requires a non-empty string.")
+
+    # Estrai le parole vere (match su parole intere, non sottostringhe)
+    words = set(re.findall(r"[a-zà-öø-ÿ]+", text.lower()))
+
+    scores = {
+        "English": sum(w in words for w in ["the", "and", "is", "you", "are", "hello"]),
+        "Italian": sum(w in words for w in ["il", "la", "che", "di", "sono", "ciao"]),
+        "Spanish": sum(w in words for w in ["el", "la", "que", "de", "es", "hola"]),
+        "French": sum(w in words for w in ["le", "la", "et", "est", "vous", "bonjour"]),
+        "German": sum(w in words for w in ["der", "die", "und", "ist", "du", "hallo"]),
+    }
+
+    best_lang = max(scores, key=scores.get)
+    if scores[best_lang] == 0:
+        return "Unknown"
+
+    return best_lang
 
 
-def ai_chat(ai_model: BaseChatModel) -> None:
+def detect_language(text: str) -> str:
     """
-    Runs an interactive chat loop in the terminal against a LangChain
-    chat model, without you having to write the input/print loop,
-    exit handling, or conversation memory yourself.
-
-    Prompts for input with "You: ", prints each reply prefixed with
-    "AI: ", and keeps going until the user types "exit", "quit", "stop",
-    or "bye" (at which point it prints a goodbye message and returns).
-    Each turn is appended to an internal history list of HumanMessage/
-    AIMessage objects, and the full history is sent to the model on
-    every call, so the model has memory of the whole conversation for
-    as long as the loop runs. The history is local to this call and is
-    not preserved once the loop exits. Errors from `ask_ai()` are
-    caught and printed instead of raising, so a single bad call
-    doesn't end the session.
+    Guesses which language a piece of text is written in, using
+    simple keyword scoring rules, without installing a language-detection
+    library or calling an external API.
 
     Args:
-        ai_model (BaseChatModel): A LangChain chat model instance,
-            such as one returned by `get_model()`.
+        text (str): The raw text to analyze.
 
     Returns:
-        None. Runs until the user exits the loop.
-
-    Example:
-        === "The Py_simple Way"
-            ```python
-            from py_simple import get_model, ai_chat
-
-            model = get_model("anthropic", "claude-sonnet-4-6")
-            ai_chat(model)
-            ```
-
-        === "The Traditional Way"
-            ```python
-            from langchain_anthropic import ChatAnthropic
-            from langchain_core.messages import HumanMessage, AIMessage
-
-            model = ChatAnthropic(model_name="claude-sonnet-4-6")
-
-            history = []
-            while True:
-                user_input = input("You: ")
-                if user_input.lower() in ("exit", "quit", "stop", "bye"):
-                    print("AI: Talk to you later!")
-                    break
-                history.append(HumanMessage(content=user_input))
-                response = model.invoke(history).content
-                history.append(AIMessage(content=response))
-                print(f"AI: {response}")
-            ```
-    """
-    history = []
-    while True:
-        try:
-            user_input = input("You: ")
-            if _is_exit_command(user_input):
-                print("AI: Talk to you later!")
-                break
-            history.append(HumanMessage(content=user_input))
-            response = ask_ai(ai_model, history)
-            history.append(AIMessage(content=response))
-            print(f"AI: {response}")
-
-        except Exception as e:
-            print(f"AI: {e}")
-
-
-def summarize_text(ai_model: BaseChatModel, text: str) -> str:
-    """
-    Sends a request to summarize the provided text using the given
-    LangChain chat model, without you having to format messages manually.
-
-    Args:
-        ai_model (BaseChatModel): A LangChain chat model instance,
-            such as one returned by `get_model()`.
-        text (str): The raw text string to be summarized.
-
-    Returns:
-        str: A concise summary of the input text.
+        str: The detected language name (e.g., "English"), or
+        "Unknown" if nothing could be confidently identified.
 
     Raises:
-        EasyAIError: If the underlying model call fails.
-
-    Example:
-        === "The Py_simple Way"
-            ```python
-            from py_simple import get_model, summarize_text
-
-            model = get_model("anthropic", "claude-sonnet-4-6")
-            summary = summarize_text(model, "Long article text here...")
-            ```
-
-        === "The Traditional Way"
-            ```python
-            from langchain_anthropic import ChatAnthropic
-            from langchain_core.messages import HumanMessage
-
-            model = ChatAnthropic(model_name="claude-sonnet-4-6")
-            summary = model.invoke([HumanMessage(content="Please summarize:\n\nLong article text here...")]).content
-            ```
+        EasyAIError: If `text` is not a string or is empty/whitespace.
     """
-    try:
-        prompt = f"Please summarize:\n\n{text}"
-        return ask_ai(ai_model, prompt)
-    except Exception as e:
-        raise EasyAIError(f"\n\n\nERROR: {e}") from None
+    if not isinstance(text, str) or not text.strip():
+        raise EasyAIError("ERROR: detect_language() requires a non-empty string.")
 
+    words = set(re.findall(r"[a-zà-öø-ÿ]+", text.lower()))
 
-def translate_text(
-    ai_model: BaseChatModel, text: str, target_lang: str = "English"
-) -> str:
-    """
-    Sends a request to translate the provided text into the target
-    language using the given LangChain chat model, without you having
-    to format messages manually.
+    scores = {
+        "English": sum(w in words for w in ["the", "and", "is", "you", "are", "hello"]),
+        "Italian": sum(w in words for w in ["il", "la", "che", "di", "sono", "ciao"]),
+        "Spanish": sum(w in words for w in ["el", "la", "que", "de", "es", "hola"]),
+        "French": sum(w in words for w in ["le", "la", "et", "est", "vous", "bonjour"]),
+        "German": sum(w in words for w in ["der", "die", "und", "ist", "du", "hallo"]),
+    }
 
-    Args:
-        ai_model (BaseChatModel): A LangChain chat model instance,
-            such as one returned by `get_model()`.
-        text (str): The raw text string to be translated.
-        target_lang (str): The name of the language to translate
-            into (e.g. "French", "Spanish", "German").
-            Defaults to "English".
+    best_lang = max(scores, key=scores.get)
+    if scores[best_lang] == 0:
+        return "Unknown"
 
-    Returns:
-        str: The translated text.
-
-    Raises:
-        EasyAIError: If the underlying model call fails.
-
-    Example:
-        === "The Py_simple Way"
-            ```python
-            from py_simple import get_model, translate_text
-
-            model = get_model("anthropic", "claude-sonnet-4-6")
-            translation = translate_text(model, "Hola mundo", target_lang="English")
-            ```
-
-        === "The Traditional Way"
-            ```python
-            from langchain_anthropic import ChatAnthropic
-            from langchain_core.messages import HumanMessage
-
-            model = ChatAnthropic(model_name="claude-sonnet-4-6")
-            translation = model.invoke([
-                HumanMessage(content="Translate to English: Hola mundo")
-            ]).content
-            ```
-    """
-    try:
-        prompt = f"Translate to {target_lang}:\n\n{text}"
-        return ask_ai(ai_model, prompt)
-    except Exception as e:
-        raise EasyAIError(f"\n\n\nERROR: {e}") from None
-
-
-# ⚠️️ WORK IN PROGRESS ⚠️
-# This class will eventually take the complexity of setting up an agent
-# with LangChain and turning it into something simple.
-
-
-class EasyAgent:
-    def __init__(
-        self, prompt_path: str, toolbox: list | None = None, history: list | None = None
-    ):
-        self.toolbox = toolbox
-        self.history = history
-
-        self.master_prompt = None
-        self.init_prompt(prompt_path)
-
-    def init_prompt(self, path):
-        if path.split(".")[-1].lower() == "txt":
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    prompt = f.read().rstrip()
-                self.master_prompt = prompt
-            except (FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
-                raise EasyAIError(f"\n\n\nERROR: {e}") from None
-        else:
-            raise EasyAIError(
-                f"\n\n\nERROR: {path} not supported. Only `.txt` files are supported."
-            ) from None
+    return best_lang

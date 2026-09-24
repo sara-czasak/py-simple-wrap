@@ -4,6 +4,9 @@ py_simple's public API — re-exports the functions from each easy_* module.
 
 from .easy_ai import (
     ask_ai,
+    detect_language,
+    detect_language,
+    detect_language,
     get_model,
     summarize_text,
     translate_text,
