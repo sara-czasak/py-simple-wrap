@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -692,6 +692,16 @@
         "test",
         "code",
         "documentation"
+      ]
+    },
+    {
+      "login": "cybs-joe",
+      "name": "Joe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/201397811?v=4",
+      "profile": "https://github.com/cybs-joe",
+      "contributions": [
+        "code",
+        "test"
       ]
     }
   ]
