@@ -382,6 +382,54 @@ def rewrite_text(ai_model: BaseChatModel, text: str, tone: str = "calm") -> str:
     except Exception as e:
         raise EasyAIError(f"\n\n\nERROR: {e}") from None
 
+def analyze_sentiment(ai_model: BaseChatModel, text: str) -> str:
+    """
+    Analyzes the sentiment of the provided text and returns whether it is
+    positive, negative, or neutral.
+
+    Args:
+        ai_model (BaseChatModel): A LangChain chat model instance,
+            such as one returned by `get_model()`.
+        text (str): The raw text to analyze for sentiment.
+
+    Returns:
+        str: The identified sentiment label (e.g., 'Positive', 'Negative',
+            or 'Neutral') along with a brief explanation.
+
+    Raises:
+        EasyAIError: If the underlying model call fails.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_model, analyze_sentiment
+
+            model = get_model("anthropic", "claude-sonnet-4-6")
+            sentiment = analyze_sentiment(model, "I absolutely love this library!")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from langchain_anthropic import ChatAnthropic
+            from langchain_core.messages import HumanMessage
+
+            model = ChatAnthropic(model_name="claude-sonnet-4-6")
+            prompt = (
+                "Analyze the sentiment of the following text as Positive, "
+                "Negative, or Neutral: I absolutely love this library!"
+            )
+            sentiment = model.invoke([HumanMessage(content=prompt)]).content
+            ```
+    """
+    try:
+        prompt = (
+            "Analyze the sentiment of the following text as Positive, "
+            f"Negative, or Neutral:\n\n{text}"
+        )
+        return ask_ai(ai_model, prompt)
+    except Exception as e:
+        raise EasyAIError(f"\n\n\nERROR: {e}") from None   
+
 
 
 

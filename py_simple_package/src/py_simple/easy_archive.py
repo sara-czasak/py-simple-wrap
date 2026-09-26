@@ -387,3 +387,46 @@ def is_zip_file(path: str) -> bool:
             ```
     """
     return zipfile.is_zipfile(path)
+
+def get_zip_file_count(zip_path: str) -> int:
+    """
+    Returns the total number of files and directories stored in a .zip archive.
+
+    Args:
+        zip_path (str): Path to the .zip archive to inspect.
+
+    Returns:
+        int: Number of items contained in the archive.
+
+    Raises:
+        EasyArchiveError: If the file does not exist or is not a valid zip file.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_zip_file_count
+
+            count = get_zip_file_count("backup.zip")  # -> 5
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import zipfile
+
+            with zipfile.ZipFile("backup.zip", "r") as zf:
+                count = len(zf.namelist())
+            ```
+    """
+    if not os.path.isfile(zip_path):
+        raise EasyArchiveError(
+            f"{os.linesep}{os.linesep}{os.linesep}ERROR: Zip file '{zip_path}' does not exist."
+        ) from None
+
+    if not zipfile.is_zipfile(zip_path):
+        raise EasyArchiveError(
+            f"{os.linesep}{os.linesep}{os.linesep}ERROR: '{zip_path}' is not a valid zip file."
+        ) from None
+
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        return len(zf.namelist())
+    

@@ -95,3 +95,66 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
                         f.write(line)
     except Exception as e:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
+def create_env_file(
+    variables: dict[str, str],
+    file_path: str = ".env",
+    overwrite: bool = False,
+) -> None:
+    """
+    Creates a .env configuration file with the provided key-value pairs.
+
+    Writes variables in 'KEY=VALUE' format. If the file already exists
+    and overwrite is False, the file is left alone. Any missing parent
+    directories are created automatically.
+
+    Args:
+        variables (dict[str, str]): Dictionary of configuration keys and
+            their string values to store in the file.
+        file_path (str, optional): Destination path for the .env file.
+            Defaults to ".env".
+        overwrite (bool, optional): Whether to overwrite an existing file.
+            Defaults to False.
+
+    Returns:
+        None
+
+    Raises:
+        EasyConfigError: If the file or parent directory cannot be written.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import create_env_file
+
+            config = {"PORT": "8000", "DEBUG": "True"}
+            create_env_file(config)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import os
+
+            config = {"PORT": "8000", "DEBUG": "True"}
+            if not os.path.exists(".env"):
+                parent_dir = os.path.dirname(".env")
+                if parent_dir:
+                    os.makedirs(parent_dir, exist_ok=True)
+                with open(".env", "w", encoding="utf-8") as f:
+                    for key, value in config.items():
+                        f.write(f"{key}={value}{os.linesep}")
+            ```
+    """
+    if os.path.exists(file_path) and not overwrite:
+        return
+
+    try:
+        parent_dir = os.path.dirname(file_path)
+        if parent_dir:
+            os.makedirs(parent_dir, exist_ok=True)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            for key, value in variables.items():
+                f.write(f"{key}={value}\n")
+    except Exception as e:
+        raise EasyConfigError(f"\n\n\nERROR: {e}") from None

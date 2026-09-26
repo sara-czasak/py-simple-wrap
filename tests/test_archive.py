@@ -6,6 +6,7 @@ from py_simple_package.src.py_simple.easy_archive import (
     EasyArchiveError,
     add_to_zip,
     extract_file_from_zip,
+    get_zip_file_count,
     is_zip_file,
     list_zip_contents,
     unzip_file,
@@ -360,3 +361,35 @@ def test_zip_files_numbers_collisions_with_the_same_parent_name(tmp_path):
             "report_shared.txt",
             "report_shared_2.txt",
         }
+
+def test_get_zip_file_count_success(tmp_path):
+    zip_path = tmp_path / "test.zip"
+    with zipfile.ZipFile(zip_path, "w") as zf:
+        zf.writestr("one.txt", "1")
+        zf.writestr("two.txt", "2")
+        zf.writestr("nested/three.txt", "3")
+
+    assert get_zip_file_count(str(zip_path)) == 3
+
+
+def test_get_zip_file_count_empty_zip(tmp_path):
+    zip_path = tmp_path / "empty.zip"
+    with zipfile.ZipFile(zip_path, "w"):
+        pass
+
+    assert get_zip_file_count(str(zip_path)) == 0
+
+
+def test_get_zip_file_count_missing_file(tmp_path):
+    missing_zip = tmp_path / "missing.zip"
+    with pytest.raises(EasyArchiveError, match="does not exist"):
+        get_zip_file_count(str(missing_zip))
+
+
+def test_get_zip_file_count_invalid_zip(tmp_path):
+    invalid_zip = tmp_path / "corrupt.zip"
+    invalid_zip.write_text("not a real zip", encoding="utf-8")
+
+    with pytest.raises(EasyArchiveError, match="not a valid zip file"):
+        get_zip_file_count(str(invalid_zip))
+        

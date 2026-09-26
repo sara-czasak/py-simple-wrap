@@ -4,6 +4,7 @@ import pytest
 from py_simple_package.src.py_simple.easy_config import (
     EasyConfigError,
     gh_workflow_config,
+    create_env_file,
 )
 
 
@@ -55,3 +56,48 @@ def test_gh_workflow_config_wraps_template_errors(tmp_path, monkeypatch):
 
     with pytest.raises(EasyConfigError, match="template missing"):
         gh_workflow_config("broken")
+
+def test_create_env_file_creates_file_with_variables(tmp_path):
+    env_file = tmp_path / ".env"
+    create_env_file({"PORT": "8000", "DEBUG": "True"}, file_path=str(env_file))
+
+    assert env_file.exists()
+    content = env_file.read_text(encoding="utf-8")
+    assert content == "PORT=8000\nDEBUG=True\n"
+
+
+def test_create_env_file_does_not_overwrite_by_default(tmp_path):
+    env_file = tmp_path / ".env"
+    env_file.write_text("INITIAL=1\n", encoding="utf-8")
+
+    create_env_file({"PORT": "8000"}, file_path=str(env_file))
+
+    assert env_file.read_text(encoding="utf-8") == "INITIAL=1\n"
+
+
+def test_create_env_file_overwrites_when_flag_is_true(tmp_path):
+    env_file = tmp_path / ".env"
+    env_file.write_text("INITIAL=1\n", encoding="utf-8")
+
+    create_env_file({"PORT": "8000"}, file_path=str(env_file), overwrite=True)
+
+    assert env_file.read_text(encoding="utf-8") == "PORT=8000\n"
+
+
+def test_create_env_file_creates_parent_directories(tmp_path):
+    nested_env = tmp_path / "sub" / "config" / ".env"
+    create_env_file({"API_KEY": "secret"}, file_path=str(nested_env))
+
+    assert nested_env.exists()
+    assert nested_env.read_text(encoding="utf-8") == "API_KEY=secret\n"
+
+
+def test_create_env_file_wraps_errors(tmp_path, monkeypatch):
+    def mock_open(*args, **kwargs):
+        raise PermissionError("Permission denied")
+
+    monkeypatch.setattr("builtins.open", mock_open)
+
+    with pytest.raises(EasyConfigError, match="Permission denied"):
+        create_env_file({"KEY": "VALUE"}, file_path=str(tmp_path / ".env"))
+        

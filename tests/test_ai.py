@@ -15,6 +15,7 @@ from py_simple_package.src.py_simple.easy_ai import (
     analyze_sentiment,
     translate_text,
     rewrite_text,
+    analyze_sentiment,
 )
 
 
@@ -318,6 +319,31 @@ def test_rewrite_text_default_tone():
     mock_model.invoke.return_value = MagicMock(content="ok")
     rewrite_text(mock_model, "hello devs")
     assert "calm" in mock_model.invoke.call_args[0][0]
+
+def test_analyze_sentiment_success():
+    """Test that analyze_sentiment returns the model's response content."""
+    mock_model = MagicMock()
+    mock_response = MagicMock()
+    mock_response.content = "Positive"
+    mock_model.invoke.return_value = mock_response
+
+    result = analyze_sentiment(mock_model, "Great work on this release!")
+
+    assert result == "Positive"
+    mock_model.invoke.assert_called_once()
+    prompt_sent = mock_model.invoke.call_args[0][0]
+    assert "Great work on this release!" in prompt_sent
+
+
+def test_analyze_sentiment_error():
+    """Test that analyze_sentiment wraps underlying exceptions in EasyAIError."""
+    mock_model = MagicMock()
+    mock_model.invoke.side_effect = Exception("API rate limit exceeded")
+
+    with pytest.raises(EasyAIError) as exc_info:
+        analyze_sentiment(mock_model, "Some text")
+
+    assert "API rate limit exceeded" in str(exc_info.value)    
 
 
 
