@@ -703,6 +703,15 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "YuuGR1337",
+      "name": "Elkero",
+      "avatar_url": "https://github.com/YuuGR1337.png",
+      "profile": "https://github.com/YuuGR1337",
+      "contributions": [
+        "documentation"
+      ]
     }
   ]
 }
