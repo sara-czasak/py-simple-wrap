@@ -392,6 +392,54 @@ def rewrite_text(ai_model: BaseChatModel, text: str, tone: str = "calm") -> str:
 # with LangChain and turning it into something simple.
 
 
+def analyze_sentiment(ai_model: BaseChatModel, text: str) -> str:
+    """
+    Sends a request to analyze the sentiment of the provided text using the
+    given LangChain chat model, returning a brief classification (e.g. Positive,
+    Negative, or Neutral).
+
+    Args:
+        ai_model (BaseChatModel): A LangChain chat model instance,
+            such as one returned by `get_model()`.
+        text (str): The raw text string to analyze.
+
+    Returns:
+        str: The sentiment classification of the text.
+
+    Raises:
+        EasyAIError: If the underlying model call fails.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_model, analyze_sentiment
+
+            model = get_model("anthropic", "claude-sonnet-4-6")
+            sentiment = analyze_sentiment(model, "I absolutely love this new tool!")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from langchain_anthropic import ChatAnthropic
+            from langchain_core.messages import HumanMessage
+
+            model = ChatAnthropic(model_name="claude-sonnet-4-6")
+            sentiment = model.invoke([
+                HumanMessage(content="Analyze the sentiment of the following text and respond with a single word (e.g., Positive, Negative, Neutral):\n\nI absolutely love this new tool!")
+            ]).content
+            ```
+    """
+    try:
+        prompt = (
+            "Analyze the sentiment of the following text and respond with "
+            "a single word (e.g., Positive, Negative, Neutral):\n\n"
+            f"{text}"
+        )
+        return ask_ai(ai_model, prompt)
+    except Exception as e:
+        raise EasyAIError(f"\n\n\nERROR: {e}") from None
+
+
 class EasyAgent:
     def __init__(
         self, prompt_path: str, toolbox: list | None = None, history: list | None = None
