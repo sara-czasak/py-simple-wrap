@@ -2235,18 +2235,7 @@ wheels = [
 name = "py-simple-wrap"
 version = "0.6.1"
 source = { editable = "." }
-
-[package.optional-dependencies]
-ai = [
-    { name = "langchain-anthropic" },
-    { name = "langchain-core" },
-    { name = "langchain-google-genai" },
-    { name = "langchain-mistralai" },
-    { name = "langchain-ollama" },
-    { name = "langchain-openai" },
-    { name = "pydantic" },
-]
-all = [
+dependencies = [
     { name = "beautifulsoup4" },
     { name = "gitpython" },
     { name = "langchain-core" },
@@ -2275,26 +2264,8 @@ docs = [
     { name = "mkdocstrings" },
     { name = "mkdocstrings-python" },
 ]
-game = [
-    { name = "pygame-ce" },
-]
-images = [
-    { name = "pillow" },
-    { name = "qrcode" },
-]
-json = [
-    { name = "python-benedict" },
-]
 test = [
     { name = "pytest" },
-]
-viz = [
-    { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "matplotlib", version = "3.11.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-web = [
-    { name = "beautifulsoup4" },
-    { name = "requests" },
 ]
 
 [package.metadata]
@@ -2313,14 +2284,13 @@ requires-dist = [
     { name = "mkdocs-material", marker = "extra == 'docs'" },
     { name = "mkdocstrings", marker = "extra == 'docs'" },
     { name = "mkdocstrings-python", marker = "extra == 'docs'" },
-    { name = "pillow", marker = "extra == 'images'", specifier = ">=10.0.0" },
-    { name = "py-simple-wrap", extras = ["ai", "game", "viz", "images", "web", "config", "json"], marker = "extra == 'all'" },
-    { name = "pydantic", marker = "extra == 'ai'", specifier = ">=2.0.0" },
-    { name = "pygame-ce", marker = "extra == 'game'", specifier = ">=2.5.0" },
+    { name = "pillow", specifier = ">=10.0.0" },
+    { name = "pydantic", specifier = ">=2.0.0" },
+    { name = "pygame-ce", specifier = ">=2.5.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=7.0" },
-    { name = "python-benedict", marker = "extra == 'json'", specifier = ">=0.38.0" },
-    { name = "qrcode", marker = "extra == 'images'", specifier = ">=7.4.0" },
-    { name = "requests", marker = "extra == 'web'", specifier = ">=2.25.0" },
+    { name = "python-benedict", specifier = ">=0.38.0" },
+    { name = "qrcode", specifier = ">=7.4.0" },
+    { name = "requests", specifier = ">=2.25.0" },
 ]
 provides-extras = ["ai", "test", "docs"]
 
