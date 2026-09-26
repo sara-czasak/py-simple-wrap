@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -702,6 +702,15 @@
       "contributions": [
         "test",
         "code"
+      ]
+    },
+    {
+      "login": "YuuGR1337",
+      "name": "Elkero",
+      "avatar_url": "https://avatars.githubusercontent.com/u/241930202?v=4",
+      "profile": "https://github.com/YuuGR1337",
+      "contributions": [
+        "documentation"
       ]
     }
   ]
