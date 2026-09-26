@@ -2,10 +2,15 @@
 easy_game is built on top of pygame to simplify the tricky parts of
 building games.
 """
+from __future__ import annotations
 
-import pygame
 
-ALLOWED_KEYS = [i for i in dir(pygame) if i.startswith("K_")]
+try:
+    import pygame
+except ImportError:
+    pygame = None
+
+ALLOWED_KEYS = [i for i in dir(pygame) if i.startswith("K_")] if pygame else []
 
 
 class EasyGameError(Exception):
@@ -65,6 +70,10 @@ def basic_game_setup(width: int, height: int, title: str = "My Game") -> tuple:
             clock = pygame.time.Clock()
             ```
     """
+    if pygame is None:
+        raise EasyGameError(
+            "easy_game needs pygame. Install it with: pip install py-simple-wrap[game]"
+        )
     try:
         pygame.init()
         screen = pygame.display.set_mode((width, height))

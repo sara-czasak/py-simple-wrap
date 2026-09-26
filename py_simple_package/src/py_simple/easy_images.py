@@ -3,9 +3,11 @@ easy_images is meant to simplify common image processing tasks
 (resizing, converting, rotating, and inspecting images) using Pillow.
 """
 
+from __future__ import annotations
 import os
-
-from PIL import Image, UnidentifiedImageError
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from PIL import Image
 
 
 class ImageProcessingError(Exception):
@@ -28,6 +30,8 @@ class ImageProcessingError(Exception):
 def _open_image(input_path: str) -> Image.Image:
     """Open an image file, raising ImageProcessingError with a clear
     message instead of letting Pillow's own exceptions leak through."""
+    from PIL import Image, UnidentifiedImageError
+
     if not os.path.isfile(input_path):
         raise ImageProcessingError(f"\nFile '{input_path}' not found.")
     try:

@@ -19,7 +19,7 @@ from py_simple_package.src.py_simple.easy_web import (
 
 
 class TestEasyWeb:
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_page_content_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.ok = True
@@ -32,7 +32,7 @@ class TestEasyWeb:
         assert "<h1>" in content
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_page_content_not_ok(self, mock_get):
         mock_response = MagicMock()
         mock_response.ok = False
@@ -42,7 +42,7 @@ class TestEasyWeb:
         assert content is None
         mock_get.assert_called_once_with("https://example.com/not-found", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_page_content_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Network Error")
 
@@ -50,7 +50,7 @@ class TestEasyWeb:
             get_page_content("https://invalid-url.com")
         mock_get.assert_called_once_with("https://invalid-url.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_is_page_up_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -61,7 +61,7 @@ class TestEasyWeb:
         assert result is True
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_is_page_up_http_error(self, mock_get):
         mock_response = MagicMock()
         mock_response.raise_for_status.side_effect = requests.HTTPError("404 Not Found")
@@ -71,7 +71,7 @@ class TestEasyWeb:
             is_page_up("https://example.com/404")
         mock_get.assert_called_once_with("https://example.com/404", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_is_page_up_connection_error(self, mock_get):
         mock_get.side_effect = requests.ConnectionError("Connection Failed")
 
@@ -79,7 +79,7 @@ class TestEasyWeb:
             is_page_up("https://offline-site.com")
         mock_get.assert_called_once_with("https://offline-site.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_is_page_up_non_200_status(self, mock_get):
         mock_response = MagicMock()
         mock_response.status_code = 201
@@ -90,7 +90,7 @@ class TestEasyWeb:
         assert result is False
         mock_get.assert_called_once_with("https://example.com/created", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_meta_description_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -106,7 +106,7 @@ class TestEasyWeb:
         assert result == ["A simple test page", "python, pytest"]
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_meta_description_empty(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><head><title>No meta</title></head></html>"
@@ -116,7 +116,7 @@ class TestEasyWeb:
         assert result == []
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_meta_description_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Request Timed Out")
 
@@ -124,7 +124,7 @@ class TestEasyWeb:
             get_meta_description("https://invalid-url.com")
         mock_get.assert_called_once_with("https://invalid-url.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_all_headers_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -139,7 +139,7 @@ class TestEasyWeb:
         assert result == ["Welcome to Py_simple", "Documentation Header"]
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_all_headers_empty(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><body><div>No header tag</div></body></html>"
@@ -149,7 +149,7 @@ class TestEasyWeb:
         assert result == []
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_all_headers_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Connection Refused")
 
@@ -159,7 +159,7 @@ class TestEasyWeb:
 
 
 class TestGetPageTitle:
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_page_title_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -171,7 +171,7 @@ class TestGetPageTitle:
         assert result == "Example Title"
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_page_title_no_title_tag(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><body><p>No title here</p></body></html>"
@@ -181,7 +181,7 @@ class TestGetPageTitle:
             get_page_title("https://example.com")
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_page_title_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Network Error")
 
@@ -191,7 +191,7 @@ class TestGetPageTitle:
 
 
 class TestCountTags:
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_tags_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -208,7 +208,7 @@ class TestCountTags:
         assert result == 3
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_tags_img(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -220,7 +220,7 @@ class TestCountTags:
         assert result == 2
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_tags_none_found(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><body><p>No links here</p></body></html>"
@@ -234,7 +234,7 @@ class TestCountTags:
         with pytest.raises(ValueError, match="Unsupported tag"):
             count_tags("https://example.com", "div")
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_tags_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Network Error")
 
@@ -244,7 +244,7 @@ class TestCountTags:
 
 
 class TestCountLinks:
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_links_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -260,7 +260,7 @@ class TestCountLinks:
         assert result == 3
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_links_none_found(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><body><p>No links here</p></body></html>"
@@ -270,7 +270,7 @@ class TestCountLinks:
         assert result == 0
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_count_links_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Network Error")
 
@@ -280,7 +280,7 @@ class TestCountLinks:
 
 
 class TestGetTagList:
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_tag_list_hrefs(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -296,7 +296,7 @@ class TestGetTagList:
         assert result == ["/one", "/two"]
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_tag_list_srcs(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -312,7 +312,7 @@ class TestGetTagList:
         assert result == ["logo.png", "banner.png"]
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_tag_list_none_found(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><body><p>No images</p></body></html>"
@@ -326,7 +326,7 @@ class TestGetTagList:
         with pytest.raises(ValueError, match="Unsupported tag"):
             get_tag_list("https://example.com", "script")
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_tag_list_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Timeout")
 
@@ -336,7 +336,7 @@ class TestGetTagList:
 
 
 class TestGetLinkList:
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_link_list_success(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = (
@@ -348,7 +348,7 @@ class TestGetLinkList:
         assert result == ["/one", "/two"]
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_link_list_none_found(self, mock_get):
         mock_response = MagicMock()
         mock_response.content = b"<html><body><p>No links here</p></body></html>"
@@ -358,7 +358,7 @@ class TestGetLinkList:
         assert result == []
         mock_get.assert_called_once_with("https://example.com", timeout=10)
 
-    @patch("py_simple_package.src.py_simple.easy_web.requests.get")
+    @patch("requests.get")
     def test_get_link_list_exception(self, mock_get):
         mock_get.side_effect = requests.RequestException("Timeout")
 

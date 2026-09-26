@@ -24,6 +24,7 @@ plugins:
             show_root_heading: true
 
 markdown_extensions:
+  - md_in_html
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.superfences
@@ -70,6 +71,7 @@ nav:
       - Project-Based Tutorials:
           - Mystery Number Quest: tutorial/easy_random_game_project.md
           - Signup Validation Check: tutorial/signup-validation-project.md
+          - Dice Roll Arena: tutorial/dice-roll-arena-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:

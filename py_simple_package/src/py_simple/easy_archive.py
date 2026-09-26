@@ -212,6 +212,66 @@ def unzip_file(zip_path: str, destination: str = ".") -> str:
     return destination
 
 
+def extract_file_from_zip(zip_path: str, filename: str, destination: str = ".") -> str:
+    """
+    Extracts a single file from a zip archive.
+
+    Args:
+        zip_path (str): Path to the zip file.
+        filename (str): Name of the file inside the archive.
+        destination (str): Folder to extract the file into.
+
+    Returns:
+        str: Path to the extracted file.
+
+    Raises:
+        EasyArchiveError: If the zip file is missing or invalid, the
+            destination is an existing file, or the requested file is not
+            present in the archive.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_file_from_zip
+
+            extract_file_from_zip("backup.zip", "notes.txt", "restored")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import zipfile
+
+            with zipfile.ZipFile("backup.zip") as zf:
+                zf.extract("notes.txt", "restored")
+            ```
+    """
+    if not os.path.isfile(zip_path):
+        raise EasyArchiveError(
+            f"\n\n\nERROR: Zip file '{zip_path}' does not exist."
+        ) from None
+
+    if not zipfile.is_zipfile(zip_path):
+        raise EasyArchiveError(
+            f"\n\n\nERROR: '{zip_path}' is not a valid zip file."
+        ) from None
+
+    if os.path.isfile(destination):
+        raise EasyArchiveError(
+            f"\n\n\nERROR: Destination '{destination}' is a file, not a folder."
+        ) from None
+
+    os.makedirs(destination, exist_ok=True)
+
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        if filename not in zf.namelist():
+            raise EasyArchiveError(
+                f"\n\n\nERROR: File '{filename}' was not found in '{zip_path}'."
+            ) from None
+        zf.extract(filename, destination)
+
+    return os.path.join(destination, filename)
+
+
 def list_zip_contents(zip_path: str) -> list:
     """
     Lists the files inside a .zip archive without extracting them.

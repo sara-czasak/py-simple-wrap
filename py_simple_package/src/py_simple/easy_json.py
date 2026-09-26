@@ -5,8 +5,6 @@ easy_json is built to simplify working with json files
 import json
 import os
 
-from benedict import benedict
-
 
 class EasyJsonError(Exception):
     """
@@ -417,6 +415,8 @@ def flatten_json(
     else:
         nested = data
     try:
+        from benedict import benedict
+
         d = benedict(nested)
         initial_squish = d.flatten(seperator)
         flat = {}

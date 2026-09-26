@@ -5,6 +5,7 @@ import pytest
 from py_simple_package.src.py_simple.easy_archive import (
     EasyArchiveError,
     add_to_zip,
+    extract_file_from_zip,
     is_zip_file,
     list_zip_contents,
     unzip_file,
@@ -138,6 +139,56 @@ def test_unzip_file_invalid_zip_raises(tmp_path):
 
     with pytest.raises(EasyArchiveError):
         unzip_file(str(fake_zip), str(tmp_path / "out"))
+
+
+def test_extract_file_from_zip_extracts_one_file(tmp_path):
+    project = make_folder_with_files(tmp_path)
+    zip_name = str(tmp_path / "project.zip")
+    zip_folder(str(project), zip_name)
+    destination = tmp_path / "restored"
+
+    result = extract_file_from_zip(zip_name, "sub/b.txt", str(destination))
+
+    assert result == str(destination / "sub" / "b.txt")
+    assert (destination / "sub" / "b.txt").read_text(encoding="utf-8") == "world"
+    assert not (destination / "a.txt").exists()
+
+
+def test_extract_file_from_zip_missing_zip_raises(tmp_path):
+    with pytest.raises(EasyArchiveError):
+        extract_file_from_zip(
+            str(tmp_path / "nope.zip"),
+            "notes.txt",
+            str(tmp_path / "out"),
+        )
+
+
+def test_extract_file_from_zip_invalid_zip_raises(tmp_path):
+    fake_zip = tmp_path / "fake.zip"
+    fake_zip.write_text("not actually a zip", encoding="utf-8")
+
+    with pytest.raises(EasyArchiveError):
+        extract_file_from_zip(str(fake_zip), "notes.txt", str(tmp_path / "out"))
+
+
+def test_extract_file_from_zip_missing_member_raises(tmp_path):
+    project = make_folder_with_files(tmp_path)
+    zip_name = str(tmp_path / "project.zip")
+    zip_folder(str(project), zip_name)
+
+    with pytest.raises(EasyArchiveError):
+        extract_file_from_zip(zip_name, "missing.txt", str(tmp_path / "out"))
+
+
+def test_extract_file_from_zip_destination_is_existing_file_raises(tmp_path):
+    project = make_folder_with_files(tmp_path)
+    zip_name = str(tmp_path / "project.zip")
+    zip_folder(str(project), zip_name)
+    blocked_destination = tmp_path / "blocked"
+    blocked_destination.write_text("i am a file, not a folder", encoding="utf-8")
+
+    with pytest.raises(EasyArchiveError):
+        extract_file_from_zip(zip_name, "a.txt", str(blocked_destination))
 
 
 def test_list_zip_contents(tmp_path):

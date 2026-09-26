@@ -186,6 +186,59 @@ def get_csv_columns(
     return headers
 
 
+def count_csv_rows(
+    filepath: str,
+    include_header: bool = False,
+    delimiter: str = ",",
+) -> int:
+    """
+    Count rows in a CSV file.
+
+    Args:
+        filepath (str): Path to the CSV file.
+        include_header (bool): If True, include the header row in the count.
+        delimiter (str): Field delimiter (default is comma).
+
+    Returns:
+        int: Number of rows in the CSV file.
+
+    Raises:
+        FileNotFoundError: If filepath doesn't exist.
+        ValueError: If the file is empty.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import count_csv_rows
+
+            row_count = count_csv_rows(filepath="people.csv")
+            print(row_count)  # 3
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import csv
+
+            with open("people.csv", "r", newline="", encoding="utf-8") as f:
+                row_count = sum(1 for _ in csv.reader(f)) - 1
+            print(row_count)  # 3
+            ```
+    """
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"File not found: {filepath}")
+
+    with open(filepath, "r", newline="", encoding="utf-8") as f:
+        row_count = sum(1 for _ in csv.reader(f, delimiter=delimiter))
+
+    if row_count == 0:
+        raise ValueError(f"File is empty: {filepath}")
+
+    if include_header:
+        return row_count
+
+    return max(row_count - 1, 0)
+
+
 def filter_csv_rows(
     filepath: str,
     column: str,

@@ -6,8 +6,6 @@ without requiring users to memorize every chart type or matplotlib function.
 from collections import Counter
 from typing import Literal
 
-import matplotlib.pyplot as plt
-
 
 def plot_data(X: list, Y: list | None = None):
     """
@@ -56,10 +54,12 @@ def plot_data(X: list, Y: list | None = None):
             plt.show()
             ```
     """
+    import matplotlib.pyplot as plt
 
     # Figure out whether each series is "quantitative" or "categorical"
     # so we can look up which chart(s) make sense for this combination.
     type_X = _infer_type(X)
+
     type_Y = _infer_type(Y) if Y is not None else None
 
     CHART_SUGGESTIONS = {

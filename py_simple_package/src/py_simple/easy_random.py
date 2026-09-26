@@ -4,7 +4,7 @@ easy_random is built to simplify common random choices, numbers, and shuffling.
 
 import random
 from collections.abc import Sequence
-from datetime import date
+from datetime import date, time
 from typing import Any
 
 

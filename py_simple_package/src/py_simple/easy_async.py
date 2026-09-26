@@ -2,7 +2,7 @@
 easy_async is built to simplify asynchronous code execution.
 """
 
-from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 
 class EasyAsyncError(Exception):
@@ -23,7 +23,7 @@ class EasyAsyncError(Exception):
         super().__init__(self.message)
 
 
-def run_at_the_same_time_no_params(functions: list) -> list:
+async def run_at_the_same_time_no_params(functions: list) -> list:
     """
     Runs multiple zero-argument functions at the same time and returns
     their results.
@@ -40,7 +40,8 @@ def run_at_the_same_time_no_params(functions: list) -> list:
     Example:
         === "The Py_simple Way"
             ```python
-            from py_simple import run_at_the_same_time
+            import asyncio
+            from py_simple import run_at_the_same_time_no_params
 
             def add():
                 return 1 + 1
@@ -48,12 +49,15 @@ def run_at_the_same_time_no_params(functions: list) -> list:
             def sub():
                 return 4 - 2
 
-            run_at_the_same_time([add, sub])  # -> [("add", 2), ("sub", 2)]
+            async def main():
+                return await run_at_the_same_time_no_params([add, sub])
+
+            asyncio.run(main())  # -> [("add", 2), ("sub", 2)]
             ```
 
         === "The Traditional Way"
             ```python
-            from concurrent.futures import ThreadPoolExecutor
+            import asyncio
 
             def add():
                 return 1 + 1
@@ -61,31 +65,26 @@ def run_at_the_same_time_no_params(functions: list) -> list:
             def sub():
                 return 4 - 2
 
-            functions = [add, sub]
-            results = []
-            with ThreadPoolExecutor() as executor:
-                tickets = [
-                    (f.__name__, executor.submit(f)) for f in functions
-                ]
-                for name, ticket in tickets:
-                    results.append((name, ticket.result()))
+            async def main():
+                loop = asyncio.get_running_loop()
+                functions = [add, sub]
+                tasks = [loop.run_in_executor(None, f) for f in functions]
+                results = await asyncio.gather(*tasks)
+                return list(zip((f.__name__ for f in functions), results))
+
+            asyncio.run(main())
             ```
     """
-    tickets = []
-    results = []
-    try:
-        with ThreadPoolExecutor() as executor:
-            for function in functions:
-                ticket = executor.submit(function)
-                tickets.append((function.__name__, ticket))
-            for ticket in tickets:
-                results.append((ticket[0], ticket[1].result()))
-        return results
-    except Exception as e:
-        raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
+    loop = asyncio.get_running_loop()
+    tasks = [loop.run_in_executor(None, function) for function in functions]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    for result in results:
+        if isinstance(result, Exception):
+            raise EasyAsyncError(f"\n\n\nERROR: {result}") from None
+    return list(zip((f.__name__ for f in functions), results))
 
 
-def run_at_the_same_time_with_params(functions_and_args: list[tuple]) -> list:
+async def run_at_the_same_time_with_params(functions_and_args: list[tuple]) -> list:
     """
     Runs multiple functions at the same time, each with its own
     arguments, and returns their results.
@@ -105,6 +104,7 @@ def run_at_the_same_time_with_params(functions_and_args: list[tuple]) -> list:
     Example:
         === "The Py_simple Way"
             ```python
+            import asyncio
             from py_simple import run_at_the_same_time_with_params
 
             def add(a, b):
@@ -113,15 +113,18 @@ def run_at_the_same_time_with_params(functions_and_args: list[tuple]) -> list:
             def sub(a, b):
                 return a - b
 
-            run_at_the_same_time_with_params([
-                (add, 1, 1),
-                (sub, 4, 2),
-            ])  # -> [("add", 2), ("sub", 2)]
+            async def main():
+                return await run_at_the_same_time_with_params([
+                    (add, 1, 1),
+                    (sub, 4, 2),
+                ])
+
+            asyncio.run(main())  # -> [("add", 2), ("sub", 2)]
             ```
 
         === "The Traditional Way"
             ```python
-            from concurrent.futures import ThreadPoolExecutor
+            import asyncio
 
             def add(a, b):
                 return a + b
@@ -129,33 +132,34 @@ def run_at_the_same_time_with_params(functions_and_args: list[tuple]) -> list:
             def sub(a, b):
                 return a - b
 
-            functions_and_args = [(add, 1, 1), (sub, 4, 2)]
-            results = []
-            with ThreadPoolExecutor() as executor:
-                tickets = [
-                    (item[0].__name__, executor.submit(item[0], *item[1:]))
+            async def main():
+                loop = asyncio.get_running_loop()
+                functions_and_args = [(add, 1, 1), (sub, 4, 2)]
+                tasks = [
+                    loop.run_in_executor(None, item[0], *item[1:])
                     for item in functions_and_args
                 ]
-                for name, ticket in tickets:
-                    results.append((name, ticket.result()))
+                results = await asyncio.gather(*tasks)
+                names = [item[0].__name__ for item in functions_and_args]
+                return list(zip(names, results))
+
+            asyncio.run(main())
             ```
     """
-    tickets = []
-    results = []
-    try:
-        with ThreadPoolExecutor() as executor:
-            for items in functions_and_args:
-                args = items[1:]
-                ticket = executor.submit(items[0], *args)
-                tickets.append((items[0].__name__, ticket))
-            for ticket in tickets:
-                results.append((ticket[0], ticket[1].result()))
-        return results
-    except Exception as e:
-        raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
+    loop = asyncio.get_running_loop()
+    tasks = [
+        loop.run_in_executor(None, items[0], *items[1:])
+        for items in functions_and_args
+    ]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    for result in results:
+        if isinstance(result, Exception):
+            raise EasyAsyncError(f"\n\n\nERROR: {result}") from None
+    names = [items[0].__name__ for items in functions_and_args]
+    return list(zip(names, results))
 
 
-def run_with_timeout(func, timeout: float, *args) -> tuple:
+async def run_with_timeout(func, timeout: float, *args) -> tuple:
     """
     Runs a function asynchronously with a timeout limit.
 
@@ -172,30 +176,160 @@ def run_with_timeout(func, timeout: float, *args) -> tuple:
     Example:
         === "The Py_simple Way"
             ```python
+            import asyncio
             from py_simple import run_with_timeout
 
             def slow_add(a, b):
                 return a + b
 
-            run_with_timeout(slow_add, 2.0, 3, 5)  # -> ("slow_add", 8)
+            async def main():
+                return await run_with_timeout(slow_add, 2.0, 3, 5)
+
+            asyncio.run(main())  # -> ("slow_add", 8)
             ```
 
         === "The Traditional Way"
             ```python
-            from concurrent.futures import ThreadPoolExecutor
+            import asyncio
 
             def slow_add(a, b):
                 return a + b
 
-            with ThreadPoolExecutor() as executor:
-                future = executor.submit(slow_add, 3, 5)
-                result = future.result(timeout=2.0)
+            async def main():
+                loop = asyncio.get_running_loop()
+                result = await asyncio.wait_for(
+                    loop.run_in_executor(None, slow_add, 3, 5),
+                    timeout=2.0,
+                )
+                return (slow_add.__name__, result)
+
+            asyncio.run(main())
             ```
     """
+    loop = asyncio.get_running_loop()
     try:
-        with ThreadPoolExecutor() as executor:
-            future = executor.submit(func, *args)
-            result = future.result(timeout=timeout)
-            return (func.__name__, result)
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, func, *args),
+            timeout=timeout,
+        )
+        return (func.__name__, result)
     except Exception as e:
         raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
+
+
+async def run_concurrent_map(func, items: list) -> list:
+    """
+    Applies a function to a list of items concurrently and returns the
+    results in the original order.
+
+    Raises EasyAsyncError if any function call raises an exception.
+
+    Args:
+        func (callable): The function to call on each item.
+        items (list): The list of items to pass one by one into the function.
+
+    Returns:
+        list: The list of return values in the same order as items.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            import asyncio
+            from py_simple import run_concurrent_map
+
+            def square(n):
+                return n * n
+
+            async def main():
+                return await run_concurrent_map(square, [1, 2, 3, 4])
+
+            asyncio.run(main())  # -> [1, 4, 9, 16]
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import asyncio
+
+            def square(n):
+                return n * n
+
+            async def main():
+                loop = asyncio.get_running_loop()
+                items = [1, 2, 3, 4]
+                tasks = [loop.run_in_executor(None, square, item) for item in items]
+                return await asyncio.gather(*tasks)
+
+            asyncio.run(main())
+            ```
+    """
+    loop = asyncio.get_running_loop()
+    tasks = [loop.run_in_executor(None, func, item) for item in items]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    for result in results:
+        if isinstance(result, Exception):
+            raise EasyAsyncError(f"\n\n\nERROR: {result}") from None
+    return results
+
+
+async def run_with_retry(func, attempts: int, delay: float, *args) -> tuple:
+    """
+    Runs a function repeatedly until it succeeds or all attempts are
+    exhausted, waiting between attempts.
+
+    Raises EasyAsyncError if every attempt fails.
+
+    Args:
+        func (callable): The function to execute.
+        attempts (int): Number of attempts to make before giving up.
+        delay (float): Time to wait between failed attempts, in seconds.
+        *args: Positional arguments to pass to the function.
+
+    Returns:
+        tuple: A tuple containing `(func.__name__, result)`.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            import asyncio
+            from py_simple import run_with_retry
+
+            def add(a, b):
+                return a + b
+
+            async def main():
+                return await run_with_retry(add, 4, 2.0, 2, 3)
+
+            asyncio.run(main())  # -> ("add", 5)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import asyncio
+
+            def add(a, b):
+                return a + b
+
+            async def main():
+                loop = asyncio.get_running_loop()
+                attempts = 4
+                for attempt in range(attempts):
+                    try:
+                        result = await loop.run_in_executor(None, add, 2, 3)
+                        return (add.__name__, result)
+                    except Exception as e:
+                        if attempt == attempts - 1:
+                            raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
+                        await asyncio.sleep(2.0)
+
+            asyncio.run(main())
+            ```
+    """
+    loop = asyncio.get_running_loop()
+    for attempt in range(attempts):
+        try:
+            result = await loop.run_in_executor(None, func, *args)
+            return (func.__name__, result)
+        except Exception as e:
+            if attempt == attempts - 1:
+                raise EasyAsyncError(f"\n\n\nERROR: {e}") from None
+            await asyncio.sleep(delay)

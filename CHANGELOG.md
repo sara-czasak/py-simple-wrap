@@ -9,6 +9,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-09-25
+
+### Added
+- Added a circular logo to the README header ([@sara-czasak](https://github.com/sara-czasak))
+
+### Changed
+- **Breaking:** `pip install py-simple-wrap` now installs a lightweight core instead of every dependency for every module. Heavy per-module dependencies (`matplotlib`, `pygame-ce`, `Pillow`, `qrcode`, `GitPython`, `python-benedict`, `pydantic`, `langchain-core`) moved out of the default install into per-module extras (`ai`, `game`, `viz`, `images`, `web`, `config`, `json`); `pip install py-simple-wrap[all]` restores the previous batteries-included install. `import py_simple` no longer requires any of these packages to be installed — each heavy import is now deferred to the specific function that uses it ([@sara-czasak](https://github.com/sara-czasak))
+
+### Fixed
+- Fixed the docs site rendering the README's title, badges, "Modules at a glance" table, and collaborators section as raw unprocessed text instead of real HTML — `mkdocs.yml` was missing the `md_in_html` extension needed to parse Markdown nested inside `<div>` blocks ([@sara-czasak](https://github.com/sara-czasak))
+- Removed the redundant GitHub-style nav bar from docs-site pages (README, Quickstart, Contributing, Contributors, License) via `include-markdown` start markers, since the site already has its own navigation ([@sara-czasak](https://github.com/sara-czasak))
+
 ## [0.6.1] - 2026-09-17
 ### Fixed
 - Cleaned up a stray leftover table row in the README's module grid ([@sara-czasak](https://github.com/sara-czasak))

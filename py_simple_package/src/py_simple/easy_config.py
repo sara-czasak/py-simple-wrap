@@ -5,8 +5,6 @@ easy_config aims to simplify creating configuration files.
 import os
 from importlib.resources import files
 
-import git
-
 
 class EasyConfigError(Exception):
     """
@@ -76,6 +74,8 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
     if at_root:
         workflow_path = f".github/workflows/{filename}.yml"
     else:
+        import git
+
         git_repo = git.Repo(os.getcwd(), search_parent_directories=True)
         git_root = git_repo.git.rev_parse("--show-toplevel")
         workflow_path = f"{git_root}/.github/workflows/{filename}.yml"

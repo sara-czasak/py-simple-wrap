@@ -1,6 +1,7 @@
 import pytest
 
 from py_simple_package.src.py_simple import (
+    count_csv_rows,
     filter_csv_rows,
     get_csv_columns,
     read_csv_to_list,
@@ -120,6 +121,52 @@ class TestGetCsvColumns:
 
         with pytest.raises(ValueError):
             get_csv_columns(str(empty_file))
+
+
+class TestCountCsvRows:
+    def test_count_data_rows_by_default(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        write_people_csv(csv_file)
+
+        result = count_csv_rows(str(csv_file))
+
+        assert result == 3
+
+    def test_count_rows_including_header(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        write_people_csv(csv_file)
+
+        result = count_csv_rows(str(csv_file), include_header=True)
+
+        assert result == 4
+
+    def test_count_header_only_file_returns_zero_by_default(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text("Name,Age\n", encoding="utf-8")
+
+        result = count_csv_rows(str(csv_file))
+
+        assert result == 0
+
+    def test_count_custom_delimiter(self, tmp_path):
+        csv_file = tmp_path / "data.csv"
+        csv_file.write_text("a;b\n1;2\n3;4\n", encoding="utf-8")
+
+        result = count_csv_rows(str(csv_file), delimiter=";")
+
+        assert result == 2
+
+    def test_count_missing_file_raises_file_not_found(self, tmp_path):
+        missing_file = tmp_path / "missing.csv"
+        with pytest.raises(FileNotFoundError):
+            count_csv_rows(str(missing_file))
+
+    def test_count_empty_file_raises_value_error(self, tmp_path):
+        empty_file = tmp_path / "empty.csv"
+        empty_file.write_text("", encoding="utf-8")
+
+        with pytest.raises(ValueError):
+            count_csv_rows(str(empty_file))
 
 
 class TestFilterCsvRows:

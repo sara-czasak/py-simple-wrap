@@ -4,6 +4,8 @@
 
 </div>
 
+<!-- docs-site-start -->
+
 # Contributing to py-simple-wrap 🚀
 
 First of all, thank you for being here! I created `py-simple-wrap` to help others on their learning journey, and I'm excited to have you join me.
@@ -56,13 +58,13 @@ If you've never contributed to an open-source project before, here is exactly ho
        uv run pytest
        ```
    - **Using pip**:
-     - Create a virtual environment and install the package with testing and documentation dependencies:
+     - Create a virtual environment and install the package with every extra — the test suite covers every module, including the ones that need extra packages (pygame, matplotlib, Pillow, and so on), so `[all]` is needed to run it in full:
        ```bash
        python -m venv .venv
        # Activate the virtual environment
        # Windows: .venv\Scripts\activate
        # macOS/Linux: source .venv/bin/activate
-       pip install -e .[test,docs,ai]
+       pip install -e .[all,test,docs]
        ```
      - Run the tests:
        ```bash

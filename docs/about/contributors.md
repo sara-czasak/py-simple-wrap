@@ -1,1 +1,1 @@
-{% include-markdown "../../CONTRIBUTORS.md" %}
+{% include-markdown "../../CONTRIBUTORS.md" start="<!-- docs-site-start -->" %}

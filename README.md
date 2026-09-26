@@ -1,22 +1,22 @@
-<div align="center">
+<div align="center" markdown="1">
 
 ⚡[Quickstart](QUICKSTART.md) · 📦[Modules](MODULES.md) · 🆘[Support](SUPPORT.md) · 🚀[Contributing](CONTRIBUTING.md) · 🌟[Contributors](CONTRIBUTORS.md) · 📜[Changelog](CHANGELOG.md) · 🔒[Security](SECURITY.md) · 🌱[Code of Conduct](CODE_OF_CONDUCT.md) · ⚖️[License](LICENSE.md)
 
 </div>
+<br>
 
-<div align="center">
-<!-- Once you have a logo/wordmark image, this pair auto-swaps by GitHub theme:
-![py-simple-wrap](docs/assets/logo-dark.png#gh-dark-mode-only)
-![py-simple-wrap](docs/assets/logo-light.png#gh-light-mode-only)
--->
+<!-- docs-site-start -->
+
+<div align="center" markdown="1">
+<img src="https://raw.githubusercontent.com/sara-czasak/py-simple-wrap/main/docs/assets/logo.jpg" alt="py-simple-wrap logo" width="150" height="150" style="border-radius: 50%; object-fit: cover;">
  
-# py-simple-wrap
- 
+<h1 id="py-simple-wrap" style="margin-top: 0;">py-simple-wrap</h1>
+
 **Making Python feel like plain English.**
  
 [![PyPI](https://img.shields.io/pypi/v/py-simple-wrap?style=flat-square&logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/py-simple-wrap/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/sara-czasak/py-simple-wrap/tests.yml?style=flat-square&logo=github&label=tests)](https://github.com/sara-czasak/py-simple-wrap/actions/workflows/tests.yml)
-[![Contributors](https://img.shields.io/badge/contributors-63-orange?style=flat-square)](CONTRIBUTORS.md)
+[![Contributors](https://img.shields.io/badge/contributors-65-orange?style=flat-square)](CONTRIBUTORS.md)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/py-simple-wrap?period=total&units=NONE&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/py-simple-wrap)
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](LICENSE.md)
 [![Discord](https://img.shields.io/discord/1533803449895092245?style=flat-square&logo=discord&logoColor=white&label=discord&color=5865F2)](https://discord.gg/Ge5HnVw2p)
@@ -25,7 +25,7 @@
 <br>
 py-simple-wrap is a beginner-friendly Python toolbox — simple, intuitive functions for common tasks, so you can build something fun before the syntax gets in the way.
  
-<div align="center">
+<div align="center" markdown="1">
 <br>
 
 ## Modules at a glance
@@ -56,7 +56,7 @@ py-simple-wrap is a beginner-friendly Python toolbox — simple, intuitive funct
 </div>
 
 ---
-<div align="center">
+<div align="center" markdown="1">
 
 ## py-simple-wrap *collaborators*
 
@@ -120,6 +120,8 @@ py-simple-wrap is a beginner-friendly Python toolbox — simple, intuitive funct
 ```bash
 pip install py-simple-wrap
 ```
+
+This installs the lightweight core; a few modules need extra packages — see [Installation](QUICKSTART.md#installation) in the Quickstart for the full list.
  
 ```python
 from py_simple import make_blank_file, miles_to_km, is_valid_email
@@ -150,6 +152,9 @@ except Exception as e:
 ```
  
 **The py-simple-wrap way**
+
+> Needs the `[web]` extra: `pip install py-simple-wrap[web]`
+
 ```python
 from py_simple import get_page_title
  
@@ -157,6 +162,10 @@ print(get_page_title("https://github.com"))
 ```
  
 <br>
+
+## 🧩 Project tutorials
+
+Want to see modules working together? Check out the [project-based tutorials](docs/tutorial/) — small, fun builds that combine 2+ modules into something you'd actually want to make.
 
 ## 📣 Share what you build
 
@@ -172,7 +181,7 @@ Whether you've used one function or ten, your feedback decides what
 gets built next. **[Take the 2-minute survey →](https://docs.google.com/forms/d/e/1FAIpQLSd3P4QCW9s-4izQlklN6q7kDGMlrgYe1I19ae6lAee5Mjbs5A/viewform?usp=header)**
 
 
-<div align="center">
+<div align="center" markdown="1">
 
 **[Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [License](LICENSE.md)**
  

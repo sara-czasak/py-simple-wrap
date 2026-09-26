@@ -4,6 +4,8 @@
 
 </div>
 
+<!-- docs-site-start -->
+
 # py-simple-wrap Contributors 🌟
 
 A massive thank you to everyone who has helped build, refine, and grow `py-simple-wrap`. This project exists to help beginners, and it wouldn't be where it is today without the support of the community.
@@ -303,6 +305,12 @@ Every tile below is a real person who showed up for this project. 💛
       <a href="https://github.com/Akkii50">
         <img src="https://github.com/Akkii50.png" width="100px;" alt="Akkii50"/><br />
         <sub><b>Akkii50</b></sub>
+      </a>
+    </td>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/cybs-joe">
+        <img src="https://github.com/cybs-joe.png" width="100px;" alt="Joe"/><br />
+        <sub><b>Joe</b></sub>
       </a>
     </td>
   </tr>
@@ -611,6 +619,12 @@ Every tile below is a real person who showed up for this project. 💛
         <sub><b>Akkii50</b></sub>
       </a>
     </td>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/cybs-joe">
+        <img src="https://github.com/cybs-joe.png" width="100px;" alt="Joe"/><br />
+        <sub><b>Joe</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
 
@@ -759,10 +773,14 @@ Every tile below is a real person who showed up for this project. 💛
         <sub><b>Akkii50</b></sub>
       </a>
     </td>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/YuuGR1337">
+        <img src="https://github.com/YuuGR1337.png" width="100px;" alt="Elkero"/><br />
+        <sub><b>Elkero</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
-
-*(This tile is lonely. Found a bug? [Open an issue](https://github.com/sara-czasak/py-simple-wrap/issues) and claim your spot here!)*
 
 ---
 
@@ -962,6 +980,8 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Akkii50"><img src="https://github.com/Akkii50.png?s=80" width="80px;" alt="Akkii50"/><br /><sub><b>Akkii50</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=Akkii50" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=Akkii50" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=Akkii50" title="Docs">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/cybs-joe"><img src="https://github.com/cybs-joe.png?s=80" width="80px;" alt="cybs-joe"/><br /><sub><b>cybs-joe</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=Joe" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=Joe" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/YuuGR1337"><img src="https://github.com/YuuGR1337.png?s=80" width="80px;" alt="Elkero"/><br /><sub><b>Elkero</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=YuuGR1337" title="Docs">📖</a></td>
     </tr>
   </tbody>
 </table>

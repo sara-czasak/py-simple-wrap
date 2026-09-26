@@ -2,11 +2,10 @@
 easy_ai wraps common LangChain functionality to make it easier to use.
 """
 
-from typing import Any
-
-from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, HumanMessage
-from pydantic import SecretStr
+from __future__ import annotations
+from typing import TYPE_CHECKING, Any
+if TYPE_CHECKING:
+    from langchain_core.language_models import BaseChatModel
 
 
 class EasyAIError(Exception):
@@ -105,6 +104,7 @@ def get_model(
 
     elif provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
+        from pydantic import SecretStr
 
         api_key = SecretStr(api_key) if api_key is not None else None
         model = ChatAnthropic(
@@ -230,6 +230,8 @@ def ai_chat(ai_model: BaseChatModel) -> None:
                 print(f"AI: {response}")
             ```
     """
+    from langchain_core.messages import AIMessage, HumanMessage
+
     history = []
     while True:
         try:
@@ -336,6 +338,55 @@ def translate_text(
         raise EasyAIError(f"\n\n\nERROR: {e}") from None
 
 
+def rewrite_text(ai_model: BaseChatModel, text: str, tone: str = "calm") -> str:
+    """
+    Sends a request to change the tone of the provided text,
+    without you having to change it manually.
+
+    Args:
+        ai_model (BaseChatModel): A LangChain chat model instance,
+            such as one returned by `get_model()`.
+        text (str): Text whose tone will be changed.
+        tone (str) : Used to decide the tone for the text that the user
+        wants (e.g. calm, angry, nervous, supportive, etc., by defualt the
+        tone is calm).
+     
+    Returns:
+        str: The text with its tone changed.
+     
+    Raises:
+        EasyAIError: If the underlying model call fails.
+     
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_model, rewrite_text
+
+            model = get_model("anthropic", "claude-sonnet-4-6")
+            tone = rewrite_text(model , "hello py-simple-wrap devs" , "excited")
+            ```
+        
+        === "The Traditional Way"
+                ```python
+                from langchain_anthropic import ChatAnthropic
+                from langchain_core.messages import HumanMessage
+
+                model = ChatAnthropic(model_name="claude-sonnet-4-6")
+                tone = model.invoke([HumanMessage(content="Change tone to excited:hello py-simple-wrap devs" )
+                ]).content
+                ```
+    """
+    try:
+        prompt = f"Change tone to {tone}:\n\n{text}"
+        return ask_ai(ai_model,prompt)
+    except Exception as e:
+        raise EasyAIError(f"\n\n\nERROR: {e}") from None
+
+
+
+
+
+ 
 # ⚠️️ WORK IN PROGRESS ⚠️
 # This class will eventually take the complexity of setting up an agent
 # with LangChain and turning it into something simple.

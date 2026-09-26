@@ -1,1 +1,1 @@
-{% include-markdown "../README.md" %}
+{% include-markdown "../README.md" start="<!-- docs-site-start -->" %}

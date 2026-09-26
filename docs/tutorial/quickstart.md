@@ -1,1 +1,1 @@
-{% include-markdown "../../QUICKSTART.md" %}
+{% include-markdown "../../QUICKSTART.md" start="<!-- docs-site-start -->" %}

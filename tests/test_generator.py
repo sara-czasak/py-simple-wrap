@@ -9,6 +9,7 @@ from py_simple_package.src.py_simple.easy_generator import (
     generate_api_key,
     generate_otp,
     generate_password,
+    generate_pin,
     generate_qr_code,
     generate_slug,
     generate_username,
@@ -148,7 +149,7 @@ def test_generate_qr_code_wraps_generation_error(monkeypatch):
         raise RuntimeError("QR generation failed")
 
     monkeypatch.setattr(
-        "py_simple_package.src.py_simple.easy_generator.qrcode.make",
+        "qrcode.make",
         fail,
     )
 
@@ -165,7 +166,7 @@ def test_generate_qr_code_wraps_save_error(monkeypatch):
             raise OSError(f"Cannot save {filename}")
 
     monkeypatch.setattr(
-        "py_simple_package.src.py_simple.easy_generator.qrcode.make",
+        "qrcode.make",
         lambda data: BrokenImage(),
     )
 
@@ -242,6 +243,38 @@ def test_generate_otp_accepts_minimum_length():
 
     assert len(otp) == 4
     assert otp.isdigit()
+
+
+def test_generate_pin_default_length():
+    pin = generate_pin()
+
+    assert len(pin) == 4
+    assert pin.isdigit()
+
+
+@pytest.mark.parametrize("length", [1, 4, 6, 8])
+def test_generate_pin_length(length):
+    pin = generate_pin(length)
+
+    assert len(pin) == length
+    assert pin.isdigit()
+
+
+def test_generate_pin_keeps_leading_zero(monkeypatch):
+    digits = iter([0, 4, 2, 9])
+
+    monkeypatch.setattr(
+        "py_simple_package.src.py_simple.easy_generator.secrets.randbelow",
+        lambda upper_bound: next(digits),
+    )
+
+    assert generate_pin(4) == "0429"
+
+
+@pytest.mark.parametrize("length", [0, -1])
+def test_generate_pin_rejects_invalid_length(length):
+    with pytest.raises(EasyGeneratorError, match="at least 1"):
+        generate_pin(length)
 
 
 def test_generate_username():

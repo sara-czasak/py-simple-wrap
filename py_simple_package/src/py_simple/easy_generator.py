@@ -10,8 +10,6 @@ import string
 import unicodedata
 import uuid
 
-import qrcode
-
 
 class EasyGeneratorError(Exception):
     """
@@ -212,8 +210,9 @@ def generate_qr_code(data_to_encode: str) -> None:
     if not data_to_encode:
         raise EasyGeneratorError("You need to provide some data to encode")
     try:
-        img = qrcode.make(data_to_encode)
+        import qrcode
 
+        img = qrcode.make(data_to_encode)
         num = 0
         good_filename = False
         while not good_filename:
@@ -328,6 +327,42 @@ def generate_otp(length: int = 4, with_letters: bool = False) -> str:
         return otp
     else:
         raise EasyGeneratorError("\n\n\nERROR: OTP length must be at least 4") from None
+
+
+def generate_pin(length: int = 4) -> str:
+    """
+    Generates a numeric PIN code of a chosen length in one call.
+
+    Args:
+        length (int, optional): Number of digits in the generated PIN.
+            Defaults to `4`.
+
+    Returns:
+        str: A numeric PIN string that keeps leading zeros when they
+            are generated.
+
+    Raises:
+        EasyGeneratorError: If `length` is less than 1.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import generate_pin
+
+            pin = generate_pin(6)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import secrets
+
+            pin = "".join(str(secrets.randbelow(10)) for _ in range(6))
+            ```
+    """
+    if length < 1:
+        raise EasyGeneratorError("\n\n\nERROR: PIN length must be at least 1") from None
+
+    return "".join(str(secrets.randbelow(10)) for _ in range(length))
 
 
 def generate_username(separator: str = "-") -> str:

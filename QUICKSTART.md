@@ -4,6 +4,8 @@
 
 </div>
 
+<!-- docs-site-start -->
+
 # Quickstart
  
 Get up and running with `py-simple-wrap` in under a minute.
@@ -12,6 +14,30 @@ Get up and running with `py-simple-wrap` in under a minute.
  
 ```bash
 pip install py-simple-wrap
+```
+
+This installs the lightweight core — most modules (`easy_math`, `easy_strings`, `easy_validator`, and 15 others) work right away with nothing else to install. A few need extra packages:
+
+| Extra | Unlocks |
+|---|---|
+| `[ai]` | `easy_ai` |
+| `[game]` | `easy_game` |
+| `[viz]` | `easy_data_visualization` |
+| `[images]` | `easy_images`, and `easy_generator`'s `generate_qr_code` |
+| `[web]` | `easy_web` |
+| `[config]` | `easy_config`'s `gh_workflow_config(at_root=False)` |
+| `[json]` | `easy_json`'s `flatten_json` |
+
+Install everything at once:
+
+```bash
+pip install py-simple-wrap[all]
+```
+
+Or install just what you need, e.g.:
+
+```bash
+pip install py-simple-wrap[game]
 ```
  
 > **Note:** The PyPI package is named `py-simple-wrap` (the name `py-simple` was already taken), but you still import it as `py_simple` in your code.
@@ -83,6 +109,8 @@ print(is_valid_url("https://example.com"))  # True
 ```
  
 ### 🌐 Web — `easy_web`
+
+> Needs the `[web]` extra: `pip install py-simple-wrap[web]`
  
 ```python
 from py_simple import is_page_up, get_page_content
@@ -102,5 +130,5 @@ print(is_palindrome("racecar"))  # True
 ## Next Steps
  
 - Browse the **Reference** section in the sidebar for the complete list of functions in every module.
-- See the full [README](docs/readme.md) for the complete list of functions in each module.
+- See the full [MODULES.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/MODULES.md) for the complete list of functions in each module.
 - Want to contribute? Check out [CONTRIBUTING.md](docs/how-to/contributing.md).

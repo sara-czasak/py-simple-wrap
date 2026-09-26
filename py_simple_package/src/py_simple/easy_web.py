@@ -2,9 +2,6 @@
 easy_web is built to simplify getting information from the web.
 """
 
-import requests
-from bs4 import BeautifulSoup
-
 _TAGS = {"a": "href", "img": "src"}
 
 
@@ -59,6 +56,9 @@ def get_page_content(url: str) -> str | None:
             ```
     """
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         if response.ok:
             return BeautifulSoup(response.text, "html.parser").prettify()
@@ -100,6 +100,8 @@ def is_page_up(url: str) -> bool:
             ```
     """
     try:
+        import requests
+
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         return bool(response.status_code == 200)
@@ -141,6 +143,9 @@ def get_page_title(url: str) -> str | None:
             ```
     """
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         page = BeautifulSoup(response.content, "html.parser")
@@ -184,6 +189,9 @@ def count_links(url: str) -> int | None:
             ```
     """
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         soup = BeautifulSoup(response.content, "html.parser")
         link_count = 0
@@ -228,6 +236,9 @@ def get_link_list(url: str) -> list[str] | None:
             ```
     """
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         soup = BeautifulSoup(response.content, "html.parser")
         link_list = []
@@ -274,6 +285,9 @@ def count_tags(url: str, tag: str) -> int | None:
     if tag not in _TAGS:
         raise ValueError(f"Unsupported tag: '{tag}'. Allowed tags: {', '.join(_TAGS)}")
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         soup = BeautifulSoup(response.content, "html.parser")
         if response is not None:
@@ -322,6 +336,9 @@ def get_tag_list(url: str, tag: str) -> list[str] | None:
     if tag not in _TAGS:
         raise ValueError(f"Unsupported tag: '{tag}'. Allowed tags: {', '.join(_TAGS)}")
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         soup = BeautifulSoup(response.content, "html.parser")
         attribute = _TAGS[tag]
@@ -389,6 +406,9 @@ def get_meta_description(url: str) -> list[str] | None:
             ```
     """
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         soup = BeautifulSoup(response.content, "html.parser")
         meta_description_list = []
@@ -436,6 +456,9 @@ def get_all_headers(url: str) -> list[str] | None:
             ```
     """
     try:
+        import requests
+        from bs4 import BeautifulSoup
+
         response = requests.get(url, timeout=10)
         soup = BeautifulSoup(response.content, "html.parser")
         header_list = []

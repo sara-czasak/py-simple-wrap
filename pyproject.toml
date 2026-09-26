@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py_simple_wrap"
-version = "0.6.1"
+version = "0.7.0"
 authors = [
   { name="Sara Czasak", email="sara.p.czasak.m@gmail.com" },
 ]
@@ -35,18 +35,7 @@ classifiers = [
     "Topic :: Education",
     "Topic :: Utilities",
 ]
-dependencies = [
-    "requests>=2.25.0",
-    "beautifulsoup4>=4.9.0",
-    "python-benedict>=0.38.0",
-    "Pillow>=10.0.0",
-    "qrcode>=7.4.0",
-    "pygame-ce>=2.5.0",
-    "matplotlib>=3.0.0",
-    "GitPython>=3.1.0",
-    "pydantic>=2.0.0",
-    "langchain-core>=0.2.0",
-]
+dependencies = []
 
 [project.urls]
 Homepage = "https://github.com/sara-czasak/py-simple-wrap"
@@ -56,12 +45,38 @@ Documentation = "https://sara-czasak.github.io/py-simple-wrap/docs/"
 Quickstart = "https://github.com/sara-czasak/py-simple-wrap/blob/main/QUICKSTART.md"
 
 [project.optional-dependencies]
+base = []
 ai = [
+    "pydantic>=2.0.0",
+    "langchain-core>=0.2.0",
     "langchain-openai>=0.1.0",
     "langchain-ollama>=0.1.0",
     "langchain-anthropic>=0.1.0",
     "langchain-google-genai>=1.0.0",
     "langchain-mistralai>=0.1.0",
+]
+game = [
+    "pygame-ce>=2.5.0",
+]
+viz = [
+    "matplotlib>=3.0.0",
+]
+images = [
+    "Pillow>=10.0.0",
+    "qrcode>=7.4.0",
+]
+web = [
+    "requests>=2.25.0",
+    "beautifulsoup4>=4.9.0",
+]
+config = [
+    "GitPython>=3.1.0",
+]
+json = [
+    "python-benedict>=0.38.0",
+]
+all = [
+    "py_simple_wrap[ai,game,viz,images,web,config,json]",
 ]
 test = [
     "pytest>=7.0",
