@@ -163,6 +163,10 @@ print(get_page_title("https://github.com"))
  
 <br>
 
+## 🧩 Project tutorials
+
+Want to see modules working together? Check out the [project-based tutorials](docs/tutorial/) — small, fun builds that combine 2+ modules into something you'd actually want to make.
+
 ## 📣 Share what you build
 
 Made something with py-simple-wrap? Post about it and tag **#py-simple-wrap**. I'd love to see it!
