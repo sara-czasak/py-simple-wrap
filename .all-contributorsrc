@@ -712,6 +712,16 @@
       "contributions": [
         "documentation"
       ]
+    },
+    {
+      "login": "Cid-oe",
+      "name": "SIDDHARTH U",
+      "avatar_url": "https://github.com/Cid-oe.png",
+      "profile": "https://github.com/Cid-oe",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ]
 }
