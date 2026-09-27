@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -718,6 +718,16 @@
       "name": "SIDDHARTH U",
       "avatar_url": "https://github.com/Cid-oe.png",
       "profile": "https://github.com/Cid-oe",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "motors78",
+      "name": "motors78",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73670015?v=4",
+      "profile": "https://github.com/motors78",
       "contributions": [
         "code",
         "test"
