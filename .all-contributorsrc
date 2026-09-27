@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -728,6 +728,16 @@
       "name": "motors78",
       "avatar_url": "https://github.com/motors78.png",
       "profile": "https://github.com/motors78",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "runway28R",
+      "name": "runway28R",
+      "avatar_url": "https://avatars.githubusercontent.com/u/241362565?v=4",
+      "profile": "https://github.com/runway28R",
       "contributions": [
         "code",
         "test"
