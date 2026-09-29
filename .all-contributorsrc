@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -741,6 +741,15 @@
       "contributions": [
         "code",
         "test"
+      ]
+    },
+    {
+      "login": "Mohamed-Saeed-Hussein",
+      "name": "Mohamed Saeed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/180985801?v=4",
+      "profile": "https://github.com/Mohamed-Saeed-Hussein",
+      "contributions": [
+        "documentation"
       ]
     }
   ]
