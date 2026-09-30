@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -748,6 +748,15 @@
       "name": "Mohamed Saeed",
       "avatar_url": "https://github.com/Mohamed-Saeed-Hussein.png",
       "profile": "https://github.com/Mohamed-Saeed-Hussein",
+      "contributions": [
+        "documentation"
+      ]
+    },
+    {
+      "login": "veligetisamanvi",
+      "name": "veligetisamanvi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/335607738?v=4",
+      "profile": "https://github.com/veligetisamanvi",
       "contributions": [
         "documentation"
       ]
