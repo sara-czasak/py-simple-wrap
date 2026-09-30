@@ -6,6 +6,7 @@ from py_simple_package.src.py_simple import (
     get_csv_columns,
     read_csv_to_list,
     write_csv_from_list,
+    sort_csv_by_column,
 )
 
 
@@ -206,3 +207,107 @@ class TestFilterCsvRows:
 
         with pytest.raises(ValueError):
             filter_csv_rows(str(csv_file), column="City", value="Nowhere")
+
+
+class TestSortCsvByColumn:
+    def test_sort_ascending_by_default(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text("Name,Age\nCarol,42\nAlice,24\nBob,31\n", encoding="utf-8")
+
+        sort_csv_by_column(str(csv_file), column="Age")
+
+        result = read_csv_to_list(str(csv_file), return_dict=True)
+
+        assert result[0]["Age"] == "24"
+        assert result[1]["Age"] == "31"
+        assert result[2]["Age"] == "42"
+
+    def test_sort_descending(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text("Name,Age\nCarol,42\nAlice,24\nBob,31\n", encoding="utf-8")
+        sort_csv_by_column(str(csv_file), column="Age", reverse=True)
+
+        result = read_csv_to_list(str(csv_file), return_dict=True)
+
+        assert result[0]["Age"] == "42"
+        assert result[1]["Age"] == "31"
+        assert result[2]["Age"] == "24"
+
+    def test_sort_to_new_output_file(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        new_csv_file = tmp_path / "people_sorted.csv"
+        csv_file.write_text("Name,Age\nCarol,42\nAlice,24\nBob,31\n", encoding="utf-8")
+
+        sort_csv_by_column(str(csv_file), column="Age", output_filepath=str(new_csv_file))
+
+        result = read_csv_to_list(str(new_csv_file), return_dict=True)
+        original = read_csv_to_list(str(csv_file), return_dict=True)
+
+        assert result[0]["Age"] == "24"
+        assert result[1]["Age"] == "31"
+        assert result[2]["Age"] == "42"
+
+        assert original[0]["Age"] == "42"
+        assert original[1]["Age"] == "24"
+        assert original[2]["Age"] == "31"
+
+    def test_sort_invalid_output_path_raises_error(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        invalid_output = tmp_path / "non_existent_folder" / "people_sorted.csv"
+        csv_file.write_text("Name,Age\nCarol,42\nAlice,24\nBob,31\n", encoding="utf-8")
+
+        with pytest.raises(FileNotFoundError):
+            sort_csv_by_column(str(csv_file), column="Age", output_filepath=str(invalid_output))
+
+    def test_sort_missing_column_raises_value_error(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text("Name,InvalidColumn\nCarol,42\nAlice,24\nBob,31\n", encoding="utf-8")
+
+        with pytest.raises(ValueError):
+            sort_csv_by_column(str(csv_file), column="Age")
+
+    def test_sort_empty_file_raises_value_error(self, tmp_path):
+        empty_file = tmp_path / "empty.csv"
+        empty_file.write_text("", encoding="utf-8")
+
+        with pytest.raises(ValueError, match=f"File is empty: "):
+            sort_csv_by_column(str(empty_file), column="Age")
+
+    def test_sort_by_string_column(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text("Name,Age\nCarol,42\nAlice,24\nBob,31\n", encoding="utf-8")
+
+        sort_csv_by_column(str(csv_file), column="Name")
+
+        result = read_csv_to_list(str(csv_file), return_dict=True)
+
+        assert result[0]["Name"] == "Alice"
+        assert result[1]["Name"] == "Bob"
+        assert result[2]["Name"] == "Carol"
+
+    def test_sort_mixed_column_types(self, tmp_path):
+        csv_file = tmp_path / "mixed.csv"
+        csv_file.write_text("Name,Age\n""Alice,thirty\n""Bob,25\n""Carol,2.5\n""Dan,\n""Eve,eleven\n", encoding="utf-8",)
+
+        sort_csv_by_column(str(csv_file), column="Age")
+        
+        result = read_csv_to_list(str(csv_file), return_dict=True)
+
+        assert [row["Age"] for row in result] == ["2.5", "25", "", "eleven", "thirty"]
+
+    def test_sort_mixed_column_types_reversed(self, tmp_path):
+        csv_file = tmp_path / "mixed.csv"
+        csv_file.write_text("Name,Age\n""Alice,thirty\n""Bob,25\n""Carol,2.5\n""Dan,\n""Eve,eleven\n", encoding="utf-8",)
+
+        sort_csv_by_column(str(csv_file), column="Age", reverse=True)
+        
+        result = read_csv_to_list(str(csv_file), return_dict=True)
+
+        assert [row["Age"] for row in result] == ["thirty", "eleven", "", "25", "2.5"]
+
+    def test_sort_header_only_raises_value_error(self, tmp_path):
+        csv_file = tmp_path / "header_only.csv"
+        csv_file.write_text("Name,Age\n", encoding="utf-8")
+
+        with pytest.raises(ValueError, match="No data rows to sort in file"):
+            sort_csv_by_column(str(csv_file), column="Age")

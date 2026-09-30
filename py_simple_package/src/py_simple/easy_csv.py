@@ -297,3 +297,74 @@ def filter_csv_rows(
 
     headers = list(all_rows[0].keys())
     return [[row[h] for h in headers] for row in filtered]
+
+
+def sort_csv_by_column(
+    filepath: str,
+    column: str,
+    reverse: bool = False,
+    output_filepath: str | None = None,
+    delimiter: str = ",",
+) -> None:
+    """
+    Sort a CSV file based on a specific column.
+    
+    Args:
+        filepath (str): Path to the CSV file.
+        column (str): Column name to sort by. For mixed data, values are sorted numerically first, followed by non-numeric strings and empty cells.
+        reverse (bool): If true, sorts in descending order. Default is false. Note that for mixed data, this reverses the grouping, placing non-numeric strings and empty cells before numbers.
+        output_filepath (str | None): Path to the sorted CSV file. If None, overwrites the source file.
+        delimiter (str): Field delimiter (default is comma).
+
+    Raises:
+        ValueError: If the file is empty, contains no data rows, or the column is not found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import sort_csv_by_column
+
+            sort_csv_by_column(filepath="people.csv", column="Age", reverse=True)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import csv
+
+            with open("people.csv", "r", newline="", encoding="utf-8") as f:
+                data = list(csv.DictReader(f))
+
+            def parse_val(val):
+                val = val or ""
+                try: 
+                    return (0, float(val), "")
+                except ValueError: 
+                    return (1, 0.0, val)
+
+            sorted_data = sorted(data, key=lambda row: parse_val(row["Age"]), reverse=True)
+
+            with open("people.csv", "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=data[0].keys())
+                writer.writeheader()
+                writer.writerows(sorted_data)
+            ```
+    """
+    data = read_csv_to_list(filepath, return_dict=True, delimiter=delimiter)
+
+    if not data:
+        raise ValueError(f"No data rows to sort in file: {filepath}")
+
+    if column not in data[0]:
+        raise ValueError(f"Column not found: {column}")
+
+    def sort_key(row: dict[str, Any]) -> Any:
+        val = row.get(column, "") or ""
+        try:
+            return (0, float(val), "")
+        except ValueError:
+            return (1, 0.0, val)
+
+    sorted_data = sorted(data, key=sort_key, reverse=reverse)
+    
+    save_path = output_filepath if output_filepath else filepath
+    write_csv_from_list(save_path, data=sorted_data, delimiter=delimiter)
