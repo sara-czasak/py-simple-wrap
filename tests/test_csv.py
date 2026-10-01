@@ -206,3 +206,25 @@ class TestFilterCsvRows:
 
         with pytest.raises(ValueError):
             filter_csv_rows(str(csv_file), column="City", value="Nowhere")
+
+class TestCountCsvRows:
+    def test_count_rows(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        write_people_csv(csv_file)
+
+        result = count_csv_rows(str(csv_file))
+
+        assert result == 3
+
+    def test_count_missing_file_raises_file_not_found(self, tmp_path):
+        csv_file = tmp_path / "missing.csv"
+
+        with pytest.raises(FileNotFoundError):
+            count_csv_rows(str(csv_file))
+
+    def test_count_empty_file_raises_value_error(self, tmp_path):
+        csv_file = tmp_path / "empty.csv"
+        csv_file.write_text("", encoding="utf-8")
+
+        with pytest.raises(ValueError):
+            count_csv_rows(str(csv_file))
