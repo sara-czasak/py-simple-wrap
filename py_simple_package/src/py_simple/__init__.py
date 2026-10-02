@@ -157,6 +157,7 @@ from .easy_generator import (
     generate_slug,
     generate_uuid,
     generate_passphrase,
+    generate_random_hex,
 )
 from .easy_images import (
     convert_image,

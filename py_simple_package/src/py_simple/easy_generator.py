@@ -9,6 +9,7 @@ import secrets
 import string
 import unicodedata
 import uuid
+from collections.abc import Generator
 
 
 class EasyGeneratorError(Exception):
@@ -481,3 +482,65 @@ def generate_passphrase(words: int = 4, separator: str = "-") -> str:
     passphrase_words.append(str(number))
 
     return separator.join(passphrase_words)
+
+
+def generate_random_hex(
+    length: int = 16,
+    count: int = 1,
+) -> Generator[str, None, None]:
+    """
+    Generates random hexadecimal strings of a chosen length in one call,
+    yielding each value lazily from a generator.
+
+    Args:
+        length (int, optional): Number of hexadecimal characters in each
+            generated string. Defaults to `16`.
+        count (int, optional): Number of hexadecimal strings to generate.
+            Defaults to `1`.
+
+    Returns:
+        Generator[str, None, None]: A generator yielding `count` random
+            hexadecimal strings, each of length `length`.
+
+    Raises:
+        EasyGeneratorError: If `length` is less than 1, or `count` is less
+            than 1.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import generate_random_hex
+
+            for hex_val in generate_random_hex(length=16, count=3):
+                print(hex_val)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import secrets
+
+
+            def generate_random_hex(length=16, count=1):
+                for _ in range(count):
+                    yield secrets.token_hex((length + 1) // 2)[:length]
+
+
+            for hex_val in generate_random_hex(length=16, count=3):
+                print(hex_val)
+            ```
+    """
+    if not isinstance(length, int) or isinstance(length, bool) or length < 1:
+        raise EasyGeneratorError(
+            "\n\n\nERROR: Hex length must be at least 1"
+        ) from None
+
+    if not isinstance(count, int) or isinstance(count, bool) or count < 1:
+        raise EasyGeneratorError(
+            "\n\n\nERROR: Count must be at least 1"
+        ) from None
+
+    def _generate() -> Generator[str, None, None]:
+        for _ in range(count):
+            yield secrets.token_hex((length + 1) // 2)[:length]
+
+    return _generate()
