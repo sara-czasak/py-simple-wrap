@@ -326,3 +326,86 @@ def find_log_lines(file_path: str, search_text: str) -> list[str]:
         return [
             line.rstrip("\n") for line in log_file if search_text in line
         ]
+
+
+def setup_file_logger(
+    log_file: str,
+    level: int | str = logging.INFO,
+    format_string: str = "%(asctime)s - %(levelname)s - %(message)s",
+    name: str | None = None,
+) -> logging.Logger:
+    """
+    Sets up and returns a logger configured to write to a file.
+
+    Creates parent directories for the log file if they do not exist.
+    Adds a `logging.FileHandler` formatted with `format_string` at the
+    specified logging level. If a handler for the same file path is already
+    attached to the logger, duplicate handlers are not added.
+
+    Args:
+        log_file (str): Path to the log file to write to.
+        level (int or str, optional): Logging level such as `logging.INFO`,
+            `logging.DEBUG`, or string equivalents like `"INFO"`.
+            Defaults to `logging.INFO`.
+        format_string (str, optional): Message format for the log handler.
+            Defaults to `"%(asctime)s - %(levelname)s - %(message)s"`.
+        name (str, optional): Name of the logger to configure. Defaults to
+            `None`, which uses `log_file` as the logger name.
+
+    Returns:
+        logging.Logger: The configured logger instance.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import setup_file_logger
+
+            logger = setup_file_logger("app.log")
+            logger.info("Application started")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import logging
+
+            logger = logging.getLogger("app.log")
+            logger.setLevel(logging.INFO)
+            handler = logging.FileHandler("app.log", encoding="utf-8")
+            handler.setLevel(logging.INFO)
+            formatter = logging.Formatter(
+                "%(asctime)s - %(levelname)s - %(message)s"
+            )
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+            logger.info("Application started")
+            ```
+    """
+    if isinstance(level, str):
+        level = level.upper()
+
+    logger_name = name if name is not None else log_file
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(level)
+
+    abs_path = os.path.abspath(log_file)
+    handler_exists = False
+    for handler in logger.handlers:
+        if (
+            isinstance(handler, logging.FileHandler)
+            and os.path.abspath(getattr(handler, "baseFilename", "")) == abs_path
+        ):
+            handler.setLevel(level)
+            handler_exists = True
+
+    if not handler_exists:
+        parent_dir = os.path.dirname(abs_path)
+        if parent_dir:
+            os.makedirs(parent_dir, exist_ok=True)
+
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setLevel(level)
+        file_handler.setFormatter(logging.Formatter(format_string))
+        logger.addHandler(file_handler)
+
+    return logger
+
