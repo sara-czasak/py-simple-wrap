@@ -133,6 +133,100 @@ def plot_data(X: list, Y: list | None = None):
     plt.show()
 
 
+def plot_heatmap(
+    data: list[list[int | float]],
+    title: str | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
+) -> None:
+    """
+    Displays a heatmap for a two-dimensional numeric data series.
+
+    A heatmap represents values in a grid using color intensity, making it
+    useful for quickly spotting patterns, differences, and high or low values
+    across a two-dimensional dataset.
+
+    Args:
+        data (list[list[int | float]]): A rectangular two-dimensional list
+            containing numeric values.
+        title (str, optional): Text shown above the heatmap. Defaults to
+            `None` (no title).
+        x_label (str, optional): Text shown under the x-axis. Defaults to
+            `None` (no label).
+        y_label (str, optional): Text shown beside the y-axis. Defaults to
+            `None` (no label).
+
+    Returns:
+        None: The heatmap is rendered directly via `plt.show()`.
+
+    Raises:
+        ValueError: If `data` is empty, is not two-dimensional, is not
+            rectangular, or contains non-numeric values.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import plot_heatmap
+
+            plot_heatmap(
+                [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+                title="Example Heatmap",
+                x_label="Columns",
+                y_label="Rows",
+            )
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import matplotlib.pyplot as plt
+
+            data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+            fig, ax = plt.subplots()
+            image = ax.imshow(data)
+            fig.colorbar(image, ax=ax)
+            ax.set_title("Example Heatmap")
+            ax.set_xlabel("Columns")
+            ax.set_ylabel("Rows")
+            plt.show()
+            ```
+    """
+    import matplotlib.pyplot as plt
+
+    if not data:
+        raise ValueError("The data cannot be empty.")
+
+    if not all(isinstance(row, list) for row in data):
+        raise ValueError("The data must be two-dimensional.")
+
+    if any(not row for row in data):
+        raise ValueError("The data must contain non-empty rows.")
+
+    row_length = len(data[0])
+    if any(len(row) != row_length for row in data):
+        raise ValueError("The data must be rectangular.")
+
+    if not all(
+        isinstance(value, (int, float)) and not isinstance(value, bool)
+        for row in data
+        for value in row
+    ):
+        raise ValueError("All values must be numbers.")
+
+    fig, ax = plt.subplots()
+    image = ax.imshow(data)
+    fig.colorbar(image, ax=ax)
+
+    if title:
+        ax.set_title(title)
+    if x_label:
+        ax.set_xlabel(x_label)
+    if y_label:
+        ax.set_ylabel(y_label)
+
+    ax.spines[["top", "right"]].set_visible(False)
+    plt.show()
+
+
 def plot_box_plot(data: list[float]) -> None:
     """
     Displays a box-and-whisker plot for a numeric data series.
