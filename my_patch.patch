@@ -1,0 +1,164 @@
+From 6b4f58cf3b20ac15d3d7e97806a0a02d91b5f232 Mon Sep 17 00:00:00 2001
+From: Bot <bot@example.com>
+Date: Thu, 1 Oct 2026 13:18:53 +0530
+Subject: [PATCH] refactor(easy_config): consolidate editorconfig_config tests
+
+---
+ tests/test_config.py      | 51 +++++++++++++++++++++++++
+ tests/test_easy_config.py | 78 ---------------------------------------
+ 2 files changed, 51 insertions(+), 78 deletions(-)
+ delete mode 100644 tests/test_easy_config.py
+
+diff --git a/tests/test_config.py b/tests/test_config.py
+index 4d203ee..c29a701 100644
+--- a/tests/test_config.py
++++ b/tests/test_config.py
+@@ -1,5 +1,8 @@
+ import git
+ import pytest
++from py_simple_package.src.py_simple.easy_config import EasyConfigError, editorconfig_config
++import git
++import pytest
+ 
+ from py_simple_package.src.py_simple.easy_config import (
+     EasyConfigError,
+@@ -221,3 +224,51 @@ def test_editorconfig_config_wraps_permission_errors(tmp_path, monkeypatch):
+ 
+     with pytest.raises(EasyConfigError, match="Permission denied"):
+         editorconfig_config()
++
++
++def test_editorconfig_config_creates_file_at_current_directory(tmp_path, monkeypatch):
++    monkeypatch.chdir(tmp_path)
++    editorconfig_config()
++    config_file = tmp_path / '.editorconfig'
++    assert config_file.exists()
++    content = config_file.read_text(encoding='utf-8')
++    assert 'root = true' in content
++    assert 'indent_style = space' in content
++    assert 'indent_size = 4' in content
++def test_editorconfig_config_does_not_overwrite_existing_file(tmp_path, monkeypatch):
++    monkeypatch.chdir(tmp_path)
++    config_file = tmp_path / '.editorconfig'
++    config_file.write_text('custom editorconfig\n', encoding='utf-8')
++    editorconfig_config()
++    assert config_file.read_text(encoding='utf-8') == 'custom editorconfig\n'
++def test_editorconfig_config_can_target_repository_root(tmp_path, monkeypatch):
++    git.Repo.init(tmp_path)
++    nested = tmp_path / 'nested'
++    nested.mkdir()
++    monkeypatch.chdir(nested)
++    editorconfig_config(at_root=False)
++    config_file = tmp_path / '.editorconfig'
++    assert config_file.exists()
++    content = config_file.read_text(encoding='utf-8')
++    assert 'root = true' in content
++    assert not (nested / '.editorconfig').exists()
++def test_editorconfig_config_wraps_template_errors(tmp_path, monkeypatch):
++    monkeypatch.chdir(tmp_path)
++
++    def missing_template(_package):
++        raise FileNotFoundError('template missing')
++    monkeypatch.setattr('py_simple_package.src.py_simple.easy_config.files', missing_template)
++    with pytest.raises(EasyConfigError, match='template missing'):
++        editorconfig_config()
++def test_editorconfig_config_wraps_git_errors(tmp_path, monkeypatch):
++    monkeypatch.chdir(tmp_path)
++    with pytest.raises(EasyConfigError):
++        editorconfig_config(at_root=False)
++def test_editorconfig_config_wraps_permission_errors(tmp_path, monkeypatch):
++    monkeypatch.chdir(tmp_path)
++
++    def mock_open(*args, **kwargs):
++        raise PermissionError('Permission denied')
++    monkeypatch.setattr('builtins.open', mock_open)
++    with pytest.raises(EasyConfigError, match='Permission denied'):
++        editorconfig_config()
+\ No newline at end of file
+diff --git a/tests/test_easy_config.py b/tests/test_easy_config.py
+deleted file mode 100644
+index 665037d..0000000
+--- a/tests/test_easy_config.py
++++ /dev/null
+@@ -1,78 +0,0 @@
+-import git
+-import pytest
+-
+-from py_simple_package.src.py_simple.easy_config import (
+-    EasyConfigError,
+-    editorconfig_config,
+-)
+-
+-
+-def test_editorconfig_config_creates_file_at_current_directory(tmp_path, monkeypatch):
+-    monkeypatch.chdir(tmp_path)
+-
+-    editorconfig_config()
+-
+-    config_file = tmp_path / ".editorconfig"
+-    assert config_file.exists()
+-    content = config_file.read_text(encoding="utf-8")
+-    assert "root = true" in content
+-    assert "indent_style = space" in content
+-    assert "indent_size = 4" in content
+-
+-
+-def test_editorconfig_config_does_not_overwrite_existing_file(tmp_path, monkeypatch):
+-    monkeypatch.chdir(tmp_path)
+-    config_file = tmp_path / ".editorconfig"
+-    config_file.write_text("custom editorconfig\n", encoding="utf-8")
+-
+-    editorconfig_config()
+-
+-    assert config_file.read_text(encoding="utf-8") == "custom editorconfig\n"
+-
+-
+-def test_editorconfig_config_can_target_repository_root(tmp_path, monkeypatch):
+-    git.Repo.init(tmp_path)
+-    nested = tmp_path / "nested"
+-    nested.mkdir()
+-    monkeypatch.chdir(nested)
+-
+-    editorconfig_config(at_root=False)
+-
+-    config_file = tmp_path / ".editorconfig"
+-    assert config_file.exists()
+-    content = config_file.read_text(encoding="utf-8")
+-    assert "root = true" in content
+-    assert not (nested / ".editorconfig").exists()
+-
+-
+-def test_editorconfig_config_wraps_template_errors(tmp_path, monkeypatch):
+-    monkeypatch.chdir(tmp_path)
+-
+-    def missing_template(_package):
+-        raise FileNotFoundError("template missing")
+-
+-    monkeypatch.setattr(
+-        "py_simple_package.src.py_simple.easy_config.files", missing_template
+-    )
+-
+-    with pytest.raises(EasyConfigError, match="template missing"):
+-        editorconfig_config()
+-
+-
+-def test_editorconfig_config_wraps_git_errors(tmp_path, monkeypatch):
+-    monkeypatch.chdir(tmp_path)
+-
+-    with pytest.raises(EasyConfigError):
+-        editorconfig_config(at_root=False)
+-
+-
+-def test_editorconfig_config_wraps_permission_errors(tmp_path, monkeypatch):
+-    monkeypatch.chdir(tmp_path)
+-
+-    def mock_open(*args, **kwargs):
+-        raise PermissionError("Permission denied")
+-
+-    monkeypatch.setattr("builtins.open", mock_open)
+-
+-    with pytest.raises(EasyConfigError, match="Permission denied"):
+-        editorconfig_config()
+-- 
+2.55.0
+
