@@ -12,6 +12,7 @@ from .easy_ai import (
     translate_text,
     rewrite_text,
     analyze_sentiment,
+    summarize_text,
 )
 from .easy_archive import (
     add_to_zip,
