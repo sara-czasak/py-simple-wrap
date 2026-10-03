@@ -2,12 +2,14 @@ import pytest
 
 from py_simple_package.src.py_simple import (
     extract_hex_colors as public_extract_hex_colors,
+    extract_phone_numbers as public_extract_phone_numbers,
 )
 from py_simple_package.src.py_simple.easy_regex import (
     extract_emails,
     extract_hex_colors,
     extract_number_sequences,
     extract_numbers,
+    extract_phone_numbers,
     extract_urls,
     extract_hashtags,
     extract_mentions,
@@ -228,3 +230,20 @@ def test_ipv4_addresses_are_extracted(input_text, expected):
 )
 def test_extra_whitespace_is_cleaned(input_text, expected):
     assert clean_extra_whitespace(input_text) == expected
+
+
+# phone number test
+@pytest.mark.parametrize(
+    "input_text, expected",
+    [
+        ("Call 555-123-4567 or (555) 987-6543", ["555-123-4567", "(555) 987-6543"]),
+        ("Reach us at +1-555-234-5678", ["+1-555-234-5678"]),
+        ("No numbers here", []),
+    ],
+)
+def test_is_phone_number_extracted(input_text, expected):
+    assert extract_phone_numbers(input_text) == expected
+
+
+def test_extract_phone_numbers_is_available_from_public_api():
+    assert public_extract_phone_numbers is extract_phone_numbers

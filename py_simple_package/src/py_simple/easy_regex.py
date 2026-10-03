@@ -356,3 +356,40 @@ def clean_extra_whitespace(text: str) -> str:
             ```
     """
     return re.sub(r'\s+', ' ', text).strip()
+
+
+def extract_phone_numbers(text: str) -> list[str]:
+    r"""
+    Returns a list of all phone numbers found in the text.
+
+    Supports standard formats including optional country code (+1 or 1),
+    parentheses around the area code, and separators such as hyphens,
+    dots, or spaces.
+
+    Args:
+        text (str): Text to search for phone numbers.
+
+    Returns:
+        list[str]: All phone numbers found in the text. Empty list if none found.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import extract_phone_numbers
+
+            result = extract_phone_numbers("Call us at (555) 123-4567 or 555-987-6543")
+            # -> ['(555) 123-4567', '555-987-6543']
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import re
+
+            pattern = r'(?<!\w)(?:\+?1[\s.-]?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}(?!\w)'
+            result = re.findall(pattern, "Call us at (555) 123-4567 or 555-987-6543")
+            # -> ['(555) 123-4567', '555-987-6543']
+            ```
+    """
+    pattern = r"(?<!\w)(?:\+?1[\s.-]?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}(?!\w)"
+    return re.findall(pattern, text)
+
