@@ -4,7 +4,67 @@ easy_csv is built to simplify reading and writing CSV files.
 
 import csv
 import os.path
+from collections.abc import Generator
 from typing import Any
+
+
+def iter_csv_rows(
+    filepath: str,
+    return_dict: bool = True,
+    delimiter: str = ",",
+) -> Generator[dict[str, str] | list[str], None, None]:
+    """
+    Returns CSV rows one at a time without loading the whole file into memory.
+
+    Args:
+        filepath (str): Path to a UTF-8 CSV file.
+        return_dict (bool): Use the first row as dictionary keys (default True).
+            If False, yield lists including the header, like read_csv_to_list.
+        delimiter (str): Field separator (default comma).
+
+    Returns:
+        Iterator: Rows such as {'Name': 'Alice', 'Age': '24'}.
+
+    Raises:
+        FileNotFoundError: When iteration begins and the file does not exist.
+        ValueError: When iteration begins and the file is empty.
+
+    The file opens on the first iteration and closes on exhaustion. If you
+    stop early, call the iterator's close() method to release it immediately.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple.easy_csv import iter_csv_rows
+
+            for person in iter_csv_rows("people.csv"):
+                print(person["Name"])
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import csv
+
+            with open("people.csv", newline="", encoding="utf-8") as file:
+                reader = csv.reader(file)
+                headers = next(reader)
+                for row in reader:
+                    person = dict(zip(headers, row))
+                    print(person["Name"])
+            ```
+    """
+    with open(filepath, "r", newline="", encoding="utf-8") as file:
+        reader = csv.reader(file, delimiter=delimiter)
+        try:
+            first = next(reader)
+        except StopIteration:
+            raise ValueError(f"File is empty: {filepath}") from None
+        if return_dict:
+            for row in reader:
+                yield dict(zip(first, row))
+        else:
+            yield first
+            yield from reader
 
 
 def read_csv_to_list(
