@@ -7,6 +7,7 @@ from py_simple_package.src.py_simple.easy_config import (
     create_env_file,
     read_env_file,
     gitignore_config,
+    requirements_config,
 )
 from py_simple import gitignore_config as top_level_gitignore_config
 
@@ -226,3 +227,73 @@ def test_gitignore_config_wraps_permission_errors(tmp_path, monkeypatch):
 
 def test_gitignore_config_imported_from_py_simple():
     assert callable(top_level_gitignore_config)
+
+def test_requirements_config_creates_file(tmp_path):
+    requirements_file = tmp_path / "requirements.txt"
+
+    requirements_config(
+        ["numpy", "pandas", "scikit-learn"],
+        file_path=str(requirements_file),
+    )
+
+    assert requirements_file.exists()
+    assert requirements_file.read_text(encoding="utf-8") == (
+        "numpy\n"
+        "pandas\n"
+        "scikit-learn\n"
+    )
+
+def test_requirements_config_does_not_overwrite_by_default(tmp_path):
+    requirements_file = tmp_path / "requirements.txt"
+    requirements_file.write_text("old-package\n", encoding="utf-8")
+
+    requirements_config(
+        ["numpy", "pandas"],
+        file_path=str(requirements_file),
+    )
+
+    assert requirements_file.read_text(encoding="utf-8") == "old-package\n"
+def test_requirements_config_overwrites_when_flag_is_true(tmp_path):
+    requirements_file = tmp_path / "requirements.txt"
+    requirements_file.write_text("old-package\n", encoding="utf-8")
+
+    requirements_config(
+        ["numpy", "pandas"],
+        file_path=str(requirements_file),
+        overwrite=True,
+    )
+
+    assert requirements_file.read_text(encoding="utf-8") == (
+        "numpy\n"
+        "pandas\n"
+    )
+def test_requirements_config_creates_parent_directories(tmp_path):
+    requirements_file = tmp_path / "config" / "requirements.txt"
+
+    requirements_config(
+        ["numpy", "pandas"],
+        file_path=str(requirements_file),
+    )
+
+    assert requirements_file.exists()
+    assert requirements_file.read_text(encoding="utf-8") == (
+        "numpy\n"
+        "pandas\n"
+    )
+def test_requirements_config_wraps_errors(tmp_path, monkeypatch):
+    requirements_file = tmp_path / "requirements.txt"
+
+    def mock_open(*args, **kwargs):
+        raise PermissionError("Permission denied")
+
+    monkeypatch.setattr("builtins.open", mock_open)
+
+    with pytest.raises(EasyConfigError):
+        requirements_config(
+            ["numpy"],
+            file_path=str(requirements_file),
+        )
+def test_requirements_config_imported_from_py_simple():
+    from py_simple import requirements_config as imported_function
+
+    assert callable(imported_function)

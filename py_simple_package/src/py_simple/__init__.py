@@ -48,6 +48,7 @@ from .easy_config import (
     create_env_file,
     read_env_file,
     gitignore_config,
+    requirements_config,
 )
 from .easy_converter import (
     celsius_to_fahrenheit,
