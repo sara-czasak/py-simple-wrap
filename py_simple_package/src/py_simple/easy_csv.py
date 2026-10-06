@@ -5,6 +5,7 @@ easy_csv is built to simplify reading and writing CSV files.
 import csv
 import os.path
 from typing import Any
+import tempfile
 
 
 def read_csv_to_list(
@@ -401,3 +402,86 @@ def read_csv_column(
         return [row[col_index] if len(row) > col_index else "" for row in reader]
 
  
+def delete_csv_rows(
+        filepath: str,
+        column: str,
+        value: str,
+        delimiter: str=",",
+)-> None:
+
+
+    """
+    Deletes rows from a CSV file where a column matches the given value.
+
+    Args:
+        filepath (str): The path to the CSV file.
+        column (str): The column to check for the given value.
+        value (str): The value used to find rows to delete.
+        delimiter (str): The field delimiter. Defaults to a comma.
+
+    Raises:
+        FileNotFoundError: If the CSV file does not exist.
+        ValueError: If the file is empty, the column does not exist,
+            or no row matches the given value.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import delete_csv_rows
+
+            delete_csv_rows(
+                filepath="people.csv",
+                column="Name",
+                value="Alice"
+            )
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import csv
+            import os
+            import tempfile
+
+            with open("people.csv", "r", newline="", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+
+            rows = [row for row in rows if row["Name"] != "Alice"]
+
+            with open("people.csv", "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=reader.fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
+            ```
+    """
+
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"File not found: {filepath}")
+
+    with open(filepath,"r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f,delimiter=delimiter)
+
+        if reader.fieldnames is None:
+            raise ValueError(f"File is empty: {filepath}")
+
+        if column not in reader.fieldnames:
+            raise ValueError(f"Column not found: {column}")
+
+        found = False
+        with tempfile.NamedTemporaryFile("w", newline="", encoding="utf-8", delete=False) as temp_file:
+
+            temp_filepath = temp_file.name
+            writer = csv.DictWriter(temp_file, fieldnames=reader.fieldnames,delimiter=delimiter)
+            writer.writeheader()
+
+            for row in reader:
+                if row[column] == value:
+                    found = True
+                else:
+                    writer.writerow(row)
+
+    if not found:
+        os.remove(temp_filepath)
+        raise ValueError(f"No rows found with {column}={value} in {filepath}")
+
+    os.replace(temp_filepath, filepath)
