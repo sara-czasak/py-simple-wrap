@@ -10,6 +10,7 @@ from py_simple_package.src.py_simple.easy_async import (
     run_concurrent_map,
     run_after_delay,
     run_with_retry,
+    run_with_fallback,
 )
 
 
@@ -147,3 +148,26 @@ def test_run_with_retry_fail():
 
     with pytest.raises(EasyAsyncError):
         asyncio.run(run_with_retry(num, 3, 0.01))
+
+def test_run_with_fallback_success():
+    def primary(a, b): return a + b
+    def fallback(a, b): return a * b
+    import asyncio
+    name, result = asyncio.run(run_with_fallback(primary, fallback, 2, 3))
+    assert name == "primary"
+    assert result == 5
+
+def test_run_with_fallback_uses_fallback():
+    def primary(a, b): raise ValueError("Fail")
+    def fallback(a, b): return a + b
+    import asyncio
+    name, result = asyncio.run(run_with_fallback(primary, fallback, 2, 3))
+    assert name == "fallback"
+    assert result == 5
+
+def test_run_with_fallback_both_fail():
+    def primary(a, b): raise ValueError("Fail 1")
+    def fallback(a, b): raise ValueError("Fail 2")
+    import asyncio
+    with pytest.raises(EasyAsyncError, match="Fail 2"):
+        asyncio.run(run_with_fallback(primary, fallback, 2, 3))

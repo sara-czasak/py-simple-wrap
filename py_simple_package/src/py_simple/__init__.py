@@ -12,6 +12,7 @@ from .easy_ai import (
     translate_text,
     rewrite_text,
     analyze_sentiment,
+    summarize_text,
 )
 from .easy_archive import (
     add_to_zip,
@@ -29,6 +30,7 @@ from .easy_async import (
     run_at_the_same_time_with_params,
     run_after_delay,
     run_with_retry,
+    run_with_fallback,
     run_with_timeout,
     run_concurrent_map,
 )
