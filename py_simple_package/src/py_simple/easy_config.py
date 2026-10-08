@@ -160,6 +160,63 @@ def create_env_file(
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 
 
+def requirements_config(
+    packages: list[str],
+    file_path: str = "requirements.txt",
+    overwrite: bool = False,
+) -> None:
+    """
+    Creates a requirements.txt file with the provided package names.
+
+    Writes one package name per line. If the file already exists
+    and overwrite is False, the file is left alone. Any missing parent
+    directories are created automatically.
+
+    Args:
+        packages (list[str]): List of package names to write to the file.
+        file_path (str, optional): Destination path for the requirements
+            file. Defaults to "requirements.txt".
+        overwrite (bool, optional): Whether to overwrite an existing file.
+            Defaults to False.
+
+    Returns:
+        None
+
+    Raises:
+        EasyConfigError: If the file or parent directory cannot be written.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import requirements_config
+
+            requirements_config(["numpy", "pandas", "scikit-learn"])
+            ```
+
+        === "The Traditional Way"
+            ```python
+            packages = ["numpy", "pandas", "scikit-learn"]
+
+            with open("requirements.txt", "w", encoding="utf-8") as f:
+                for package in packages:
+                    f.write(f"{package}\\n")
+            ```
+    """
+    if os.path.exists(file_path) and not overwrite:
+        return
+
+    try:
+        parent_dir = os.path.dirname(file_path)
+        if parent_dir:
+            os.makedirs(parent_dir, exist_ok=True)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            for package in packages:
+                f.write(f"{package}\n")
+    except Exception as e:
+        raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
+
 def read_env_file(file_path: str = ".env") -> dict[str, str]:
     """
     Reads a .env configuration file into a dictionary.
