@@ -253,6 +253,7 @@ def test_requirements_config_does_not_overwrite_by_default(tmp_path):
     )
 
     assert requirements_file.read_text(encoding="utf-8") == "old-package\n"
+    
 def test_requirements_config_overwrites_when_flag_is_true(tmp_path):
     requirements_file = tmp_path / "requirements.txt"
     requirements_file.write_text("old-package\n", encoding="utf-8")
@@ -267,6 +268,7 @@ def test_requirements_config_overwrites_when_flag_is_true(tmp_path):
         "numpy\n"
         "pandas\n"
     )
+    
 def test_requirements_config_creates_parent_directories(tmp_path):
     requirements_file = tmp_path / "config" / "requirements.txt"
 
@@ -280,6 +282,7 @@ def test_requirements_config_creates_parent_directories(tmp_path):
         "numpy\n"
         "pandas\n"
     )
+    
 def test_requirements_config_wraps_errors(tmp_path, monkeypatch):
     requirements_file = tmp_path / "requirements.txt"
 
@@ -293,6 +296,7 @@ def test_requirements_config_wraps_errors(tmp_path, monkeypatch):
             ["numpy"],
             file_path=str(requirements_file),
         )
+        
 def test_requirements_config_imported_from_py_simple():
     from py_simple import requirements_config as imported_function
 
