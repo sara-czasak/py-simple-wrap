@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -766,6 +766,16 @@
       "name": "Yousif Wael",
       "avatar_url": "https://github.com/G-Glitch404.png",
       "profile": "https://github.com/G-Glitch404",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "vedddev",
+      "name": "Vedant Shelake",
+      "avatar_url": "https://avatars.githubusercontent.com/u/177407793?v=4",
+      "profile": "https://vedant-portfolio-fzs6.vercel.app/",
       "contributions": [
         "code",
         "test"
