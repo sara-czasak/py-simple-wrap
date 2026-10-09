@@ -403,13 +403,11 @@ def read_csv_column(
 
  
 def delete_csv_rows(
-        filepath: str,
-        column: str,
-        value: str,
-        delimiter: str=",",
-)-> None:
-
-
+    filepath: str,
+    column: str,
+    value: str,
+    delimiter: str = ",",
+) -> None:
     """
     Deletes rows from a CSV file where a column matches the given value.
 
@@ -458,8 +456,8 @@ def delete_csv_rows(
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"File not found: {filepath}")
 
-    with open(filepath,"r", newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f,delimiter=delimiter)
+    with open(filepath, "r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=delimiter)
 
         if reader.fieldnames is None:
             raise ValueError(f"File is empty: {filepath}")
@@ -468,10 +466,17 @@ def delete_csv_rows(
             raise ValueError(f"Column not found: {column}")
 
         found = False
-        with tempfile.NamedTemporaryFile("w", newline="", encoding="utf-8", delete=False) as temp_file:
-
+        with tempfile.NamedTemporaryFile(
+            "w",
+            newline="",
+            encoding="utf-8",
+            delete=False,
+            dir=os.path.dirname(os.path.abspath(filepath)),
+        ) as temp_file:
             temp_filepath = temp_file.name
-            writer = csv.DictWriter(temp_file, fieldnames=reader.fieldnames,delimiter=delimiter)
+            writer = csv.DictWriter(
+                temp_file, fieldnames=reader.fieldnames, delimiter=delimiter
+            )
             writer.writeheader()
 
             for row in reader:
