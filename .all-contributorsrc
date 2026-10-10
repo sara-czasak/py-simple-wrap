@@ -790,6 +790,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "mansi-singh4",
+      "name": "Mansi Singh",
+      "avatar_url": "https://github.com/mansi-singh4.png",
+      "profile": "https://github.com/mansi-singh4",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ]
 }

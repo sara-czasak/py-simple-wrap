@@ -399,6 +399,14 @@ Every tile below is a real person who showed up for this project. 💛
       </a>
     </td>
   </tr>
+  <tr>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/mansi-singh4">
+        <img src="https://github.com/mansi-singh4.png" width="100px;" alt="Mansi Singh"/><br />
+        <sub><b>Mansi Singh</b></sub>
+      </a>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -754,6 +762,12 @@ Every tile below is a real person who showed up for this project. 💛
       <a href="https://github.com/rugged-code">
         <img src="https://github.com/rugged-code.png" width="100px;" alt="Shrey Raj"/><br />
         <sub><b>Shrey Raj</b></sub>
+      </a>
+    </td>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/mansi-singh4">
+        <img src="https://github.com/mansi-singh4.png" width="100px;" alt="Mansi Singh"/><br />
+        <sub><b>Mansi Singh</b></sub>
       </a>
     </td>
   </tr>
@@ -1143,6 +1157,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/G-Glitch404"><img src="https://github.com/G-Glitch404.png?s=80" width="80px;" alt="Yousif Wael"/><br /><sub><b>Yousif Wael</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=G-Glitch404" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=G-Glitch404" title="Tests">🧪</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vedddev"><img src="https://github.com/vedddev.png?s=80" width="80px;" alt="Vedant Shelake"/><br /><sub><b>Vedant Shelake</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=vedddev" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=vedddev" title="Tests">🧪</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/rugged-code"><img src="https://github.com/rugged-code.png?s=80" width="80px;" alt="Shrey Raj"/><br /><sub><b>Shrey Raj</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=rugged-code" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=rugged-code" title="Tests">🧪</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mansi-singh4"><img src="https://github.com/mansi-singh4.png?s=80" width="80px;" alt="Mansi Singh"/><br /><sub><b>Mansi Singh</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=mansi-singh4" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=mansi-singh4" title="Tests">🧪</a></td>
     </tr>
   </tbody>
 </table>
