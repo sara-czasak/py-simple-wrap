@@ -6,6 +6,7 @@ from .easy_ai import (
     EasyAIError,
     ai_chat,
     ask_ai,
+    chunk_text,
     detect_language,
     get_model,
     summarize_text,

@@ -549,6 +549,84 @@ def analyze_sentiment(ai_model: BaseChatModel, text: str) -> str:
         raise EasyAIError(f"\n\n\nERROR: {e}") from None
 
 
+def chunk_text(text: str, max_chars: int = 500) -> list[str]:
+    """
+    Split text into pieces that fit inside a character limit.
+
+    Useful before sending a long note to an AI model that only accepts
+    a short prompt. Words stay whole when they fit. A single word longer
+    than the limit is split so nothing is dropped.
+
+    Args:
+        text (str): The text to split.
+        max_chars (int, optional): Maximum characters in each piece.
+            Defaults to `500`.
+
+    Returns:
+        list[str]: The pieces, in order. An empty string returns an
+            empty list.
+
+    Raises:
+        EasyAIError: If `text` is not a string or `max_chars` is less
+            than 1.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import chunk_text
+
+            pieces = chunk_text("Pack a lunch and a notebook", max_chars=16)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            text = "Pack a lunch and a notebook"
+            words = text.split()
+            pieces = []
+            current = ""
+            for word in words:
+                candidate = word if not current else f"{current} {word}"
+                if len(candidate) <= 16:
+                    current = candidate
+                else:
+                    pieces.append(current)
+                    current = word
+            if current:
+                pieces.append(current)
+            ```
+    """
+    if not isinstance(text, str):
+        raise EasyAIError("\n\n\nERROR: text must be a string.") from None
+    if not isinstance(max_chars, int) or isinstance(max_chars, bool) or max_chars < 1:
+        raise EasyAIError(
+            "\n\n\nERROR: max_chars must be an integer of at least 1."
+        ) from None
+    if text == "":
+        return []
+
+    pieces: list[str] = []
+    current = ""
+    for word in text.split():
+        if len(word) > max_chars:
+            if current:
+                pieces.append(current)
+                current = ""
+            for start in range(0, len(word), max_chars):
+                pieces.append(word[start : start + max_chars])
+            continue
+
+        candidate = word if not current else f"{current} {word}"
+        if len(candidate) <= max_chars:
+            current = candidate
+        else:
+            pieces.append(current)
+            current = word
+
+    if current:
+        pieces.append(current)
+    return pieces
+
+
 class EasyAgent:
     def __init__(
         self,
