@@ -309,6 +309,12 @@ from .easy_validator import (
     is_valid_username,
     is_valid_zipcode,
 )
+from .easy_url import (
+    EasyUrlError,
+    add_query_param,
+    get_domain,
+    is_https,
+)
 from .easy_web import (
     count_links,
     count_tags,
