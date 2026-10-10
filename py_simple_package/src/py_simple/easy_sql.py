@@ -554,3 +554,64 @@ def run_update(
             "\n\t- Lowercase letters (a-z)"
             "\n\t- Underscores  (_)."
         ) from None
+
+
+def list_tables(connection: sqlite3.Connection, cursor: sqlite3.Cursor) -> list[str]:
+    """
+    Lists the user tables in a SQLite database.
+
+    Skips SQLite's own internal tables (names starting with `sqlite_`)
+    so the result is the tables you created.
+
+    Args:
+        connection (sqlite3.Connection): Open connection to the database.
+        cursor (sqlite3.Cursor): Cursor for executing SQL statements.
+
+    Returns:
+        list[str]: Table names, in the order SQLite returns them. An
+            empty list means the database has no user tables yet.
+
+    Raises:
+        EasySqlError: If the query cannot be run.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import list_tables, open_db
+
+            connection, cursor = open_db("notes.db")
+            print(list_tables(connection, cursor))
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import sqlite3
+
+            connection = sqlite3.connect("notes.db")
+            cursor = connection.cursor()
+            cursor.execute(
+                "SELECT name FROM sqlite_master "
+                "WHERE type = 'table' AND name NOT LIKE 'sqlite_%' "
+                "ORDER BY name"
+            )
+            print([row[0] for row in cursor.fetchall()])
+            ```
+    """
+    if cursor.connection is not connection:
+        raise EasySqlError(
+            "\n\nERROR: cursor does not belong to the given connection."
+        )
+
+    try:
+        cursor.execute(
+            "SELECT name FROM sqlite_master "
+            "WHERE type = 'table' AND name NOT LIKE 'sqlite_%' "
+            "ORDER BY name"
+        )
+        return [row[0] for row in cursor.fetchall()]
+    except (
+        sqlite3.OperationalError,
+        sqlite3.ProgrammingError,
+        sqlite3.DatabaseError,
+    ) as error:
+        raise EasySqlError(f"\n\nERROR: {error}") from None
