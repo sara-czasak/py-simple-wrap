@@ -73,6 +73,7 @@ from .easy_converter import (
 )
 from .easy_csv import (
     count_csv_rows,
+    drop_empty_csv_rows,
     filter_csv_rows,
     get_csv_columns,
     read_csv_column,
