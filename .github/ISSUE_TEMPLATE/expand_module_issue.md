@@ -11,7 +11,7 @@ labels: good first issue, help wanted, good-first-issue
 > **Tasks**:
 > - [ ] Pick a function that fits the theme of `{{MODULE_NAME}}` and isn't already covered.
 > - [ ] Add it to [`{{MODULE_NAME}}.py`](https://github.com/sara-czasak/py-simple-wrap/blob/main/py_simple_package/src/py_simple/{{MODULE_NAME}}.py), with a docstring following the [docstring guide](https://sara-czasak.github.io/py-simple-wrap/docs/contributor-hub/docstring_template/).
-> - [ ] Add a matching test in [`tests/`](https://github.com/sara-czasak/py-simple-wrap/tree/main/tests).
+> - [ ] Check if a test file for the module exists, if there is no test for the module then add a matching test in [`tests/`](https://github.com/sara-czasak/py-simple-wrap/tree/main/tests). Test file names should be `test_` + the name of the module without `easy` (eg. `test_random.py`, `test_csv.py`). If the test file for a module already exists, add your tests there.
 >
 > **A few guidelines to keep things consistent**:
 > - **Keep it beginner-friendly.** The whole point of py-simple-wrap is that someone new to Python can use it without fighting boilerplate.
