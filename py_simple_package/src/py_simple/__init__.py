@@ -196,6 +196,7 @@ from .easy_lists import (
 )
 from .easy_logging import (
     clear_log_file,
+    count_log_levels,
     find_log_lines,
     log_function,
     log_step,

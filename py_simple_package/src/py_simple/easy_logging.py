@@ -9,6 +9,7 @@ example with logging.basicConfig(level=logging.INFO).
 
 import logging
 import os
+import re
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from functools import wraps
@@ -326,3 +327,56 @@ def find_log_lines(file_path: str, search_text: str) -> list[str]:
         return [
             line.rstrip("\n") for line in log_file if search_text in line
         ]
+
+
+def count_log_levels(file_path: str) -> dict[str, int]:
+    """
+    Counts how many lines in a log file mention each standard level.
+
+    Looks for DEBUG, INFO, WARNING, ERROR, and CRITICAL as whole words,
+    so a line is counted once for each level name it contains. A missing
+    file returns zeros for every level.
+
+    Args:
+        file_path (str): Path to the log file to scan.
+
+    Returns:
+        dict[str, int]: Counts keyed by level name, always including
+            DEBUG, INFO, WARNING, ERROR, and CRITICAL.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import count_log_levels
+
+            totals = count_log_levels("app.log")
+            print(totals["ERROR"])
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import os
+            import re
+
+            levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+            totals = {level: 0 for level in levels}
+            if os.path.exists("app.log"):
+                with open("app.log") as log_file:
+                    for line in log_file:
+                        for level in levels:
+                            if re.search(rf"\\b{level}\\b", line):
+                                totals[level] += 1
+            ```
+    """
+    levels = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+    totals = {level: 0 for level in levels}
+    if not os.path.exists(file_path):
+        return totals
+
+    patterns = {level: re.compile(rf"\b{level}\b") for level in levels}
+    with open(file_path) as log_file:
+        for line in log_file:
+            for level, pattern in patterns.items():
+                if pattern.search(line):
+                    totals[level] += 1
+    return totals
