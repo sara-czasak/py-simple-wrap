@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -786,6 +786,16 @@
       "name": "Shrey Raj",
       "avatar_url": "https://github.com/rugged-code.png",
       "profile": "https://github.com/rugged-code",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "mansi-singh4",
+      "name": "Mansi Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/193050764?v=4",
+      "profile": "https://github.com/mansi-singh4",
       "contributions": [
         "code",
         "test"
