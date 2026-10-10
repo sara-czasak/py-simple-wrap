@@ -82,3 +82,17 @@ This helper follows Python's Unicode `\w` matching: combining marks are not
 included and no Unicode normalization is performed. It is not a validator for
 any particular social platform. The existing
 `py_simple.easy_regex.extract_hashtags()` continues to return tags with `#`.
+
+## Extract Phone Numbers
+
+Use `extract_phone_numbers()` to extract phone numbers from text:
+
+```python
+from py_simple import extract_phone_numbers
+
+numbers = extract_phone_numbers("Call us at (555) 123-4567 or 555-987-6543")
+# -> ['(555) 123-4567', '555-987-6543']
+```
+
+The function supports standard formats with optional country codes (`+1`), parentheses around area codes, and separators like dashes, dots, or spaces.
+

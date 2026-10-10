@@ -266,6 +266,7 @@ from .easy_regex import (
     extract_mentions,
     extract_number_sequences,
     extract_numbers,
+    extract_phone_numbers,
     extract_urls,
 )
 from .easy_sql import (
