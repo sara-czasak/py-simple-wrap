@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -796,6 +796,16 @@
       "name": "Mansi Singh",
       "avatar_url": "https://github.com/mansi-singh4.png",
       "profile": "https://github.com/mansi-singh4",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "Ymax27",
+      "name": "Ymax27",
+      "avatar_url": "https://avatars.githubusercontent.com/u/192303824?v=4",
+      "profile": "https://github.com/Ymax27",
       "contributions": [
         "code",
         "test"
