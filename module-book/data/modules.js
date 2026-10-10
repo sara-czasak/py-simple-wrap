@@ -482,6 +482,23 @@ window.BOOK_DATA = {
       ]
     },
     {
+      id: "easy_url",
+      name: "Easy URL",
+      icon: "🔗",
+      category: "web-visuals",
+      summary: "read a link's host, check HTTPS, and add a query parameter",
+      useCases: [
+        "Show only the site name from a long link",
+        "Refuse a bookmark that is not HTTPS",
+        "Add page=2 to a club page link"
+      ],
+      links: [
+        { label: "Docs", icon: "📘", url: "https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_url/" },
+        { label: "Tutorial", icon: "🎓", url: "https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_url/" },
+        { label: "Source", icon: "🐍", url: "https://github.com/sara-czasak/py-simple-wrap/blob/main/py_simple_package/src/py_simple/easy_url.py" }
+      ]
+    },
+    {
       id: "easy_colors",
       name: "Easy Colors",
       icon: "🎨",

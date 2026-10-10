@@ -67,6 +67,7 @@ nav:
         - Easy Strings: tutorial/easy_strings.md
         - Easy Text: tutorial/easy_text.md
         - Easy Terminal: tutorial/easy_terminal.md
+        - Easy URL: tutorial/easy_url.md
         - Easy Validator: tutorial/easy_validator.md
         - Easy Web: tutorial/easy_web.md
       - Project-Based Tutorials:
@@ -109,6 +110,7 @@ nav:
       - Easy Strings: reference/easy_strings.md
       - Easy Text: reference/easy_text.md
       - Easy Terminal: reference/easy_terminal.md
+      - Easy URL: reference/easy_url.md
       - Easy Validator: reference/easy_validator.md
       - Easy Web: reference/easy_web.md
       - Easy SQL: reference/easy_sql.md
