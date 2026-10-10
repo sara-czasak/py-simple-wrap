@@ -201,6 +201,23 @@ window.BOOK_DATA = {
       ]
     },
     {
+      id: "easy_bytes",
+      name: "Easy Bytes",
+      icon: "📦",
+      category: "files-data",
+      summary: "readable file sizes without dividing by 1024 yourself",
+      useCases: [
+        "Show a folder size as 2.5 MB instead of a huge byte count",
+        "Turn a typed size like 10 MB back into bytes",
+        "Report what percent of a drive is already full"
+      ],
+      links: [
+        { label: "Docs", icon: "📘", url: "https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_bytes/" },
+        { label: "Tutorial", icon: "🎓", url: "https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_bytes/" },
+        { label: "Source", icon: "🐍", url: "https://github.com/sara-czasak/py-simple-wrap/blob/main/py_simple_package/src/py_simple/easy_bytes.py" }
+      ]
+    },
+    {
       id: "easy_config",
       name: "Easy Config",
       icon: "⚙️",

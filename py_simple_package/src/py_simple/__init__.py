@@ -33,6 +33,12 @@ from .easy_async import (
     run_concurrent_map,
     run_periodically,
 )
+from .easy_bytes import (
+    EasyBytesError,
+    bytes_to_human,
+    human_to_bytes,
+    percent_used,
+)
 from .easy_colors import (
     contrast_ratio,
     hex_to_rgb,
