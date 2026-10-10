@@ -74,6 +74,7 @@ nav:
           - Signup Validation Check: tutorial/signup-validation-project.md
           - Dice Roll Arena: tutorial/dice-roll-arena-project.md
           - Screen Time Detective: tutorial/screen-time-detective-project.md
+          - Quiz Score Analyzer: tutorial/quiz-score-analyzer-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
