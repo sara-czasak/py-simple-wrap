@@ -7,10 +7,12 @@ import pytest
 from PIL import Image
 
 from py_simple_package.src.py_simple import create_thumbnail as public_create_thumbnail
+from py_simple_package.src.py_simple import flip_image as public_flip_image
 from py_simple_package.src.py_simple.easy_images import (
     ImageProcessingError,
     convert_image,
     create_thumbnail,
+    flip_image,
     get_image_info,
     resize_image,
     rotate_image,
@@ -142,3 +144,47 @@ class TestGetImageInfo:
             f.write("this is definitely not image data")
         with pytest.raises(ImageProcessingError):
             get_image_info("not_an_image.png")
+
+
+class TestFlipImage:
+    """Tests for flip_image function."""
+
+    def test_horizontal_flip_mirrors_pixels(self, sample_png):
+        Image.new("RGB", (2, 1), color="white").save("wide.png")
+        with Image.open("wide.png") as img:
+            img.putpixel((0, 0), (255, 0, 0))
+            img.putpixel((1, 0), (0, 0, 255))
+            img.save("wide.png")
+
+        flip_image("wide.png", "flipped.png", "horizontal")
+        with Image.open("flipped.png") as img:
+            assert img.getpixel((0, 0)) == (0, 0, 255)
+            assert img.getpixel((1, 0)) == (255, 0, 0)
+
+    def test_vertical_flip_mirrors_pixels(self, tmp_workdir):
+        Image.new("RGB", (1, 2), color="white").save("tall.png")
+        with Image.open("tall.png") as img:
+            img.putpixel((0, 0), (255, 0, 0))
+            img.putpixel((0, 1), (0, 0, 255))
+            img.save("tall.png")
+
+        flip_image("tall.png", "flipped.png", "vertical")
+        with Image.open("flipped.png") as img:
+            assert img.getpixel((0, 0)) == (0, 0, 255)
+            assert img.getpixel((0, 1)) == (255, 0, 0)
+
+    def test_default_direction_is_horizontal(self, sample_png):
+        flip_image(sample_png, "flipped.png")
+        with Image.open("flipped.png") as img:
+            assert img.size == (100, 60)
+
+    def test_invalid_direction_raises(self, sample_png):
+        with pytest.raises(ValueError):
+            flip_image(sample_png, "flipped.png", "diagonal")
+
+    def test_missing_input_raises(self, tmp_workdir):
+        with pytest.raises(ImageProcessingError):
+            flip_image("does_not_exist.png", "out.png")
+
+    def test_public_import(self):
+        assert public_flip_image is flip_image

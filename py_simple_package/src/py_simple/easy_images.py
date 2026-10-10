@@ -222,3 +222,49 @@ def get_image_info(input_path: str) -> dict:
             "format": img.format,
             "mode": img.mode,
         }
+
+
+def flip_image(input_path: str, output_path: str, direction: str = "horizontal"):
+    """
+    Flip an image horizontally or vertically and save the result.
+
+    Args:
+        input_path (str): Path of the image to flip.
+        output_path (str): Path to save the flipped image to.
+        direction (str): Either "horizontal" (left-right) or "vertical"
+            (top-bottom). Defaults to "horizontal".
+
+    Raises:
+        ValueError: If `direction` is not "horizontal" or "vertical".
+        ImageProcessingError: If the input file is missing or not a
+            supported image.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import flip_image
+
+            flip_image("photo.jpg", "photo_flipped.jpg", "horizontal")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from PIL import Image
+
+            with Image.open("photo.jpg") as img:
+                img.transpose(Image.Transpose.FLIP_LEFT_RIGHT).save(
+                    "photo_flipped.jpg"
+                )
+            ```
+    """
+    from PIL import Image
+
+    flips = {
+        "horizontal": Image.Transpose.FLIP_LEFT_RIGHT,
+        "vertical": Image.Transpose.FLIP_TOP_BOTTOM,
+    }
+    if direction not in flips:
+        raise ValueError('direction must be "horizontal" or "vertical".')
+
+    with _open_image(input_path) as img:
+        img.transpose(flips[direction]).save(output_path)
