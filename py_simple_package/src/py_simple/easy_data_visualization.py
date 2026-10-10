@@ -449,3 +449,72 @@ def plot_bar_chart(
 
     ax.spines[["top", "right"]].set_visible(False)
     plt.show()
+
+
+def plot_pie_chart(
+    labels: list[str],
+    values: list[int | float],
+    title: str | None = None,
+) -> None:
+    """
+    Displays a pie chart that shows how a whole splits into parts.
+
+    Each value becomes one slice. Labels name the slices, and an
+    optional title sits above the chart.
+
+    Args:
+        labels (list[str]): The name of each slice.
+        values (list[int | float]): The size of each slice. Values must
+            be numbers and cannot be negative.
+        title (str, optional): Text shown above the chart. Defaults to
+            `None` (no title).
+
+    Returns:
+        None: The pie chart is rendered directly via `plt.show()`.
+
+    Raises:
+        ValueError: If `labels` or `values` is empty, if they have
+            different lengths, if any value is not a number, or if any
+            value is negative.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import plot_pie_chart
+
+            plot_pie_chart(
+                ["Walk", "Bus", "Bike"],
+                [12, 7, 5],
+                title="How we get to school",
+            )
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import matplotlib.pyplot as plt
+
+            fig, ax = plt.subplots()
+            ax.pie([12, 7, 5], labels=["Walk", "Bus", "Bike"])
+            ax.set_title("How we get to school")
+            plt.show()
+            ```
+    """
+    import matplotlib.pyplot as plt
+
+    if not labels or not values:
+        raise ValueError("Labels and values cannot be empty.")
+
+    if len(labels) != len(values):
+        raise ValueError("Labels and values must have the same length.")
+
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in values):
+        raise ValueError("All values must be numbers.")
+
+    if any(v < 0 for v in values):
+        raise ValueError("Pie chart values cannot be negative.")
+
+    _, ax = plt.subplots()
+    ax.pie(values, labels=[str(label) for label in labels])
+    if title:
+        ax.set_title(title)
+    plt.show()
