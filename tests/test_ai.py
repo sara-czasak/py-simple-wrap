@@ -363,6 +363,42 @@ def test_detect_language_empty_text():
         detect_language("")
 
 
+def test_chunk_text_keeps_words_whole():
+    from py_simple_package.src.py_simple.easy_ai import chunk_text
+
+    pieces = chunk_text("Pack a lunch and a notebook", max_chars=16)
+    assert pieces == ["Pack a lunch and", "a notebook"]
+    assert all(len(piece) <= 16 for piece in pieces)
+
+
+def test_chunk_text_splits_a_word_longer_than_the_limit():
+    from py_simple_package.src.py_simple.easy_ai import chunk_text
+
+    assert chunk_text("abcdefghij", max_chars=4) == ["abcd", "efgh", "ij"]
+
+
+def test_chunk_text_empty_string():
+    from py_simple_package.src.py_simple.easy_ai import chunk_text
+
+    assert chunk_text("") == []
+
+
+def test_chunk_text_rejects_bad_input():
+    from py_simple_package.src.py_simple.easy_ai import EasyAIError, chunk_text
+
+    with pytest.raises(EasyAIError):
+        chunk_text(12)
+    with pytest.raises(EasyAIError):
+        chunk_text("hello", max_chars=0)
+
+
+def test_chunk_text_public_import():
+    from py_simple_package.src.py_simple import chunk_text as public_chunk_text
+    from py_simple_package.src.py_simple.easy_ai import chunk_text
+
+    assert public_chunk_text is chunk_text
+
+
 def test_detect_language_invalid_type():
     import pytest
     from py_simple import detect_language
