@@ -38,6 +38,7 @@
 | 🧮 Easy Math      | math helpers without re-deriving the formulas          |      [Docs](https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_math/) · [Tutorial](https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_math/)      |
 | 📊 Easy Stats     | statistics operations without memorizing the formulas  |     [Docs](https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_stats/) · [Tutorial](https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_stats/)     |
 | 🔄 Easy Converter | unit conversions without memorizing formulas           | [Docs](https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_converter/) · [Tutorial](https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_converter/) |
+| 💵 Easy Money     | prices, tax, and split bills without decimal surprises |     [Docs](https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_money/) · [Tutorial](https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_money/)     |
 
 ## Time & control flow
 

@@ -192,6 +192,12 @@ from .easy_lists import (
     sum_all,
     unique_items,
 )
+from .easy_money import (
+    EasyMoneyError,
+    add_tax,
+    format_money,
+    split_bill,
+)
 from .easy_logging import (
     clear_log_file,
     find_log_lines,
