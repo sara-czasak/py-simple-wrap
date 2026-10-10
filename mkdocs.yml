@@ -37,6 +37,7 @@ nav:
         - Easy AI: tutorial/easy_ai.md
         - Easy Async: tutorial/easy_async.md
         - Easy Archive: tutorial/easy_archive.md
+        - Easy Bytes: tutorial/easy_bytes.md
         - Easy Colors: tutorial/easy_colors.md
         - Easy Config: tutorial/easy_config.md
         - Easy Converter: tutorial/easy_converter.md
@@ -85,6 +86,7 @@ nav:
   - Reference:
       - Easy AI: reference/easy_ai.md
       - Easy Archive: reference/easy_archive.md
+      - Easy Bytes: reference/easy_bytes.md
       - Easy Async: reference/easy_async.md
       - Easy Colors: reference/easy_colors.md
       - Easy Config: reference/easy_config.md
