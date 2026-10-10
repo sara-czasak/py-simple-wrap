@@ -481,3 +481,53 @@ def generate_passphrase(words: int = 4, separator: str = "-") -> str:
     passphrase_words.append(str(number))
 
     return separator.join(passphrase_words)
+
+
+def generate_coupon_code(length: int = 8, prefix: str = "") -> str:
+    """
+    Generates a short coupon code made of uppercase letters and digits.
+
+    Characters that are easy to mix up (0, O, 1, and I) are left out, so
+    a code is easier to read aloud or type from a receipt.
+
+    Args:
+        length (int, optional): How many random characters to add after
+            the prefix. Defaults to `8`.
+        prefix (str, optional): Text placed at the start of the code,
+            such as `"SAVE"`. Defaults to an empty string.
+
+    Returns:
+        str: The coupon code, for example `"SAVE-K7MNP2QX"`. A hyphen is
+            added between the prefix and the random part when a prefix
+            is given.
+
+    Raises:
+        EasyGeneratorError: If `length` is less than 1.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import generate_coupon_code
+
+            code = generate_coupon_code(prefix="SAVE")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import secrets
+
+            alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+            random_part = "".join(secrets.choice(alphabet) for _ in range(8))
+            code = f"SAVE-{random_part}"
+            ```
+    """
+    if length < 1:
+        raise EasyGeneratorError(
+            "\n\n\nERROR: Coupon code length must be at least 1"
+        ) from None
+
+    alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    random_part = "".join(secrets.choice(alphabet) for _ in range(length))
+    if prefix:
+        return f"{prefix}-{random_part}"
+    return random_part

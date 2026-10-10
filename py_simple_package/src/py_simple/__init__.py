@@ -155,6 +155,7 @@ from .easy_game import (
 )
 from .easy_generator import (
     generate_api_key,
+    generate_coupon_code,
     generate_otp,
     generate_password,
     generate_pin,
