@@ -8,6 +8,7 @@ from py_simple_package.src.py_simple import (
     read_csv_column,
     read_csv_to_list,
     write_csv_from_list,
+    delete_csv_rows
 )
 
 
@@ -326,3 +327,75 @@ class TestReadCsvColumn:
 
         result = read_csv_column(str(csv_file), "Role")
         assert result == ["Engineer", ""]
+
+
+class TestDeleteCsvRows:
+    def test_delete_matching_row(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        write_people_csv(csv_file)
+
+        delete_csv_rows(str(csv_file), column="Name", value="Bob")
+
+        rows = read_csv_to_list(str(csv_file), return_dict=True)
+        assert rows == [
+            {"Name": "Alice", "Age": "24"},
+            {"Name": "Carol", "Age": "42"},
+        ]
+
+    def test_delete_multiple_matching_rows(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text(
+            "Name,Age\nAlice,24\nBob,31\nCarol,42\nBob,35\n",
+            encoding="utf-8",
+        )
+
+        delete_csv_rows(str(csv_file), column="Name", value="Bob")
+
+        rows = read_csv_to_list(str(csv_file), return_dict=True)
+        assert rows == [
+            {"Name": "Alice", "Age": "24"},
+            {"Name": "Carol", "Age": "42"},
+        ]
+
+    def test_delete_no_matching_row(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        write_people_csv(csv_file)
+
+        with pytest.raises(ValueError, match="No rows found"):
+            delete_csv_rows(
+                str(csv_file),
+                column="Name",
+                value="David",
+            )
+
+    def test_delete_missing_column(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        write_people_csv(csv_file)
+
+        with pytest.raises(ValueError, match="Column not found"):
+            delete_csv_rows(
+                str(csv_file),
+                column="Country",
+                value="India",
+            )
+
+    def test_delete_missing_file(self, tmp_path):
+        csv_file = tmp_path / "missing.csv"
+
+        with pytest.raises(FileNotFoundError):
+            delete_csv_rows(
+                str(csv_file),
+                column="Name",
+                value="Bob",
+            )
+
+    def test_delete_empty_file(self, tmp_path):
+        csv_file = tmp_path / "empty.csv"
+        csv_file.write_text("", encoding="utf-8")
+
+        with pytest.raises(ValueError, match="File is empty"):
+            delete_csv_rows(
+                str(csv_file),
+                column="Name",
+                value="Bob",
+            )
