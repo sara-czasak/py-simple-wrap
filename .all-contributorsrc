@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -776,6 +776,16 @@
       "name": "Vedant Shelake",
       "avatar_url": "https://github.com/vedddev.png",
       "profile": "https://github.com/vedddev",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "rugged-code",
+      "name": "Shrey Raj",
+      "avatar_url": "https://avatars.githubusercontent.com/u/187316747?v=4",
+      "profile": "https://github.com/rugged-code",
       "contributions": [
         "code",
         "test"
