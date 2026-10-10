@@ -85,6 +85,7 @@ from .easy_data_visualization import (
     plot_heatmap,
     plot_box_plot,
     plot_bar_chart,
+    plot_pie_chart,
 )
 from .easy_date_formatter import (
     dd_mm_yyyy,
