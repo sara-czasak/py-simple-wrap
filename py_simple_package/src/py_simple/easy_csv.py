@@ -400,4 +400,64 @@ def read_csv_column(
         col_index = headers.index(col)
         return [row[col_index] if len(row) > col_index else "" for row in reader]
 
+
+def drop_empty_csv_rows(filepath: str, delimiter: str = ",") -> int:
+    """
+    Remove rows whose cells are all blank and rewrite the CSV in place.
+
+    The header row is always kept. A cell that contains only spaces
+    counts as blank.
+
+    Args:
+        filepath (str): Path to the CSV file.
+        delimiter (str): Field delimiter (default is comma).
+
+    Returns:
+        int: How many data rows were removed.
+
+    Raises:
+        FileNotFoundError: If filepath doesn't exist.
+        ValueError: If the file is empty.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import drop_empty_csv_rows
+
+            removed = drop_empty_csv_rows("people.csv")
+            print(removed)  # 2
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import csv
+
+            with open("people.csv", newline="", encoding="utf-8") as f:
+                rows = list(csv.reader(f))
+            header, data = rows[0], rows[1:]
+            kept = [row for row in data if any(cell.strip() for cell in row)]
+            with open("people.csv", "w", newline="", encoding="utf-8") as f:
+                csv.writer(f).writerows([header, *kept])
+            ```
+    """
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"File not found: {filepath}")
+
+    with open(filepath, "r", newline="", encoding="utf-8") as f:
+        rows = list(csv.reader(f, delimiter=delimiter))
+
+    if not rows:
+        raise ValueError(f"File is empty: {filepath}")
+
+    header, data_rows = rows[0], rows[1:]
+    kept = [row for row in data_rows if any(cell.strip() for cell in row)]
+    removed = len(data_rows) - len(kept)
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f, delimiter=delimiter)
+        writer.writerow(header)
+        writer.writerows(kept)
+
+    return removed
+
  

@@ -3,6 +3,7 @@ import pytest
 from py_simple_package.src.py_simple import (
     append_row_to_csv,
     count_csv_rows,
+    drop_empty_csv_rows,
     filter_csv_rows,
     get_csv_columns,
     read_csv_column,
@@ -326,3 +327,38 @@ class TestReadCsvColumn:
 
         result = read_csv_column(str(csv_file), "Role")
         assert result == ["Engineer", ""]
+
+
+class TestDropEmptyCsvRows:
+    def test_removes_blank_rows_and_keeps_header(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text(
+            "Name,Age\nAlice,24\n,\nBob,31\n  ,  \n",
+            encoding="utf-8",
+        )
+
+        removed = drop_empty_csv_rows(str(csv_file))
+
+        assert removed == 2
+        assert csv_file.read_text(encoding="utf-8") == "Name,Age\nAlice,24\nBob,31\n"
+
+    def test_keeps_rows_that_have_one_value(self, tmp_path):
+        csv_file = tmp_path / "people.csv"
+        csv_file.write_text("Name,Age\nAlice,\n,31\n", encoding="utf-8")
+
+        assert drop_empty_csv_rows(str(csv_file)) == 0
+        rows = read_csv_to_list(str(csv_file))
+        assert rows == [
+            {"Name": "Alice", "Age": ""},
+            {"Name": "", "Age": "31"},
+        ]
+
+    def test_missing_file_raises(self, tmp_path):
+        with pytest.raises(FileNotFoundError):
+            drop_empty_csv_rows(str(tmp_path / "missing.csv"))
+
+    def test_empty_file_raises(self, tmp_path):
+        empty_file = tmp_path / "empty.csv"
+        empty_file.write_text("", encoding="utf-8")
+        with pytest.raises(ValueError):
+            drop_empty_csv_rows(str(empty_file))

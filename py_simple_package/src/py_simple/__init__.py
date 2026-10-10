@@ -73,6 +73,7 @@ from .easy_converter import (
 )
 from .easy_csv import (
     count_csv_rows,
+    drop_empty_csv_rows,
     filter_csv_rows,
     get_csv_columns,
     read_csv_column,
@@ -85,6 +86,7 @@ from .easy_data_visualization import (
     plot_heatmap,
     plot_box_plot,
     plot_bar_chart,
+    plot_pie_chart,
 )
 from .easy_date_formatter import (
     dd_mm_yyyy,
@@ -194,6 +196,7 @@ from .easy_lists import (
 )
 from .easy_logging import (
     clear_log_file,
+    count_log_levels,
     find_log_lines,
     log_function,
     log_step,
@@ -261,6 +264,7 @@ from .easy_sql import (
     EasySqlError,
     conditional_run_select,
     delete_all_from_table,
+    list_tables,
     open_db,
     run_delete,
     run_insert,
