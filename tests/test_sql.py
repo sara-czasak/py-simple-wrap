@@ -11,6 +11,8 @@ from py_simple_package.src.py_simple.easy_sql import (
     run_insert,
     run_select,
     run_update,
+    table_exists,
+
 )
 
 
@@ -138,6 +140,43 @@ class TestRunSelect:
                 "users",
                 "name UNION SELECT sql FROM sqlite_master",
             )
+
+class TestTableExists:
+    """Tests for table_exists function."""
+
+    def setup_method(self):
+        """Create a fresh in-memory database before each test."""
+        self.conn, self.cursor = open_db(":memory:")
+        self.cursor.execute(
+            "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)"
+        )
+        self.conn.commit()
+
+    def teardown_method(self):
+        """Close the connection after each test."""
+        self.conn.close()
+
+    def test_table_exists_when_table_exists(self):
+        """Test that table_exists returns True for an existing table."""
+        assert table_exists(self.conn, self.cursor, "users") is True
+
+    def test_table_exists_when_table_does_not_exist(self):
+        """Test that table_exists returns False for a missing table."""
+        assert table_exists(self.conn, self.cursor, "products") is False
+
+    def test_table_exists_invalid_table_name(self):
+        """Test that an invalid table name raises EasySqlError."""
+        with pytest.raises(EasySqlError):
+            table_exists(
+                self.conn,
+                self.cursor,
+                "users; DROP TABLE users;--",
+            )
+
+    def test_table_exists_non_string_table_name(self):
+        """Test that a non-string table name raises EasySqlError."""
+        with pytest.raises(EasySqlError):
+            table_exists(self.conn, self.cursor, 123)
 
 
 class TestConditionalRunSelect:
