@@ -340,7 +340,10 @@ class TestDropEmptyCsvRows:
         removed = drop_empty_csv_rows(str(csv_file))
 
         assert removed == 2
-        assert csv_file.read_text(encoding="utf-8") == "Name,Age\nAlice,24\nBob,31\n"
+        assert read_csv_to_list(str(csv_file)) == [
+            {"Name": "Alice", "Age": "24"},
+            {"Name": "Bob", "Age": "31"},
+        ]
 
     def test_keeps_rows_that_have_one_value(self, tmp_path):
         csv_file = tmp_path / "people.csv"
