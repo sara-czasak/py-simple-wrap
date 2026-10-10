@@ -165,6 +165,7 @@ from .easy_generator import (
 from .easy_images import (
     convert_image,
     create_thumbnail,
+    flip_image,
     get_image_info,
     resize_image,
     rotate_image,
