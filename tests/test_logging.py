@@ -4,8 +4,10 @@ import logging
 
 import pytest
 
+from py_simple_package.src.py_simple import count_log_levels as public_count_log_levels
 from py_simple_package.src.py_simple.easy_logging import (
     clear_log_file,
+    count_log_levels,
     find_log_lines,
     log_function,
     log_step,
@@ -198,3 +200,51 @@ def test_find_log_lines_returns_empty_list_when_file_is_missing(tmp_path):
     missing_file = tmp_path / "missing.log"
 
     assert find_log_lines(str(missing_file), "ERROR") == []
+
+
+def test_count_log_levels_counts_each_standard_level(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text(
+        "DEBUG startup\n"
+        "INFO ready\n"
+        "INFO still ready\n"
+        "WARNING slow\n"
+        "ERROR failed\n"
+        "CRITICAL down\n"
+    )
+
+    assert count_log_levels(str(log_file)) == {
+        "DEBUG": 1,
+        "INFO": 2,
+        "WARNING": 1,
+        "ERROR": 1,
+        "CRITICAL": 1,
+    }
+
+
+def test_count_log_levels_ignores_level_names_inside_words(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("INFORMATION loaded\nDEBUGGING helper\n")
+
+    assert count_log_levels(str(log_file)) == {
+        "DEBUG": 0,
+        "INFO": 0,
+        "WARNING": 0,
+        "ERROR": 0,
+        "CRITICAL": 0,
+    }
+
+
+def test_count_log_levels_missing_file_returns_zeros(tmp_path):
+    missing_file = tmp_path / "missing.log"
+    assert count_log_levels(str(missing_file)) == {
+        "DEBUG": 0,
+        "INFO": 0,
+        "WARNING": 0,
+        "ERROR": 0,
+        "CRITICAL": 0,
+    }
+
+
+def test_count_log_levels_public_import():
+    assert public_count_log_levels is count_log_levels

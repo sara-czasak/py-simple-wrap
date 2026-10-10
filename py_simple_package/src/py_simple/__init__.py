@@ -85,6 +85,7 @@ from .easy_data_visualization import (
     plot_heatmap,
     plot_box_plot,
     plot_bar_chart,
+    plot_pie_chart,
 )
 from .easy_date_formatter import (
     dd_mm_yyyy,
@@ -194,6 +195,7 @@ from .easy_lists import (
 )
 from .easy_logging import (
     clear_log_file,
+    count_log_levels,
     find_log_lines,
     log_function,
     log_step,
@@ -261,6 +263,7 @@ from .easy_sql import (
     EasySqlError,
     conditional_run_select,
     delete_all_from_table,
+    list_tables,
     open_db,
     run_delete,
     run_insert,
