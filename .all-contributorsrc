@@ -780,6 +780,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "rugged-code",
+      "name": "Shrey Raj",
+      "avatar_url": "https://github.com/rugged-code.png",
+      "profile": "https://github.com/rugged-code",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ]
 }
