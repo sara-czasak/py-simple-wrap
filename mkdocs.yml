@@ -54,6 +54,7 @@ nav:
             - Tutorial 2: tutorial/easy_json2.md
         - Easy Lists: tutorial/easy_lists.md
         - Easy Logging: tutorial/easy_logging.md
+        - Easy Money: tutorial/easy_money.md
         - Easy Math:
             - Tutorial 1: tutorial/easy_math.md
             - Tutorial 2: tutorial/easy_math2.md
@@ -102,6 +103,7 @@ nav:
       - Easy Lists: reference/easy_lists.md
       - Easy Logging: reference/easy_logging.md
       - Easy Math: reference/easy_math.md
+      - Easy Money: reference/easy_money.md
       - Easy Numbers: reference/easy_numbers.md
       - Easy Random: reference/easy_random.md
       - Easy Regex: reference/easy_regex.md
