@@ -4,9 +4,13 @@ import uuid
 
 import pytest
 
+from py_simple_package.src.py_simple import (
+    generate_coupon_code as public_generate_coupon_code,
+)
 from py_simple_package.src.py_simple.easy_generator import (
     EasyGeneratorError,
     generate_api_key,
+    generate_coupon_code,
     generate_otp,
     generate_password,
     generate_pin,
@@ -388,3 +392,26 @@ def test_generate_passphrase_respects_custom_separator(monkeypatch):
 def test_generate_passphrase_rejects_invalid_word_count(words):
     with pytest.raises(EasyGeneratorError, match="at least 1"):
         generate_passphrase(words)
+
+
+def test_generate_coupon_code_uses_readable_alphabet():
+    alphabet = set("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
+    code = generate_coupon_code(12)
+    assert len(code) == 12
+    assert set(code) <= alphabet
+
+
+def test_generate_coupon_code_adds_prefix():
+    code = generate_coupon_code(4, prefix="SAVE")
+    prefix, random_part = code.split("-", maxsplit=1)
+    assert prefix == "SAVE"
+    assert len(random_part) == 4
+
+
+def test_generate_coupon_code_rejects_short_length():
+    with pytest.raises(EasyGeneratorError, match="at least 1"):
+        generate_coupon_code(0)
+
+
+def test_generate_coupon_code_public_import():
+    assert public_generate_coupon_code is generate_coupon_code
