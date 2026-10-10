@@ -14,6 +14,12 @@ from .easy_ai import (
     rewrite_text,
     analyze_sentiment,
 )
+from .easy_base64 import (
+    EasyBase64Error,
+    decode_text,
+    encode_text,
+    is_base64,
+)
 from .easy_archive import (
     add_to_zip,
     extract_file_from_zip,

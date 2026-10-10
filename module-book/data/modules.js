@@ -201,6 +201,23 @@ window.BOOK_DATA = {
       ]
     },
     {
+      id: "easy_base64",
+      name: "Easy Base64",
+      icon: "🔤",
+      category: "files-data",
+      summary: "encode and decode text as Base64 without the bytes boilerplate",
+      useCases: [
+        "Hide a short answer inside a shareable code",
+        "Check that a pasted code is really Base64 before decoding it",
+        "Turn a message into plain text you can store in a form field"
+      ],
+      links: [
+        { label: "Docs", icon: "📘", url: "https://sara-czasak.github.io/py-simple-wrap/docs/reference/easy_base64/" },
+        { label: "Tutorial", icon: "🎓", url: "https://sara-czasak.github.io/py-simple-wrap/docs/tutorial/easy_base64/" },
+        { label: "Source", icon: "🐍", url: "https://github.com/sara-czasak/py-simple-wrap/blob/main/py_simple_package/src/py_simple/easy_base64.py" }
+      ]
+    },
+    {
       id: "easy_config",
       name: "Easy Config",
       icon: "⚙️",
