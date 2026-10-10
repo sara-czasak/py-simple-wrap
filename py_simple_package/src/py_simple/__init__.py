@@ -162,6 +162,12 @@ from .easy_generator import (
     generate_uuid,
     generate_passphrase,
 )
+from .easy_hash import (
+    EasyHashError,
+    hash_file,
+    hash_text,
+    hashes_match,
+)
 from .easy_images import (
     convert_image,
     create_thumbnail,
