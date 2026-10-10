@@ -5,13 +5,20 @@ py_simple's public API — re-exports the functions from each easy_* module.
 from .easy_ai import (
     EasyAIError,
     ai_chat,
+    analyze_sentiment,
     ask_ai,
+    chunk_text,
     detect_language,
     get_model,
+    rewrite_text,
     summarize_text,
     translate_text,
-    rewrite_text,
-    analyze_sentiment,
+)
+from .easy_base64 import (
+    EasyBase64Error,
+    decode_text,
+    encode_text,
+    is_base64,
 )
 from .easy_archive import (
     add_to_zip,
@@ -73,6 +80,7 @@ from .easy_converter import (
 )
 from .easy_csv import (
     count_csv_rows,
+    drop_empty_csv_rows,
     filter_csv_rows,
     get_csv_columns,
     read_csv_column,
@@ -85,6 +93,7 @@ from .easy_data_visualization import (
     plot_heatmap,
     plot_box_plot,
     plot_bar_chart,
+    plot_pie_chart,
 )
 from .easy_date_formatter import (
     dd_mm_yyyy,
@@ -154,6 +163,7 @@ from .easy_game import (
 )
 from .easy_generator import (
     generate_api_key,
+    generate_coupon_code,
     generate_otp,
     generate_password,
     generate_pin,
@@ -161,6 +171,12 @@ from .easy_generator import (
     generate_slug,
     generate_uuid,
     generate_passphrase,
+)
+from .easy_hash import (
+    EasyHashError,
+    hash_file,
+    hash_text,
+    hashes_match,
 )
 from .easy_images import (
     convert_image,
@@ -194,6 +210,7 @@ from .easy_lists import (
 )
 from .easy_logging import (
     clear_log_file,
+    count_log_levels,
     find_log_lines,
     log_function,
     log_step,
@@ -261,6 +278,7 @@ from .easy_sql import (
     EasySqlError,
     conditional_run_select,
     delete_all_from_table,
+    list_tables,
     open_db,
     run_delete,
     run_insert,

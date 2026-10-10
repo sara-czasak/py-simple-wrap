@@ -48,6 +48,7 @@ nav:
         - Easy File Manager: tutorial/easy_file_manager.md
         - Easy Game: tutorial/easy_game.md
         - Easy Generator: tutorial/easy_generator.md
+        - Easy Hash: tutorial/easy_hash.md
         - Easy Images: tutorial/easy_images.md
         - Easy Json:
             - Tutorial 1: tutorial/easy_json.md
@@ -97,6 +98,7 @@ nav:
       - Easy Flow: reference/easy_flow.md
       - Easy Game: reference/easy_game
       - Easy Generator: reference/easy_generator.md
+      - Easy Hash: reference/easy_hash.md
       - Easy Images: reference/easy_images.md
       - Easy Json: reference/easy_json.md
       - Easy Lists: reference/easy_lists.md
