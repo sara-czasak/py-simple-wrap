@@ -19,6 +19,8 @@ from .easy_base64 import (
     decode_text,
     encode_text,
     is_base64,
+    encode_bytes,
+    decode_to_bytes,
 )
 from .easy_archive import (
     add_to_zip,

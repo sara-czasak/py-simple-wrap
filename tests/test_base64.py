@@ -2,12 +2,16 @@ import pytest
 
 from py_simple_package.src.py_simple import (
     decode_text as public_decode_text,
+    decode_to_bytes as public_decode_to_bytes,
+    encode_bytes as public_encode_bytes,
     encode_text as public_encode_text,
     is_base64 as public_is_base64,
 )
 from py_simple_package.src.py_simple.easy_base64 import (
     EasyBase64Error,
     decode_text,
+    decode_to_bytes,
+    encode_bytes,
     encode_text,
     is_base64,
 )
@@ -39,3 +43,24 @@ def test_public_imports():
     assert public_encode_text is encode_text
     assert public_decode_text is decode_text
     assert public_is_base64 is is_base64
+
+
+def test_encode_and_decode_bytes_round_trip():
+    raw = b"\x00\x01\x02\xff"
+    assert decode_to_bytes(encode_bytes(raw)) == raw
+    assert encode_bytes(b"hello") == "aGVsbG8="
+
+
+def test_encode_bytes_rejects_non_bytes():
+    with pytest.raises(EasyBase64Error):
+        encode_bytes("not bytes")
+
+
+def test_decode_to_bytes_rejects_invalid_text():
+    with pytest.raises(EasyBase64Error):
+        decode_to_bytes("not base64!!!")
+
+
+def test_decode_to_bytes_rejects_non_string():
+    with pytest.raises(EasyBase64Error):
+        decode_to_bytes(123)

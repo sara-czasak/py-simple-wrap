@@ -123,3 +123,79 @@ def is_base64(value: str) -> bool:
     except ValueError:
         return False
     return True
+
+
+def encode_bytes(data: bytes) -> str:
+    """
+    Encode raw bytes as a Base64 string.
+
+    Useful when working with binary data such as images, audio, or file
+    contents that are already in bytes form and not text.
+
+    Args:
+        data (bytes): The bytes to encode.
+
+    Returns:
+        str: The Base64 text, safe to paste into a file or a message.
+
+    Raises:
+        EasyBase64Error: If `data` is not bytes.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import encode_bytes
+
+            encoded = encode_bytes(b"\\x00\\x01\\x02")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import base64
+
+            encoded = base64.b64encode(b"\\x00\\x01\\x02").decode("ascii")
+            ```
+    """
+    if not isinstance(data, bytes):
+        raise EasyBase64Error("\n\nERROR: data must be bytes.")
+    return base64.b64encode(data).decode("ascii")
+
+
+def decode_to_bytes(encoded: str) -> bytes:
+    """
+    Decode a Base64 string back into raw bytes.
+
+    The counterpart of `encode_bytes`. Use this when you need the original
+    bytes rather than text (for example when the encoded data is an image
+    or a binary file).
+
+    Args:
+        encoded (str): Base64 text, such as the result of `encode_bytes`.
+
+    Returns:
+        bytes: The original bytes.
+
+    Raises:
+        EasyBase64Error: If `encoded` is not valid Base64 text.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import decode_to_bytes
+
+            raw = decode_to_bytes("AAEC")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import base64
+
+            raw = base64.b64decode("AAEC")
+            ```
+    """
+    if not isinstance(encoded, str):
+        raise EasyBase64Error("\n\nERROR: encoded text must be a string.")
+    try:
+        return base64.b64decode(encoded, validate=True)
+    except (ValueError, UnicodeDecodeError) as error:
+        raise EasyBase64Error(f"\n\nERROR: {error}") from None
