@@ -52,14 +52,42 @@ info = get_image_info("photo.jpg")
 print(info)
 ```
 
+## Save a grayscale copy
+
+```python
+from py_simple import convert_to_greyscale
+
+convert_to_greyscale("photo.jpg", "photo_gray.png")
+```
+
+`convert_to_greyscale()` removes the colour while keeping the original
+dimensions. Each pixel becomes one of 256 shades of gray, from black (0)
+to white (255). Mode `L` stores the gray value; mode `LA` also stores opacity.
+Outputs ending in `.jpg`, `.jpeg` or `.bmp` use `L` because Pillow's JPEG/BMP
+encoders cannot save `LA` and would raise `OSError`. Other extensions use `LA`.
+
+The output extension selects the file format, so you can also save to
+`"photo_gray.jpg"`. Using a different output path keeps the source file
+unchanged. Both paths can be strings or `pathlib.Path` objects.
+
+For transparent inputs:
+
+| Output | Transparency |
+| --- | --- |
+| PNG, TIFF, WebP | Preserved |
+| JPEG, BMP, GIF | Discarded without blending a background |
+
+Only the first frame of an animated or multi-frame image is converted.
+
 ## The Py_simple Way
 
 ```python
-from py_simple import resize_image, convert_image, rotate_image
+from py_simple import resize_image, convert_image, rotate_image, convert_to_greyscale
 
 resize_image("photo.jpg", "small.jpg", 320, 240)
 convert_image("photo.png", "photo.jpg")
 rotate_image("photo.jpg", "rotated.jpg", 90)
+convert_to_greyscale("photo.jpg", "photo_gray.png")
 ```
 
 ## The Traditional Way
@@ -77,6 +105,9 @@ with Image.open("photo.png") as img:
 
 with Image.open("photo.jpg") as img:
     img.rotate(90, expand=True).save("rotated.jpg")
+
+with Image.open("photo.jpg") as img:
+    img.convert("LA").save("photo_gray.png")
 ```
 
 ## Getting image information
@@ -126,6 +157,7 @@ Instead of repeatedly writing Pillow code for common image operations, you can s
 resize_image("photo.jpg", "small.jpg", 320, 240)
 convert_image("photo.png", "photo.jpg")
 rotate_image("photo.jpg", "rotated.jpg", 90)
+convert_to_greyscale("photo.jpg", "photo_gray.png")
 info = get_image_info("photo.jpg")
 ```
 

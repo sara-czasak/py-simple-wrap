@@ -8,9 +8,13 @@ from PIL import Image
 
 from py_simple_package.src.py_simple import create_thumbnail as public_create_thumbnail
 from py_simple_package.src.py_simple import flip_image as public_flip_image
+from py_simple_package.src.py_simple import (
+    convert_to_greyscale as public_convert_to_greyscale,
+)
 from py_simple_package.src.py_simple.easy_images import (
     ImageProcessingError,
     convert_image,
+    convert_to_greyscale,
     create_thumbnail,
     flip_image,
     get_image_info,
@@ -188,3 +192,219 @@ class TestFlipImage:
 
     def test_public_import(self):
         assert public_flip_image is flip_image
+
+
+class TestConvertToGreyscale:
+    """Exercise real image files and decoded pixels, without mocking Pillow."""
+
+    def test_converts_rgb_pixels_and_preserves_source(self, tmp_path):
+        source = tmp_path / "colours.png"
+        output = tmp_path / "gray.png"
+        image = Image.new("RGB", (5, 1))
+        image.putdata(
+            [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255)]
+        )
+        image.save(source)
+        original_bytes = source.read_bytes()
+
+        assert convert_to_greyscale(str(source), str(output)) is None
+
+        with Image.open(output) as converted:
+            assert converted.mode == "LA"
+            assert converted.size == (5, 1)
+            assert list(converted.getchannel("L").getdata()) == [0, 76, 150, 29, 255]
+            assert converted.getchannel("A").getextrema() == (255, 255)
+        assert source.read_bytes() == original_bytes
+
+    def test_webp_preserves_transparency(self, tmp_path):
+        source = tmp_path / "transparent.png"
+        output = tmp_path / "gray.webp"
+        image = Image.new("RGBA", (3, 1))
+        image.putdata([(255, 0, 0, 0), (0, 255, 0, 128), (0, 0, 255, 255)])
+        image.save(source)
+        original_bytes = source.read_bytes()
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.format == "WEBP"
+            assert converted.mode == "RGBA"
+            assert converted.size == (3, 1)
+            # WebP's default colour compression is lossy; alpha stays exact.
+            assert list(converted.getchannel("A").getdata()) == [0, 128, 255]
+        assert source.read_bytes() == original_bytes
+
+    @pytest.mark.parametrize(
+        ("extension", "format", "mode"),
+        [(".png", "PNG", "LA"), (".JPEG", "JPEG", "L"), (".bmp", "BMP", "L")],
+    )
+    def test_accepts_pathlib_paths(self, tmp_path, extension, format, mode):
+        source = tmp_path / "source.png"
+        output = tmp_path / ("gray" + extension)
+        Image.new("RGBA", (2, 1), (255, 0, 0, 128)).save(source)
+
+        convert_to_greyscale(source, output)
+
+        with Image.open(output) as converted:
+            assert converted.format == format
+            assert converted.mode == mode
+            assert converted.size == (2, 1)
+            if mode == "LA":
+                assert list(converted.getdata()) == [(76, 128)] * 2
+            else:
+                assert list(converted.getdata()) == pytest.approx([76, 76], abs=2)
+
+    @pytest.mark.parametrize(
+        ("extension", "mode"),
+        [(".png", "LA"), (".jpg", "L"), (".bmp", "L"), (".tiff", "LA")],
+    )
+    def test_saves_requested_format(self, sample_png, extension, mode):
+        output = "grayscale" + extension
+        convert_to_greyscale(sample_png, output)
+
+        with Image.open(output) as converted:
+            assert converted.mode == mode
+            assert converted.size == (100, 60)
+            assert converted.getchannel("L").getpixel((0, 0)) == 76
+
+    @pytest.mark.parametrize("extension", [".png", ".tiff"])
+    def test_rgba_input_preserves_transparency(self, tmp_path, extension):
+        source = tmp_path / "transparent.png"
+        output = tmp_path / ("gray" + extension)
+        image = Image.new("RGBA", (3, 1))
+        image.putdata([(255, 0, 0, 0), (0, 255, 0, 128), (0, 0, 255, 255)])
+        image.save(source)
+        original_bytes = source.read_bytes()
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.mode == "LA"
+            assert list(converted.getdata()) == [(76, 0), (150, 128), (29, 255)]
+        assert source.read_bytes() == original_bytes
+
+    @pytest.mark.parametrize(
+        ("extension", "format"), [(".jpg", "JPEG"), (".JPEG", "JPEG"), (".bmp", "BMP")]
+    )
+    def test_transparent_input_saves_without_alpha(self, tmp_path, extension, format):
+        source = tmp_path / "transparent.png"
+        output = tmp_path / ("gray" + extension)
+        image = Image.new("RGBA", (3, 1))
+        image.putdata([(255, 0, 0, 0), (255, 0, 0, 128), (255, 0, 0, 255)])
+        image.save(source)
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.format == format
+            assert converted.mode == "L"
+            assert list(converted.getdata()) == pytest.approx([76, 76, 76], abs=2)
+
+    @pytest.mark.parametrize(
+        ("transparency", "alpha"),
+        [(0, [0, 255, 255]), (bytes([0, 128, 255]), [0, 128, 255])],
+    )
+    def test_preserves_palette_transparency(self, tmp_path, transparency, alpha):
+        source = tmp_path / "transparent-palette.png"
+        output = tmp_path / "gray.png"
+        image = Image.new("P", (3, 1))
+        image.putpalette([255, 255, 255, 254, 255, 255, 255, 0, 0] + [0] * 759)
+        image.putdata([0, 1, 2])
+        image.save(source, transparency=transparency)
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.mode == "LA"
+            assert list(converted.getdata()) == list(zip([255, 255, 76], alpha))
+
+    def test_preserves_rgb_colour_key_transparency(self, tmp_path):
+        source = tmp_path / "transparent-rgb.png"
+        output = tmp_path / "gray.png"
+        image = Image.new("RGB", (2, 1))
+        image.putdata([(255, 0, 0), (0, 130, 0)])
+        image.save(source, transparency=(255, 0, 0))
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.mode == "LA"
+            assert list(converted.getchannel("A").getdata()) == [0, 255]
+            assert converted.getpixel((1, 0)) == (76, 255)
+
+    def test_preserves_existing_grayscale_alpha(self, tmp_path):
+        source = tmp_path / "transparent-gray.png"
+        output = tmp_path / "gray.png"
+        pixels = [(0, 0), (64, 128), (255, 255)]
+        image = Image.new("LA", (3, 1))
+        image.putdata(pixels)
+        image.save(source)
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.mode == "LA"
+            assert list(converted.getdata()) == pixels
+
+    def test_preserves_existing_grayscale_values(self, tmp_path):
+        source = tmp_path / "already-gray.png"
+        output = tmp_path / "gray.png"
+        image = Image.new("L", (4, 1))
+        image.putdata([0, 64, 128, 255])
+        image.save(source)
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert list(converted.getchannel("L").getdata()) == [0, 64, 128, 255]
+
+    def test_uses_palette_colours(self, tmp_path):
+        source = tmp_path / "palette.png"
+        output = tmp_path / "gray.png"
+        image = Image.new("P", (2, 1))
+        image.putpalette([255, 0, 0, 0, 0, 255] + [0] * (768 - 6))
+        image.putdata([0, 1])
+        image.save(source)
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert list(converted.getchannel("L").getdata()) == [76, 29]
+
+    @pytest.mark.parametrize("extension", [".png", ".gif"])
+    def test_converts_only_first_frame(self, tmp_path, extension):
+        source = tmp_path / "animated.gif"
+        output = tmp_path / ("gray" + extension)
+        first = Image.new("RGB", (2, 1), "red")
+        second = Image.new("RGB", (2, 1), "blue")
+        first.save(source, save_all=True, append_images=[second])
+
+        convert_to_greyscale(str(source), str(output))
+
+        with Image.open(output) as converted:
+            assert converted.n_frames == 1
+            assert list(converted.convert("RGB").getdata()) == [(76, 76, 76)] * 2
+
+    def test_missing_input_raises(self, tmp_path):
+        with pytest.raises(ImageProcessingError):
+            convert_to_greyscale(
+                str(tmp_path / "missing.png"), str(tmp_path / "gray.png")
+            )
+
+    def test_unrecognized_input_raises(self, tmp_path):
+        source = tmp_path / "broken.png"
+        source.write_bytes(b"not an image")
+
+        with pytest.raises(ImageProcessingError):
+            convert_to_greyscale(str(source), str(tmp_path / "gray.png"))
+
+    def test_unknown_output_format_raises(self, sample_png):
+        with pytest.raises(ValueError, match="unknown file extension"):
+            convert_to_greyscale(sample_png, "gray.unknown")
+
+    def test_missing_output_directory_raises(self, sample_png, tmp_path):
+        with pytest.raises(OSError):
+            convert_to_greyscale(sample_png, str(tmp_path / "missing" / "gray.png"))
+
+    def test_public_import(self):
+        assert public_convert_to_greyscale is convert_to_greyscale
