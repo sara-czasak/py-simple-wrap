@@ -185,6 +185,7 @@ from .easy_hash import (
     hash_file,
     hash_text,
     hashes_match,
+    verify_file_hash,
 )
 from .easy_images import (
     convert_image,

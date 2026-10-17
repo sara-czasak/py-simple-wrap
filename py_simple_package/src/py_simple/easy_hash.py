@@ -24,9 +24,7 @@ _ALGORITHMS = ("sha256", "sha1", "md5")
 
 def _new_hasher(algorithm: str):
     if algorithm not in _ALGORITHMS:
-        raise EasyHashError(
-            "\n\nERROR: algorithm must be 'sha256', 'sha1', or 'md5'."
-        )
+        raise EasyHashError("\n\nERROR: algorithm must be 'sha256', 'sha1', or 'md5'.")
     return hashlib.new(algorithm)
 
 
@@ -108,6 +106,69 @@ def hash_file(filepath: str, algorithm: str = "sha256") -> str:
     except OSError as error:
         raise EasyHashError(f"\n\nERROR: {error}") from None
     return hasher.hexdigest()
+
+
+def verify_file_hash(
+    filepath: str | Path, expected: str, algorithm: str = "sha256"
+) -> bool:
+    """
+    Checks whether a file matches an expected checksum using chunked reads.
+
+    Args:
+        filepath (str | Path): Path to the file to check.
+        expected (str): Expected hex checksum, ignoring letter case.
+            Whitespace is not stripped.
+        algorithm (str, optional): One of `"sha256"`, `"sha1"`, or
+            `"md5"`. Defaults to `"sha256"`.
+
+    Returns:
+        bool: True when the file's checksum equals `expected`. A mismatch,
+            malformed checksum, or non-string `expected` returns False.
+            Non-string checksums are rejected before reading the file or
+            checking the algorithm, as with `hashes_match()`.
+
+    Raises:
+        EasyHashError: If the file cannot be read or the algorithm is
+            not supported.
+        TypeError: If `filepath` is not a string or path-like object.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from pathlib import Path
+            from py_simple import verify_file_hash
+
+            Path("notes.txt").write_bytes(b"hello")
+            expected = "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+            matches = verify_file_hash("notes.txt", expected)
+            print(matches)  # True
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import hashlib
+            from pathlib import Path
+
+            Path("notes.txt").write_bytes(b"hello")
+            expected = "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+            hasher = hashlib.sha256()
+            with open("notes.txt", "rb") as file:
+                while chunk := file.read(64 * 1024):
+                    hasher.update(chunk)
+            matches = hasher.hexdigest() == expected.lower()
+            print(matches)  # True
+            ```
+    """
+    if not isinstance(expected, str):
+        return False
+    hasher = _new_hasher(algorithm)
+    try:
+        with Path(filepath).open("rb") as file:
+            while chunk := file.read(64 * 1024):
+                hasher.update(chunk)
+    except OSError as error:
+        raise EasyHashError(f"\n\nERROR: {error}") from None
+    return hasher.hexdigest() == expected.lower()
 
 
 def hashes_match(text: str, expected: str, algorithm: str = "sha256") -> bool:

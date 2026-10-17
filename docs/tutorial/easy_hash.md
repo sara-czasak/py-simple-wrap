@@ -34,6 +34,33 @@ accepts uppercase or lowercase hex.
 `hash_file()` does the same job for a file on disk. You can pass `"md5"` or
 `"sha1"` when a tool asks for that kind of checksum instead.
 
+## Check a file against a checksum
+
+`verify_file_hash()` compares a file with an expected checksum. It reads in
+64 KiB chunks, so a large file does not need to fit in memory.
+
+```python
+from pathlib import Path
+from py_simple import verify_file_hash
+
+Path("notes.txt").write_bytes(b"hello")
+expected = "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+
+print(verify_file_hash("notes.txt", expected))  # True
+print(verify_file_hash("notes.txt", "0" * 64))  # False
+```
+
+Pass a string path or a `pathlib.Path`, and use `algorithm="sha1"` or
+`algorithm="md5"` if that is how the expected checksum was made. Hex letters
+can be uppercase or lowercase. Non-string or malformed checksums return
+`False`; surrounding whitespace is not stripped. A non-string checksum
+returns `False` before the file or algorithm is checked. With a string
+checksum, missing/unreadable files and unsupported algorithms raise
+`EasyHashError`, just as `hash_file()` does.
+
+Checksums help detect changed contents. Compare against a checksum from a
+trusted source; a matching checksum alone does not prove who made the file.
+
 ## Why use these helpers?
 
 The usual version is a few steps every time:
