@@ -84,6 +84,7 @@ nav:
           - Homework Log: tutorial/homework-log-project.md
           - Word Detective: tutorial/word-frequency-project.md
           - Backup Checker: tutorial/backup-check-project.md
+          - Study Habit Tracker: tutorial/study-habit-tracker-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
