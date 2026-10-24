@@ -46,3 +46,17 @@ def test_rejects_incomplete_url():
         get_path("school.example")
     with pytest.raises(EasyUrlError):
         add_query_param("https://school.example", "", "2")
+
+
+@pytest.mark.parametrize(
+    "query,key,value,expected",
+    [
+        ("tag=python&tag=beginner", "page", "2", "tag=python&tag=beginner&page=2"),
+        ("tag=python&page=1&tag=beginner&page=3", "page", "2", "tag=python&page=2&tag=beginner"),
+        ("tag=&tag=python&empty=", "page", "2", "tag=&tag=python&empty=&page=2"),
+        ("tag=c%2B%2B&tag=a%26b", "q", "hello world", "tag=c%2B%2B&tag=a%26b&q=hello+world"),
+    ],
+)
+def test_add_query_param_preserves_other_repeated_parameters(query, key, value, expected):
+    url = f"https://school.example/clubs?{query}#results"
+    assert add_query_param(url, key, value) == f"https://school.example/clubs?{expected}#results"

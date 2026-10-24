@@ -93,6 +93,10 @@ def add_query_param(url: str, key: str, value: str) -> str:
     """
     Add or replace one query parameter on a link.
 
+    Replaces all occurrences of the selected key with one value at its
+    first position, or appends it if absent. Other parameters retain
+    their order, repeated values, and blank values.
+
     Args:
         url (str): A full link.
         key (str): Parameter name, such as `"page"`.
@@ -118,8 +122,18 @@ def add_query_param(url: str, key: str, value: str) -> str:
             from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
             parsed = urlparse("https://school.example/clubs")
-            query = dict(parse_qsl(parsed.query))
-            query["page"] = "2"
+            pairs = parse_qsl(parsed.query, keep_blank_values=True)
+            query = []
+            replaced = False
+            for key, value in pairs:
+                if key == "page":
+                    if not replaced:
+                        query.append(("page", "2"))
+                        replaced = True
+                else:
+                    query.append((key, value))
+            if not replaced:
+                query.append(("page", "2"))
             print(urlunparse(parsed._replace(query=urlencode(query))))
             ```
     """
@@ -128,8 +142,17 @@ def add_query_param(url: str, key: str, value: str) -> str:
             "\n\nERROR: key and value must be strings, and key cannot be empty."
         ) from None
     parsed = _parsed(url)
-    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query[key] = value
+    query = []
+    replaced = False
+    for name, current_value in parse_qsl(parsed.query, keep_blank_values=True):
+        if name == key:
+            if not replaced:
+                query.append((key, value))
+                replaced = True
+        else:
+            query.append((name, current_value))
+    if not replaced:
+        query.append((key, value))
     return urlunparse(parsed._replace(query=urlencode(query)))
 
 
