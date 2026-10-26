@@ -1,6 +1,6 @@
 {
   "files": [
-  "CONTRIBUTORS.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 80,
   "projectName": "py_simple",
@@ -974,6 +974,17 @@
       "avatar_url": "https://github.com/amandeavor.png",
       "profile": "https://github.com/amandeavor",
       "contributions": [
+        "documentation"
+      ]
+    },
+    {
+      "login": "drudru18",
+      "name": "Doroiman Alexandru",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94912677?v=4",
+      "profile": "https://github.com/drudru18",
+      "contributions": [
+        "code",
+        "test",
         "documentation"
       ]
     }
