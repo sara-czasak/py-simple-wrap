@@ -95,6 +95,7 @@ nav:
       - Tutorial Template: contributor-hub/tutorial_template.md
       - Custom Exception Template: contributor-hub/error_template.md
       - Module Tests Template: contributor-hub/tests_template.md
+      - Type Hints Template: contributor-hub/type_hints_template.md
       - Public API Export Template: contributor-hub/public_api_template.md
       - Pre-commit Guide: contributor-hub/pre_commit_template.md
       - Pull Request Workflow Guide: contributor-hub/pr_workflow_template.md
