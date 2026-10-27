@@ -22,9 +22,12 @@ def _as_money(amount) -> Decimal:
     if isinstance(amount, bool) or not isinstance(amount, (int, float, str, Decimal)):
         raise EasyMoneyError("\n\nERROR: amount must be a number.") from None
     try:
-        return Decimal(str(amount))
+        value = Decimal(str(amount))
     except InvalidOperation as error:
         raise EasyMoneyError(f"\n\nERROR: {error}") from None
+    if not value.is_finite():
+        raise EasyMoneyError("\n\nERROR: amount must be finite.") from None
+    return value
 
 
 def _cents(amount: Decimal) -> Decimal:
@@ -44,7 +47,7 @@ def format_money(amount, symbol: str = "$") -> str:
         str: The formatted amount, such as `"$12.50"`.
 
     Raises:
-        EasyMoneyError: If `amount` is not a number.
+        EasyMoneyError: If `amount` is not a finite number.
 
     Example:
         === "The Py_simple Way"
@@ -77,7 +80,7 @@ def add_tax(amount, rate: float) -> Decimal:
         Decimal: The price after tax, rounded to two decimal places.
 
     Raises:
-        EasyMoneyError: If `amount` or `rate` is not a number, or if
+        EasyMoneyError: If `amount` or `rate` is not a finite number, or if
             `rate` is negative.
 
     Example:
@@ -117,8 +120,8 @@ def calculate_discount(amount, discount_rate: float) -> Decimal:
         Decimal: The discounted price, rounded to two decimal places.
 
     Raises:
-        EasyMoneyError: If the amount or discount rate is invalid, or if
-            the discount rate is outside the range of 0 to 100.
+        EasyMoneyError: If the amount or discount rate is not a finite number,
+            or if the discount rate is outside the range of 0 to 100.
 
     Example:
         === "The Py_simple Way"
@@ -164,7 +167,7 @@ def calculate_tip(amount, tip_rate: float) -> Decimal:
         Decimal: The tip amount to add, rounded to two decimal places.
 
     Raises:
-        EasyMoneyError: If `amount` or `tip_rate` is not a valid number,
+        EasyMoneyError: If `amount` or `tip_rate` is not a finite number,
             or if `tip_rate` is negative.
 
     Example:
@@ -207,7 +210,7 @@ def split_bill(total, people: int) -> Decimal:
 
     Raises:
         EasyMoneyError: If `people` is less than 1 or `total` is not a
-            number.
+            finite number.
 
     Example:
         === "The Py_simple Way"
@@ -290,8 +293,6 @@ def split_bill_exact(total, people: int) -> list[Decimal]:
         ) from None
     try:
         amount = _as_money(total)
-        if not amount.is_finite():
-            raise EasyMoneyError("\n\nERROR: amount must be finite.") from None
         rounded = _cents(amount)
         # Allocate whole cents without rounding the division or using floats.
         numerator, denominator = rounded.as_integer_ratio()
