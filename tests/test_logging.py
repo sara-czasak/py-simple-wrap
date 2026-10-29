@@ -388,37 +388,40 @@ def test_setup_file_logger_updates_level_on_existing_handler(tmp_path):
 
 def test_filter_log_lines_return_matching_level(tmp_path):
 
-    log_file=tmp_path/"app.log"
-    log_file.write_text("2026-10-24 10:00:01,123 - INFO - Application started\n"
+    log_file = tmp_path / "app.log"
+    log_file.write_text(
+        "2026-10-24 10:00:01,123 - INFO - Application started\n"
         "2026-10-24 10:00:02,234 - ERROR - Connection failed\n"
         "2026-10-24 10:00:03,345 - WARNING - ERROR appears in this message\n"
-        "2026-10-24 10:00:04,456 - ERROR - Retry failed\n")
+        "2026-10-24 10:00:04,456 - ERROR - Retry failed\n"
+    )
 
-    assert filter_log_lines(str(log_file),"ERROR") == ["2026-10-24 10:00:02,234 - ERROR - Connection failed",
+    assert filter_log_lines(str(log_file), "ERROR") == [
+        "2026-10-24 10:00:02,234 - ERROR - Connection failed",
         "2026-10-24 10:00:04,456 - ERROR - Retry failed",
-        ]
-    assert len(filter_log_lines(str(log_file),"WARNING")) == 1
+    ]
+    assert len(filter_log_lines(str(log_file), "WARNING")) == 1
 
 
 def test_filter_log_lines_accepts_lowercase_level(tmp_path):
-    log_file = tmp_path/ "app.log"
+    log_file = tmp_path / "app.log"
     log_file.write_text("2026-10-24 10:00:01,123 - ERROR - Connection failed\n")
 
-    assert len(filter_log_lines(str(log_file),"error")) == 1
+    assert len(filter_log_lines(str(log_file), "error")) == 1
 
 
 def test_filter_log_lines_returns_empty_list_for_empty_file(tmp_path):
-    log_file = tmp_path/"app.log"
+    log_file = tmp_path / "app.log"
     log_file.write_text("")
 
-    assert filter_log_lines(str(log_file),"ERROR") == []
+    assert filter_log_lines(str(log_file), "ERROR") == []
 
 
 def test_filter_log_lines_raises_for_missing_file(tmp_path):
-    log_file = tmp_path/ "missing.log"
+    log_file = tmp_path / "missing.log"
 
     with pytest.raises(FileNotFoundError):
-        filter_log_lines(str(log_file),"ERROR")
+        filter_log_lines(str(log_file), "ERROR")
 
 def test_filter_log_lines_raises_for_invalid_level(tmp_path):
     log_file = tmp_path / "app.log"
@@ -426,3 +429,4 @@ def test_filter_log_lines_raises_for_invalid_level(tmp_path):
 
     with pytest.raises(ValueError):
         filter_log_lines(str(log_file), "TRACE")
+        

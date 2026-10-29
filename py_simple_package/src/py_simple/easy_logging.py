@@ -465,45 +465,40 @@ def setup_file_logger(
 
 
 def filter_log_lines(file_path: str, level: str) -> list[str]:
-
     """
-        Returns log file lines matching the specified logging level.
+    Returns the log lines matching the specified logging level.
 
-        Args:
-            file_path (str): Path to the log file to search.
-            level (str): Logging level to filter by, such as "ERROR"
+    Args:
+        file_path (str): Path to the log file to search.
+        level (str): Logging level to filter by, such as "ERROR".
 
-        Returns:
-            list[str]: Mathcing log lines without trailing newline characters.
-                Returns an empty list if the file is empty.
+    Returns:
+        list[str]: Matching log lines without trailing newline characters.
+            Returns an empty list if no lines match the specified level.
 
-        Raises:
-            FileNotFoundError: If the specified log file does not exist.
-            ValueError: If the specified logging level is invalid.
+    Raises:
+        FileNotFoundError: If the specified log file does not exist.
+        ValueError: If the specified logging level is invalid.
 
-        
-        Example:
-            === "The Py_simple Way"
-            ```python 
+    Example:
+        === "The Py_simple Way"
+            ```python
             from py_simple.easy_logging import filter_log_lines
 
-            errors = filter_log_lines("app.log","ERROR")
+            errors = filter_log_lines("app.log", "ERROR")
             ```
 
-            === "The Traditional Way"
-            ```python 
-            import os
-
+        === "The Traditional Way"
+            ```python
             errors = []
-            if os.path.exists("app.log"):
-                with open("app.log") as log_file:
-                    for line in log_file:
-                        parts = line.split(" - ",2)
-                            if len(parts) >=3 and parts[1]== level:
-                                errors.append(line.rstrip("\n"))
+            level = "ERROR"
+
+            with open("app.log", encoding="utf-8") as log_file:
+                for line in log_file:
+                    parts = line.split(" - ", 2)
+                    if len(parts) >= 3 and parts[1] == level:
+                        errors.append(line.rstrip("\\n"))
             ```
-    
-    
     """
 
     levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
