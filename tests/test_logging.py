@@ -274,8 +274,7 @@ def cleanup_logging_handlers():
     """Ensure only handlers added during tests are closed and removed."""
     manager = logging.Logger.manager
     pre_existing_handlers = {
-        name: set(logging.getLogger(name).handlers)
-        for name in list(manager.loggerDict)
+        name: set(logging.getLogger(name).handlers) for name in list(manager.loggerDict)
     }
     pre_existing_root_handlers = set(logging.root.handlers)
 
@@ -361,9 +360,7 @@ def test_setup_file_logger_does_not_duplicate_handlers(tmp_path):
 
     assert logger1 is logger2
 
-    file_handlers = [
-        h for h in logger1.handlers if isinstance(h, logging.FileHandler)
-    ]
+    file_handlers = [h for h in logger1.handlers if isinstance(h, logging.FileHandler)]
     assert len(file_handlers) == 1
 
     logger1.info("Single line message")
@@ -387,7 +384,6 @@ def test_setup_file_logger_updates_level_on_existing_handler(tmp_path):
 
 
 def test_filter_log_lines_return_matching_level(tmp_path):
-
     log_file = tmp_path / "app.log"
     log_file.write_text(
         "2026-10-24 10:00:01,123 - INFO - Application started\n"
@@ -423,10 +419,10 @@ def test_filter_log_lines_raises_for_missing_file(tmp_path):
     with pytest.raises(FileNotFoundError):
         filter_log_lines(str(log_file), "ERROR")
 
+
 def test_filter_log_lines_raises_for_invalid_level(tmp_path):
     log_file = tmp_path / "app.log"
     log_file.write_text("2026-10-24 10:00:01,123 - INFO - Started\n")
 
     with pytest.raises(ValueError):
         filter_log_lines(str(log_file), "TRACE")
-        

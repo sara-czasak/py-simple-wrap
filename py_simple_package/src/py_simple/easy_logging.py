@@ -178,6 +178,7 @@ def log_function(
 
     return decorator
 
+
 def clear_log_file(file_path: str) -> bool:
     """
     Empties a log file, leaving it in place but with no contents.
@@ -324,9 +325,7 @@ def find_log_lines(file_path: str, search_text: str) -> list[str]:
         return []
 
     with open(file_path) as log_file:
-        return [
-            line.rstrip("\n") for line in log_file if search_text in line
-        ]
+        return [line.rstrip("\n") for line in log_file if search_text in line]
 
 
 def count_log_levels(file_path: str) -> dict[str, int]:
@@ -510,11 +509,9 @@ def filter_log_lines(file_path: str, level: str) -> list[str]:
     if level not in levels:
         raise ValueError(f"Invalid log level {level}")
 
-    
-    with open(file_path,encoding="utf-8") as log_file:
+    with open(file_path, encoding="utf-8") as log_file:
         for line in log_file:
-            parts = line.split(" - ",2)
-            if len(parts) >=3 and parts[1]== level:
+            parts = line.split(" - ", 2)
+            if len(parts) >= 3 and parts[1] == level:
                 level_content.append(line.rstrip("\n"))
     return level_content
-
