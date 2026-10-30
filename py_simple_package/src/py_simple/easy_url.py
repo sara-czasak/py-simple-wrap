@@ -214,6 +214,38 @@ def remove_query_param(url: str, key: str) -> str:
         return url
     return urlunparse(parsed._replace(query=urlencode(remaining)))
 
+from urllib.parse import urlparse
+
+
+def get_url_scheme(url: str) -> str:
+    """Return the protocol scheme of a URL in lowercase.
+
+    Args:
+        url (str): The URL string to inspect.
+
+    Returns:
+        str: The scheme component (e.g., 'http', 'https', 'ftp'), or an empty
+            string if no scheme is present.
+
+    Raises:
+        TypeError: If url is not a string.
+
+    Example:
+        === "Python"
+            ```python
+            from py_simple.easy_url import get_url_scheme
+
+            scheme = get_url_scheme("[https://example.com/path](https://example.com/path)")
+            print(scheme)
+            ```
+        === "Output"
+            ```text
+            https
+            ```
+    """
+    if not isinstance(url, str):
+        raise TypeError(f"Expected str, got {type(url).__name__}")
+    return urlparse(url.strip()).scheme.lower()
 
 def get_query_values(url: str, key: str) -> list[str]:
     """

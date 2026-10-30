@@ -9,6 +9,7 @@ from py_simple_package.src.py_simple.easy_url import (
     get_domain,
     get_path,
     get_query_values,
+    get_url_scheme,
     is_https,
     remove_query_param,
 )
@@ -95,6 +96,25 @@ def test_remove_query_param_public_imports():
         == "https://school.example/clubs"
     )
 
+def test_get_url_scheme_standard():
+    assert get_url_scheme("https://github.com") == "https"
+    assert get_url_scheme("http://localhost:8000") == "http"
+    assert get_url_scheme("ftp://ftp.example.com/files") == "ftp"
+
+
+def test_get_url_scheme_case_insensitivity():
+    assert get_url_scheme("HTTPS://EXAMPLE.COM") == "https"
+    assert get_url_scheme("Http://Example.Com") == "http"
+
+
+def test_get_url_scheme_missing_or_empty():
+    assert get_url_scheme("example.com/index.html") == ""
+    assert get_url_scheme("") == ""
+
+
+def test_get_url_scheme_invalid_type():
+    with pytest.raises(TypeError):
+        get_url_scheme(123)  # type: ignore
 
 @pytest.mark.parametrize(
     "url,key,expected",

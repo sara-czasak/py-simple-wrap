@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from py_simple_package.src.py_simple import (
@@ -6,6 +8,7 @@ from py_simple_package.src.py_simple import (
 )
 from py_simple_package.src.py_simple.easy_terminal import (
     EasyTerminal,
+    confirm_prompt,
     print_centered,
     print_rule,
     print_styled,
@@ -304,3 +307,32 @@ def test_print_rule_public_imports(monkeypatch, capsys):
     assert public_print is module_print
     public_print(title="Hi")
     assert capsys.readouterr().out == "──────── Hi ────────\n"
+
+def test_confirm_prompt_affirmative():
+    """Test affirmative responses returning True."""
+    for user_input in ["y", "Y", "yes", "YES", "true", "1"]:
+        with patch("builtins.input", return_value=user_input):
+            assert confirm_prompt("Proceed?") is True
+
+
+def test_confirm_prompt_negative():
+    """Test negative responses returning False."""
+    for user_input in ["n", "N", "no", "NO", "false", "0"]:
+        with patch("builtins.input", return_value=user_input):
+            assert confirm_prompt("Proceed?") is False
+
+
+def test_confirm_prompt_default_fallback():
+    """Test fallback when user presses Enter with an empty input."""
+    with patch("builtins.input", return_value=""):
+        assert confirm_prompt("Proceed?", default=True) is True
+        assert confirm_prompt("Proceed?", default=False) is False
+
+
+def test_confirm_prompt_invalid_types():
+    """Test TypeError on invalid argument types."""
+    with pytest.raises(TypeError):
+        confirm_prompt(123)  # type: ignore
+
+    with pytest.raises(TypeError):
+        confirm_prompt("Proceed?", default="yes")  # type: ignore

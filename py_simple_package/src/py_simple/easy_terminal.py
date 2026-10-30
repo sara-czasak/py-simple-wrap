@@ -330,3 +330,49 @@ def print_rule(title: str = "") -> None:
     from rich.text import Text
 
     Console().rule(Text(str(title)))
+
+def confirm_prompt(prompt: str = "Continue?", default: bool = True) -> bool:
+    """Prompt the user with a yes/no question in the terminal and return a boolean.
+
+    Args:
+        prompt (str): The question or message displayed to the user. Defaults to 'Continue?'.
+        default (bool): The default outcome if the user presses Enter without typing. Defaults to True.
+
+    Returns:
+        bool: True if the user enters affirmative responses (y, yes, true, 1),
+            False if negative (n, no, false, 0). Returns the default value if input is empty.
+
+    Raises:
+        TypeError: If prompt is not a string or default is not a boolean.
+
+    Examples:
+        === "Python"
+            ```python
+            from py_simple.easy_terminal import confirm_prompt
+
+            if confirm_prompt("Do you want to proceed?", default=True):
+                print("Proceeding...")
+            ```
+        === "Output"
+            ```text
+            Do you want to proceed? [Y/n]: y
+            Proceeding...
+            ```
+    """
+    if not isinstance(prompt, str):
+        raise TypeError(f"prompt must be a string, got {type(prompt).__name__}")
+    if not isinstance(default, bool):
+        raise TypeError(f"default must be a boolean, got {type(default).__name__}")
+
+    hint = "[Y/n]" if default else "[y/N]"
+    raw = input(f"{prompt} {hint}: ").strip().lower()
+
+    if not raw:
+        return default
+
+    if raw in {"y", "yes", "true", "1"}:
+        return True
+    if raw in {"n", "no", "false", "0"}:
+        return False
+
+    return default
