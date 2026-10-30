@@ -21,8 +21,12 @@ class EasyUrlError(Exception):
 def _parsed(url: str):
     if not isinstance(url, str) or not url.strip():
         raise EasyUrlError("\n\nERROR: url must be a non-empty string.") from None
-    parsed = urlparse(url)
-    if not parsed.scheme or not parsed.netloc:
+    try:
+        parsed = urlparse(url)
+        hostname = parsed.hostname
+    except ValueError as error:
+        raise EasyUrlError(f"\n\nERROR: {error}") from None
+    if not parsed.scheme or not hostname:
         raise EasyUrlError("\n\nERROR: url must include a scheme and a host.") from None
     return parsed
 
@@ -162,3 +166,98 @@ def get_path(url: str) -> str:
             ```
     """
     return _parsed(url).path or "/"
+
+
+def remove_query_param(url: str, key: str) -> str:
+    """
+    Remove one query parameter from a link.
+
+    The counterpart to `add_query_param`: where that function sets a
+    parameter, this one drops it. All other parameters, and the rest
+    of the link, are left unchanged. Removing a parameter that is not
+    present returns the link unchanged.
+
+    Args:
+        url (str): A full link.
+        key (str): Parameter name to remove, such as `"page"`.
+
+    Returns:
+        str: The link without that parameter.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link, or if `key` is not
+            a non-empty string.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import remove_query_param
+
+            print(remove_query_param("https://school.example/clubs?page=2&sort=name", "page"))
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+
+            parsed = urlparse("https://school.example/clubs?page=2&sort=name")
+            query = [(k, v) for k, v in parse_qsl(parsed.query) if k != "page"]
+            print(urlunparse(parsed._replace(query=urlencode(query))))
+            ```
+    """
+    if not isinstance(key, str) or key == "":
+        raise EasyUrlError("\n\nERROR: key must be a non-empty string.") from None
+    parsed = _parsed(url)
+    pairs = parse_qsl(parsed.query, keep_blank_values=True)
+    remaining = [(k, v) for k, v in pairs if k != key]
+    if len(remaining) == len(pairs):
+        return url
+    return urlunparse(parsed._replace(query=urlencode(remaining)))
+
+
+def get_query_values(url: str, key: str) -> list[str]:
+    """
+    Return all values for one query parameter, in their original order.
+
+    Args:
+        url (str): A full link, including a scheme and host.
+        key (str): Non-empty, decoded parameter name, such as `"tag"`.
+            Names are case-sensitive.
+
+    Returns:
+        list[str]: Decoded values, including repeats and empty strings for
+            blank values or parameters without `=`. Returns an empty list
+            when the name is absent. Percent escapes are decoded as UTF-8
+            with replacement for invalid bytes; `+` becomes a space.
+            The link is not changed.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link, or `key` is not a
+            non-empty string.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_query_values
+
+            link = "https://school.example/clubs?tag=python&tag=&tag=art+club#list"
+            print(get_query_values(link, "tag"))
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import parse_qsl, urlparse
+
+            link = "https://school.example/clubs?tag=python&tag=&tag=art+club#list"
+            pairs = parse_qsl(urlparse(link).query, keep_blank_values=True)
+            print([value for name, value in pairs if name == "tag"])
+            ```
+    """
+    if not isinstance(key, str) or key == "":
+        raise EasyUrlError("\n\nERROR: key must be a non-empty string.") from None
+    parsed = _parsed(url)
+    return [
+        value
+        for name, value in parse_qsl(parsed.query, keep_blank_values=True)
+        if name == key
+    ]

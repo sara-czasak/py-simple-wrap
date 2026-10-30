@@ -3,7 +3,6 @@ easy_terminal is meant to make it easy to get styled output in the terminal.
 Built on top of the rich library — no more memorizing markup strings.
 """
 
-
 from __future__ import annotations
 
 
@@ -34,6 +33,7 @@ class EasyTerminal:
             console.print("Hello World", style="bold red")
             ```
     """
+
     def __init__(self, text: str) -> None:
         self.text = text
         self.color = "#ffffff"
@@ -42,7 +42,6 @@ class EasyTerminal:
         self.weight = None
         self.styles = {}
         self.style_chain = None
-
 
     def set_color(self, color: str) -> EasyTerminal:
         """
@@ -70,10 +69,9 @@ class EasyTerminal:
                 console = Console()
                 console.print("Hello", style="#ff0000")
                 ```
-    """
+        """
         self.color = color
         return self
-
 
     def set_bg_color(self, color: str) -> EasyTerminal:
         """
@@ -105,7 +103,6 @@ class EasyTerminal:
         self.bg_color = color
         return self
 
-
     def set_bold(self) -> EasyTerminal:
         """
         Makes the text bold and returns the object for chaining.
@@ -133,9 +130,8 @@ class EasyTerminal:
                 ```
         """
         self.weight = "bold"
-        self.styles['weight'] = self.weight
+        self.styles["weight"] = self.weight
         return self
-
 
     def set_light_weight(self) -> EasyTerminal:
         """
@@ -164,9 +160,8 @@ class EasyTerminal:
                 ```
         """
         self.weight = "dim"
-        self.styles['weight'] = self.weight
+        self.styles["weight"] = self.weight
         return self
-
 
     def _check_color_scheme(self) -> EasyTerminal:
         """Combines the text and background colors into one rich style."""
@@ -174,9 +169,8 @@ class EasyTerminal:
             self.color_scheme = f"{self.color} on {self.bg_color}"
         else:
             self.color_scheme = self.color
-        self.styles['color_scheme'] = self.color_scheme
+        self.styles["color_scheme"] = self.color_scheme
         return self
-
 
     def _chain_styles(self) -> EasyTerminal:
         """Joins all chosen styles into a single space-separated string."""
@@ -185,7 +179,6 @@ class EasyTerminal:
         style_list = [i for i in style_list if i is not None]
         self.style_chain = " ".join(style_list)
         return self
-
 
     def show(self) -> None:
         """
@@ -263,3 +256,77 @@ def print_styled(
     elif dim:
         terminal.set_light_weight()
     terminal.show()
+
+
+def print_centered(text: str, width: int | None = None) -> None:
+    """
+    Prints text centered across the terminal width.
+
+    A one-line way to center a heading or message without working out
+    the padding yourself. When no width is given, the current terminal
+    width is used.
+
+    Args:
+        text (str): The text to print.
+        width (int, optional): Width to center within. Defaults to the
+            current terminal width.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import print_centered
+
+            print_centered("Hello World")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from rich.align import Align
+            from rich.console import Console
+
+            Console().print(Align.center("Hello World"))
+            ```
+    """
+    import shutil
+
+    from rich.align import Align
+    from rich.console import Console
+
+    if width is None:
+        width = shutil.get_terminal_size().columns
+    Console(width=width).print(Align.center(str(text)))
+
+
+def print_rule(title: str = "") -> None:
+    """
+    Print a horizontal divider with an optional centered heading.
+
+    Uses the current console width. Rich fits or shortens the heading
+    when the console is narrow; the exact divider depends on the console.
+
+    Args:
+        title (str, optional): Heading to show as literal text, without
+            interpreting Rich markup. Defaults to an empty string for
+            a plain divider. Values are converted to strings, as with
+            `print_centered()`.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import print_rule
+
+            print_rule("Results")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from rich.console import Console
+            from rich.text import Text
+
+            Console().rule(Text("Results"))
+            ```
+    """
+    from rich.console import Console
+    from rich.text import Text
+
+    Console().rule(Text(str(title)))

@@ -381,6 +381,75 @@ def count_log_levels(file_path: str) -> dict[str, int]:
     return totals
 
 
+@contextmanager
+def temporary_log_level(logger: logging.Logger, level: int | str) -> Iterator[None]:
+    """
+    Changes a logger's level for a block and restores its previous level.
+
+    Restores the exact explicit level, including NOTSET, even if the block
+    raises. Nested blocks restore the level that was active on entry.
+    Handler levels/filters, logger filters, propagation and global logging
+    settings still apply and are not changed. A shared logger's temporary
+    level is visible to other users of that logger; this is not thread-local.
+
+    Args:
+        logger (logging.Logger): Logger to adjust, normally obtained with
+            logging.getLogger(). Its explicit level will change.
+        level (int | str): Integer logging level or a registered level name,
+            such as logging.DEBUG or "debug". String names are uppercased,
+            matching setup_file_logger. Integers follow Logger.setLevel.
+
+    Yields:
+        None: Runs the block without providing an `as` target value.
+
+    Raises:
+        TypeError: If logger is not a logging.Logger or level is neither
+            an integer nor a string accepted by logging.
+        ValueError: If a string does not name a registered logging level.
+        BaseException: Propagates any exception from the enclosed block
+            after restoring the previous level.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            import logging
+            from py_simple.easy_logging import temporary_log_level
+
+            logger = logging.getLogger("example")
+            logger.setLevel(logging.WARNING)
+            with temporary_log_level(logger, "debug"):
+                print(logger.isEnabledFor(logging.DEBUG))  # True
+            print(logger.level == logging.WARNING)  # True
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import logging
+
+            logger = logging.getLogger("example")
+            logger.setLevel(logging.WARNING)
+            previous_level = logger.level
+            logger.setLevel("DEBUG")
+            try:
+                print(logger.isEnabledFor(logging.DEBUG))  # True
+            finally:
+                logger.setLevel(previous_level)
+            print(logger.level == logging.WARNING)  # True
+            ```
+    """
+    if not isinstance(logger, logging.Logger):
+        raise TypeError("logger must be a logging.Logger")
+    if isinstance(level, str):
+        level = level.upper()
+
+    previous_level = logger.level
+    logger.setLevel(level)
+    try:
+        yield
+    finally:
+        logger.setLevel(previous_level)
+
+
 def setup_file_logger(
     log_file: str,
     level: int | str = logging.INFO,
@@ -394,6 +463,9 @@ def setup_file_logger(
     Adds a `logging.FileHandler` formatted with `format_string` at the
     specified logging level. If a handler for the same file path is already
     attached to the logger, duplicate handlers are not added.
+
+    Calling this again for the same logger and file updates both the
+    handler level and format without adding another handler.
 
     Args:
         log_file (str): Path to the log file to write to.
@@ -448,6 +520,7 @@ def setup_file_logger(
             and os.path.abspath(getattr(handler, "baseFilename", "")) == abs_path
         ):
             handler.setLevel(level)
+            handler.setFormatter(logging.Formatter(format_string))
             handler_exists = True
 
     if not handler_exists:

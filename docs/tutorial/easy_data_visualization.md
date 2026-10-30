@@ -49,6 +49,28 @@ plot_data(x, y)
 
 The module uses `_infer_type()` internally to classify each series as either `quantitative` or `categorical`, allowing `plot_data()` to choose the appropriate visualization automatically.
 
+## Dedicated Chart Functions
+
+When you already know the exact visualization you want and want to label axes and titles, `easy_data_visualization` provides dedicated helpers:
+
+```python
+from py_simple import (
+    plot_bar_chart,
+    plot_line_chart,
+    plot_pie_chart,
+    plot_scatter_chart,
+)
+
+# Scatter plot: Explore relationships between two numeric sets
+plot_scatter_chart(
+    x_values=[1, 2, 3, 4, 5],
+    y_values=[10, 20, 25, 30, 50],
+    title="Study Hours vs Test Score",
+    x_label="Hours Studied",
+    y_label="Score (%)",
+)
+```
+
 ## Why use these helpers?
 
 Instead of manually checking your data, choosing a chart, creating Matplotlib figures, and configuring each axis, you can simply write:

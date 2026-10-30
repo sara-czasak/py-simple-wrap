@@ -41,6 +41,34 @@ INFO: Finished: Prepare order summary
 
 If a block or decorated function raises an exception, the helper logs an ERROR message with the traceback and re-raises the original exception. It does not log a successful completion for that operation.
 
+## Temporarily enable more detailed logging
+
+Use `temporary_log_level()` to change one logger's level just for a block:
+
+```python
+import logging
+from py_simple.easy_logging import temporary_log_level
+
+logger = logging.getLogger("example")
+logger.setLevel(logging.WARNING)
+with temporary_log_level(logger, "debug"):
+    print(logger.isEnabledFor(logging.DEBUG))  # True
+print(logger.level == logging.WARNING)  # True
+```
+
+The helper accepts integer levels and registered string names, including
+lowercase names like `"debug"`, as `setup_file_logger()` does. It restores the
+exact previous explicit level even when the block raises. An original `NOTSET`
+level returns to `NOTSET`, so the logger inherits its parent's current level
+again. Nested blocks restore the level active at each entry. Exceptions from
+the block propagate unchanged.
+
+This changes only the logger's level. Handler thresholds and filters, logger
+filters, disabled settings and global logging settings still apply. In
+particular, a handler set to INFO will still discard DEBUG records; configuring
+that handler remains the application's responsibility. Other users of the same
+logger see the temporary level too, so this does not provide thread isolation.
+
 ## Why use these helpers?
 
 These helpers handle the repeated start, success, and failure logging around an operation, keeping the code focused on its task. Use `log_step()` for a selected block and `log_function()` when every call to a synchronous function or method should be logged.

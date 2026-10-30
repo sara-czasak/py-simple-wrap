@@ -330,3 +330,13 @@ def test_clamp_decimal_values():
 
 def test_clamp_negative_range():
     assert clamp(-5, -10, -1) == -5
+
+
+@pytest.mark.parametrize("number", [10**400, 3 * (10**400 + 1)])
+def test_is_prime_handles_large_composites_without_float_overflow(number):
+    assert is_prime(number) is False
+
+
+@pytest.mark.parametrize("number,expected", [(1, False), (2, True), (3, True), (9, False), (25, False), (49, False), (121, False), (127, True)])
+def test_is_prime_checks_integer_square_root_boundary(number, expected):
+    assert is_prime(number) is expected

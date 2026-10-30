@@ -52,18 +52,13 @@ def find_duplicates(items: list) -> list:
         === "The Traditional Way"
             ```python
             items = [1, 2, 2, 3, 3, 3]
-            result = list({item for item in items if items.count(item) > 1})
+            result = [item for item in dict.fromkeys(items) if items.count(item) > 1]
             ```
     """
-    seen = set()
-    duplicates = []
+    counts = {}
     for item in items:
-        if item in seen:
-            if item not in duplicates:
-                duplicates.append(item)
-        else:
-            seen.add(item)
-    return duplicates
+        counts[item] = counts.get(item, 0) + 1
+    return [item for item, count in counts.items() if count > 1]
 
 
 def chunk_list(items: list, size: int) -> list:

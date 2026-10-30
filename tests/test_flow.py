@@ -139,7 +139,7 @@ class TestTimeFunctionCall:
     def test_measures_elapsed_time(self, monkeypatch):
         """Checks to see if time difference is calculated correctly."""
         times = iter([100.0, 100.5])
-        monkeypatch.setattr(time, "time", lambda: next(times))
+        monkeypatch.setattr(time, "perf_counter", lambda: next(times))
 
         duration = time_function_call(lambda: None)
         assert duration == pytest.approx(0.5)
@@ -357,3 +357,73 @@ def test_wait_until_checks_condition_after_timeout(monkeypatch):
 
     assert wait_until(condition, timeout=0.5, interval=0.1) is True
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize("runner", [run_py_file, run_py_file_safe])
+def test_script_runner_executes_main_guard(runner, tmp_path, capsys):
+    script = tmp_path / "guarded.py"
+    script.write_text(
+        "if __name__ == '__main__':\n"
+        "    print('main entry point ran')\n",
+        encoding="utf-8",
+    )
+
+    result = runner(str(script))
+
+    assert "main entry point ran" in capsys.readouterr().out
+    if runner is run_py_file_safe:
+        assert result == (True, None)
+
+
+@pytest.mark.parametrize("runner", [run_py_file, run_py_file_safe])
+def test_script_runner_handles_errors_in_main_guard(runner, tmp_path):
+    script = tmp_path / "broken_main.py"
+    script.write_text(
+        "if __name__ == '__main__':\n"
+        "    raise ValueError('main entry point failed')\n",
+        encoding="utf-8",
+    )
+
+    if runner is run_py_file:
+        with pytest.raises(EasyFlowError, match="main entry point failed"):
+            runner(str(script))
+    else:
+        assert runner(str(script)) == (False, "main entry point failed")
+
+
+
+def test_time_it_preserves_metadata_and_signature(capsys):
+    import inspect
+
+    def calculate(value: int, *, offset: int = 1) -> int:
+        """Calculate an adjusted value."""
+        return value + offset
+
+    timed = time_it(calculate)
+
+    assert timed.__name__ == calculate.__name__
+    assert timed.__qualname__ == calculate.__qualname__
+    assert timed.__doc__ == calculate.__doc__
+    assert timed.__annotations__ == calculate.__annotations__
+    assert inspect.signature(timed) == inspect.signature(calculate)
+    assert inspect.unwrap(timed) is calculate
+    assert timed(2, offset=3) == 5
+    assert "calculate took" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("clock_shift", [-3600, 3600])
+@pytest.mark.parametrize("decorated", [False, True])
+def test_timing_helpers_ignore_wall_clock_adjustments(monkeypatch, capsys, clock_shift, decorated):
+    wall_times = iter([10000.0, 10000.0 + clock_shift])
+    elapsed_times = iter([20.0, 20.25])
+    monkeypatch.setattr(time, "time", lambda: next(wall_times))
+    monkeypatch.setattr(time, "perf_counter", lambda: next(elapsed_times))
+
+    def calculate():
+        return 42
+
+    if decorated:
+        assert time_it(calculate)() == 42
+        assert capsys.readouterr().out == "calculate took 0.25s\n"
+    else:
+        assert time_function_call(calculate) == pytest.approx(0.25)

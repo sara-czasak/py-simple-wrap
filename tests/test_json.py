@@ -71,6 +71,15 @@ class TestEasyJson:
         result = pretty_json(data=data)
         assert result == json.dumps(data, indent=2)
 
+    def test_pretty_json_with_empty_dict(self):
+        assert pretty_json(data={}) == "{}"
+
+    def test_pretty_json_with_empty_dict_filepath(self, tmp_path):
+        json_file = tmp_path / "empty.json"
+        json_file.write_text("{}", encoding="utf-8")
+
+        assert pretty_json(filepath=str(json_file)) == "{}"
+
     def test_pretty_json_with_filepath(self, tmp_path):
         json_file = tmp_path / "sample.json"
         data = {"name": "Sara", "age": 25}
@@ -136,7 +145,7 @@ class TestEasyJson:
 
     def test_is_nested_json_false_flat(self):
         data = {"a": 1, "b": "hello", "c": True}
-        assert not is_nested_json(data=data)
+        assert is_nested_json(data=data) is False
 
     def test_is_nested_json_with_filepath(self, tmp_path):
         json_file = tmp_path / "nested.json"
@@ -144,6 +153,13 @@ class TestEasyJson:
         json_file.write_text(json.dumps(data), encoding="utf-8")
 
         assert is_nested_json(filepath=str(json_file)) is True
+
+    @pytest.mark.parametrize("data", [{}, {"a": 1, "b": "hello"}])
+    def test_is_nested_json_false_with_flat_filepath(self, tmp_path, data):
+        json_file = tmp_path / "flat.json"
+        json_file.write_text(json.dumps(data), encoding="utf-8")
+
+        assert is_nested_json(filepath=str(json_file)) is False
 
     def test_is_nested_json_no_args_raises_easy_json_error(self):
         with pytest.raises(EasyJsonError) as exc_info:
@@ -233,7 +249,7 @@ class TestEasyJson:
         assert "ERROR:" in str(exc_info.value)
 
     def test_is_nested_json_empty_dict_is_not_nested(self):
-        assert not is_nested_json(data={})
+        assert is_nested_json(data={}) is False
 
     def test_is_nested_json_invalid_file_raises_easy_json_error(self, tmp_path):
         bad_file = tmp_path / "bad.json"

@@ -38,8 +38,8 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
     Returns:
         None
     Raises:
-        EasyConfigError: If the template cannot be read or the workflow
-            file cannot be written.
+        EasyConfigError: If the template cannot be read, the git repository
+            cannot be found, or the workflow file cannot be written.
     Example:
         === "The Py_simple Way"
             ```python
@@ -71,15 +71,15 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
                 )
             ```
     """
-    if at_root:
-        workflow_path = f".github/workflows/{filename}.yml"
-    else:
-        import git
-
-        git_repo = git.Repo(os.getcwd(), search_parent_directories=True)
-        git_root = git_repo.git.rev_parse("--show-toplevel")
-        workflow_path = f"{git_root}/.github/workflows/{filename}.yml"
     try:
+        if at_root:
+            workflow_path = f".github/workflows/{filename}.yml"
+        else:
+            import git
+
+            git_repo = git.Repo(os.getcwd(), search_parent_directories=True)
+            git_root = git_repo.git.rev_parse("--show-toplevel")
+            workflow_path = f"{git_root}/.github/workflows/{filename}.yml"
         if not os.path.exists(workflow_path):
             template_path = (
                 files("py_simple") / "config_templates" / "workflow-template.yml"
@@ -266,6 +266,85 @@ def read_env_file(file_path: str = ".env") -> dict[str, str]:
                 value = value.strip()
                 variables[key] = value
         return variables
+    except Exception as e:
+        raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
+
+def create_env_example_file(
+    file_path: str = ".env",
+    example_path: str = ".env.example",
+    overwrite: bool = False,
+) -> None:
+    """
+    Creates a .env.example file from an existing .env file.
+
+    Copies every key and drops the values, so the example documents
+    which variables a project needs without leaking secrets. Comment
+    lines and blank lines are kept as-is. If the example file already
+    exists and overwrite is False, it is left alone.
+
+    Args:
+        file_path (str, optional): Path to the source .env file.
+            Defaults to ".env".
+        example_path (str, optional): Destination path for the example
+            file. Defaults to ".env.example".
+        overwrite (bool, optional): Whether to overwrite an existing
+            example file. Defaults to False.
+
+    Returns:
+        None
+
+    Raises:
+        EasyConfigError: If the source file cannot be read or the
+            example file cannot be written.
+        EasyConfigError: If the source and destination paths point to
+            the same file.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import create_env_example_file
+
+            create_env_example_file(".env")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            with open(".env", encoding="utf-8") as source:
+                lines = source.readlines()
+            with open(".env.example", "w", encoding="utf-8") as target:
+                for line in lines:
+                    stripped = line.strip()
+                    if not stripped or stripped.startswith("#"):
+                        target.write(line)
+                    elif "=" in stripped:
+                        key = stripped.split("=", 1)[0].strip()
+                        target.write(f"{key}=\\n")
+            ```
+    """
+    if os.path.realpath(file_path) == os.path.realpath(example_path):
+        raise EasyConfigError(
+            "\n\n\nERROR: source and destination must be different files"
+        )
+
+    if os.path.exists(example_path) and not overwrite:
+        return
+
+    try:
+        parent_dir = os.path.dirname(example_path)
+        if parent_dir:
+            os.makedirs(parent_dir, exist_ok=True)
+
+        with open(file_path, encoding="utf-8") as source:
+            lines = source.readlines()
+        with open(example_path, "w", encoding="utf-8") as target:
+            for line in lines:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    target.write(line)
+                elif "=" in stripped:
+                    key = stripped.split("=", 1)[0].strip()
+                    target.write(f"{key}=\n")
     except Exception as e:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 

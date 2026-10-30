@@ -82,6 +82,17 @@ nav:
           - Lunch Picker: tutorial/lunch-picker-project.md
           - Palette Journal: tutorial/palette-journal-project.md
           - Homework Log: tutorial/homework-log-project.md
+          - Word Detective: tutorial/word-frequency-project.md
+          - Backup Checker: tutorial/backup-check-project.md
+          - Pizza Party Bill Splitter: tutorial/pizza-party-project.md
+          - Study Habit Tracker: tutorial/study-habit-tracker-project.md
+          - BookQuest: tutorial/bookquest-reading-tracker.md
+          - Message Capsule: tutorial/message-capsule-project.md
+          - Message Detective: tutorial/message-detective-project.md
+          - Class Link Shelf: tutorial/class-link-shelf-project.md
+          - Story Prompt Jar: tutorial/story-prompt-jar-project.md
+          - Website Health Monitor: tutorial/website-health-monitor-project.md
+          - Club Badge: tutorial/club-badge-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
@@ -90,6 +101,14 @@ nav:
       - Tutorial Template: contributor-hub/tutorial_template.md
       - Custom Exception Template: contributor-hub/error_template.md
       - Module Tests Template: contributor-hub/tests_template.md
+      - Testing Random Helpers: contributor-hub/random_tests_template.md
+      - Network Test Template: contributor-hub/network_tests_template.md
+      - Public API Export Template: contributor-hub/public_api_template.md
+      - Pre-commit Guide: contributor-hub/pre_commit_template.md
+      - Pull Request Workflow Guide: contributor-hub/pr_workflow_template.md
+      - Adding a New Module Guide: contributor-hub/new_module_template.md
+      - Adding a Function to an Existing Module: contributor-hub/expand_module_template.md
+      - Project-Based Tutorial Template: contributor-hub/project_tutorial_template.md
   - Reference:
       - Easy AI: reference/easy_ai.md
       - Easy Archive: reference/easy_archive.md

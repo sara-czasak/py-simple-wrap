@@ -218,7 +218,7 @@ def is_alphanumeric(text: str) -> bool:
     Example:
         === "The Py_simple Way"
             ```python
-            from py_simple import is_palindrome
+            from py_simple import is_alphanumeric
 
             result = is_alphanumeric("Something123")  # -> True
             ```
@@ -226,10 +226,7 @@ def is_alphanumeric(text: str) -> bool:
         === "The Traditional Way"
             ```python
             text = "Something123"
-                if text.isalnum():
-                    return True
-                else:
-                    return False
+            result = text.isalnum()  # -> True
             ```
     """
     return bool(text.isalnum())

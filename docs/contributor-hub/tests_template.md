@@ -226,7 +226,7 @@ tests/test_strings.py::test_count_words[hello 123 world-3] PASSED        [100%]
 ======================= 8 passed, 53 deselected in 0.04s =======================
 ````
 
-Before you open your pull request, run plain `pytest` once with no extras, so you know the whole suite is still green. GitHub will run it again on Python 3.10 through 3.14 when you push.
+Before you open your pull request, run plain `pytest` once with no extras, so you know the whole suite is still green. GitHub will run it again on Python 3.11 through 3.14 when you push.
 
 ## Still stuck?
 

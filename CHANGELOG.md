@@ -9,6 +9,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-10-26
+
+### Breaking Changes
+- **Dropped support for Python 3.10 due to security vulnerabilities affecting Pillow.** Python 3.11 or newer is now required. Updated `requires-python`, supported Python classifiers, and CI configurations to reflect this change. Users running Python 3.10 must upgrade their Python environment to install v0.9.0 or later.
+- Updated the minimum supported Pillow version to `13.0.0` to address security vulnerabilities.
+
+### Security
+- Updated vulnerable dependencies, including Pillow, GitPython, and certificate-related dependencies.
+- Updated `certifi` requirements for the `ai` and `web` optional dependency groups.
+- Hardened GitHub Actions workflows and addressed security scanning findings.
+
+### Added
+- Added `encode_bytes`, `decode_to_bytes`, and `encode_file` to `easy_base64`, with tests and documentation ([@JavaSCP](https://github.com/JavaSCP), [@anisayakmitra-in](https://github.com/anisayakmitra-in)).
+- Added `compare_file_hashes` to `easy_hash` ([@Cid-oe](https://github.com/Cid-oe)).
+- Added `calculate_tip` and exact bill-splitting support to `easy_money` ([@anisayakmitra-in](https://github.com/anisayakmitra-in), [@Pratham2511](https://github.com/Pratham2511)).
+- Added `add_bytes`, `remaining_bytes`, and `percent_free` to `easy_bytes` ([@drudru18](https://github.com/drudru18), [@Ash1-gif](https://github.com/Ash1-gif), [@anisayakmitra-in](https://github.com/anisayakmitra-in)).
+- Added `crop_image` and `adjust_brightness` to `easy_images`, with tests ([@anisayakmitra-in](https://github.com/anisayakmitra-in), [@supergioo0](https://github.com/supergioo0)).
+- Added `plot_scatter_chart` and `plot_histogram` to `easy_data_visualization` ([@anisayakmitra-in](https://github.com/anisayakmitra-in), [@Dikshant-Neupane](https://github.com/Dikshant-Neupane)).
+- Added `iter_csv_rows` for memory-efficient CSV iteration and `merge_csv_files` for merging CSV files ([@nawaaaaaAaar](https://github.com/nawaaaaaAaar), [@Pratham2511](https://github.com/Pratham2511)).
+- Added `get_path` to `easy_url` ([@Cid-oe](https://github.com/Cid-oe)).
+- Added `extract_phone_numbers` to `easy_regex` ([@Cid-oe](https://github.com/Cid-oe)).
+- Added `setup_file_logger` and `temporary_log_level` to `easy_logging` ([@Cid-oe](https://github.com/Cid-oe), [@Pratham2511](https://github.com/Pratham2511)).
+- Added `run_first_completed` to `easy_async` ([@Cid-oe](https://github.com/Cid-oe)).
+- Added `print_styled` to `easy_terminal` ([@Cid-oe](https://github.com/Cid-oe)).
+- Added `dockerfile_config` to `easy_config` for generating a starter Dockerfile ([@Mr-Neutr0n](https://github.com/Mr-Neutr0n)).
+- Added new project-based tutorials covering backup verification, word-frequency analysis, study habits, and bill splitting.
+- Expanded the Contributor Hub with guides for public API exports and pre-commit checks ([@Utkarsh3725](https://github.com/Utkarsh3725), [@Pratham2511](https://github.com/Pratham2511)).
+
+### Changed
+- Updated Python compatibility metadata and dependency constraints.
+- Updated GitHub Actions workflows for security, compatibility, and reliability.
+- Paused automatic creation of new-module contribution issues following completion of the initial module target.
+- Expanded contributor documentation and tutorials.
+
+### Fixed
+- Fixed malformed Base64 input handling to correctly catch `binascii.Error`.
+- Fixed `easy_archive` allowing extraction output paths that overwrite input archives ([@Utkarsh3725](https://github.com/Utkarsh3725)).
+- Fixed `easy_flow` script execution to correctly run `__main__` guards and preserve timed-function metadata ([@Utkarsh3725](https://github.com/Utkarsh3725)).
+- Fixed repository lookup error handling in `easy_config` ([@Utkarsh3725](https://github.com/Utkarsh3725)).
+- Improved primality testing in `easy_numbers` using integer square roots ([@Utkarsh3725](https://github.com/Utkarsh3725)).
+- Fixed CSV tests for improved Windows portability ([@Ash1-gif](https://github.com/Ash1-gif)).
+- Fixed matplotlib figure cleanup in visualization tests to prevent accumulated open figures ([@Codexhack286](https://github.com/Codexhack286)).
+- Fixed GitHub Actions workflow configuration errors affecting CodeQL and CI.
+- Improved input validation and error handling in `easy_bytes`.
+
 ## [0.8.0] - 2026-10-20
 
 ### Added

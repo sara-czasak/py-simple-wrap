@@ -116,6 +116,36 @@ internal workers from submitting more items. It cannot forcibly terminate
 an already running Python thread; those callbacks may finish later. When
 using `asyncio.run()`, its executor shutdown can wait for those threads.
 
+## Return the first completed result
+
+Use `run_first_completed()` to run multiple zero-argument functions concurrently and get the result of whichever finishes first:
+
+```python
+import asyncio
+import time
+from py_simple import run_first_completed
+
+
+def query_primary():
+    return "primary data"
+
+
+def query_mirror():
+    time.sleep(0.05)
+    return "mirror data"
+
+
+async def main():
+    return await run_first_completed([query_primary, query_mirror])
+
+
+print(asyncio.run(main()))  # ("query_primary", "primary data")
+```
+
+In this example, `query_primary` returns immediately while `query_mirror` has a short delay, so `query_primary` finishes first.
+
+Once the first function completes, all other pending tasks are cancelled. Note that cancelling an asyncio task cannot forcibly terminate an already running thread in Python's thread pool; those callbacks may complete in the background. If the first completed function raises an exception, an `EasyAsyncError` is raised.
+
 ## Why use these helpers?
 
 Instead of manually creating thread pools and handling results every time, you can simply write:

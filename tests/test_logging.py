@@ -1,6 +1,8 @@
 """Tests for easy_logging module."""
 
+import io
 import logging
+from uuid import uuid4
 
 import pytest
 
@@ -18,7 +20,245 @@ from py_simple_package.src.py_simple.easy_logging import (
     log_to_file,
     read_recent_log_lines,
     setup_file_logger,
+    temporary_log_level,
 )
+
+
+@pytest.fixture
+def level_logger():
+    """Register an isolated logger and remove only its own state afterward."""
+    logger = logging.getLogger(f"temporary-level-test-{uuid4().hex}")
+    logger.setLevel(logging.WARNING)
+    logger.propagate = False
+    handler = logging.StreamHandler(io.StringIO())
+    handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+    logger.addHandler(handler)
+    try:
+        yield logger
+    finally:
+        logger.removeHandler(handler)
+        handler.close()
+        logging.Logger.manager.loggerDict.pop(logger.name)
+
+
+def test_temporary_log_level_top_level_public_import(level_logger):
+    from py_simple import temporary_log_level as public_temporary_log_level
+    from py_simple.easy_logging import temporary_log_level as module_temporary_log_level
+
+    assert public_temporary_log_level is module_temporary_log_level
+    stream = level_logger.handlers[0].stream
+    level_logger.debug("hidden before public context")
+    with public_temporary_log_level(level_logger, "debug"):
+        assert level_logger.level == logging.DEBUG
+        level_logger.debug("visible through public import")
+    assert level_logger.level == logging.WARNING
+    level_logger.debug("hidden after public context")
+    assert stream.getvalue() == "DEBUG: visible through public import\n"
+
+
+@pytest.mark.parametrize(
+    "level,expected",
+    [
+        (logging.DEBUG, logging.DEBUG),
+        (logging.INFO, logging.INFO),
+        (logging.NOTSET, logging.NOTSET),
+        (15, 15),
+        (-1, -1),
+        (True, True),
+        ("debug", logging.DEBUG),
+        ("InFo", logging.INFO),
+        ("WARN", logging.WARNING),
+        ("fatal", logging.CRITICAL),
+        ("NOTSET", logging.NOTSET),
+    ],
+)
+def test_temporary_log_level_restores_explicit_level(level_logger, level, expected):
+    with temporary_log_level(level_logger, level) as value:
+        assert value is None
+        assert level_logger.level == expected
+    assert level_logger.level == logging.WARNING
+
+
+def test_temporary_log_level_changes_actual_records_and_restores_cache(level_logger):
+    stream = level_logger.handlers[0].stream
+    level_logger.debug("hidden before")
+    with temporary_log_level(level_logger, logging.DEBUG):
+        level_logger.debug("visible inside")
+        level_logger.info("also visible")
+    level_logger.debug("hidden after")
+    level_logger.warning("visible after")
+    assert stream.getvalue().splitlines() == [
+        "DEBUG: visible inside",
+        "INFO: also visible",
+        "WARNING: visible after",
+    ]
+
+
+def test_temporary_log_level_restores_notset_inheritance(level_logger):
+    parent = logging.Logger("temporary-parent", logging.ERROR)
+    level_logger.parent = parent
+    level_logger.setLevel(logging.NOTSET)
+    assert level_logger.getEffectiveLevel() == logging.ERROR
+    with temporary_log_level(level_logger, "debug"):
+        assert level_logger.getEffectiveLevel() == logging.DEBUG
+        parent.setLevel(logging.CRITICAL)
+    assert level_logger.level == logging.NOTSET
+    assert level_logger.getEffectiveLevel() == logging.CRITICAL
+
+
+@pytest.mark.parametrize("error_type", [ValueError, KeyboardInterrupt, SystemExit])
+def test_temporary_log_level_restores_and_preserves_exception(level_logger, error_type):
+    error = error_type("original failure")
+    origin = None
+    with pytest.raises(error_type) as caught:
+        with temporary_log_level(level_logger, "debug"):
+            try:
+                raise error
+            except BaseException as raised:
+                origin = raised.__traceback__
+                raise
+    assert caught.value is error
+    traceback = caught.value.__traceback__
+    frames = []
+    while traceback is not None:
+        frames.append(traceback)
+        traceback = traceback.tb_next
+    assert origin in frames
+    assert level_logger.level == logging.WARNING
+
+
+def test_temporary_log_level_nested_success_and_failure(level_logger):
+    with temporary_log_level(level_logger, "info"):
+        with temporary_log_level(level_logger, logging.DEBUG):
+            assert level_logger.level == logging.DEBUG
+        assert level_logger.level == logging.INFO
+        with pytest.raises(RuntimeError, match="inner"):
+            with temporary_log_level(level_logger, logging.ERROR):
+                raise RuntimeError("inner")
+        assert level_logger.level == logging.INFO
+    assert level_logger.level == logging.WARNING
+
+
+@pytest.mark.parametrize(
+    "level,error_type",
+    [
+        (None, TypeError),
+        (1.5, TypeError),
+        ([], TypeError),
+        ({}, TypeError),
+        (object(), TypeError),
+        ("unknown", ValueError),
+        ("10", ValueError),
+        ("", ValueError),
+    ],
+)
+def test_temporary_log_level_invalid_level_does_not_enter(
+    level_logger, level, error_type
+):
+    entered = False
+    with pytest.raises(error_type):
+        with temporary_log_level(level_logger, level):
+            entered = True
+    assert not entered
+    assert level_logger.level == logging.WARNING
+
+
+@pytest.mark.parametrize(
+    "logger",
+    [None, "example", object(), logging.LoggerAdapter(logging.Logger("adapter"), {})],
+)
+def test_temporary_log_level_rejects_invalid_logger(logger):
+    with pytest.raises(TypeError, match="logger must be a logging.Logger"):
+        with temporary_log_level(logger, "debug"):
+            pytest.fail("Invalid logger must not enter the block")
+
+
+def test_temporary_log_level_leaves_other_state_and_handler_threshold(level_logger):
+    handler = level_logger.handlers[0]
+    handler.setLevel(logging.ERROR)
+    logger_filter, handler_filter = logging.Filter(), logging.Filter()
+    level_logger.addFilter(logger_filter)
+    handler.addFilter(handler_filter)
+    other = logging.Logger("unrelated", logging.CRITICAL)
+    root_state = (logging.root.level, list(logging.root.handlers))
+    disabled = logging.root.manager.disable
+    original_state = (
+        list(level_logger.handlers),
+        list(level_logger.filters),
+        level_logger.propagate,
+        level_logger.disabled,
+        handler.level,
+        list(handler.filters),
+        handler.formatter,
+    )
+    with temporary_log_level(level_logger, "debug"):
+        level_logger.debug("still blocked by handler")
+        level_logger.error("visible error")
+        assert other.level == logging.CRITICAL
+    assert handler.stream.getvalue() == "ERROR: visible error\n"
+    assert original_state == (
+        list(level_logger.handlers),
+        list(level_logger.filters),
+        level_logger.propagate,
+        level_logger.disabled,
+        handler.level,
+        list(handler.filters),
+        handler.formatter,
+    )
+    assert root_state == (logging.root.level, list(logging.root.handlers))
+    assert logging.root.manager.disable == disabled
+
+
+def test_temporary_log_level_does_not_enable_disabled_logger(level_logger):
+    level_logger.disabled = True
+    with temporary_log_level(level_logger, "debug"):
+        level_logger.error("disabled")
+    assert level_logger.disabled
+    assert level_logger.handlers[0].stream.getvalue() == ""
+
+
+def test_temporary_log_level_preserves_filtering_and_shared_visibility(level_logger):
+    handler = level_logger.handlers[0]
+
+    class MessageFilter(logging.Filter):
+        def __init__(self, blocked):
+            super().__init__()
+            self.blocked = blocked
+
+        def filter(self, record):
+            return record.getMessage() != self.blocked
+
+    level_logger.addFilter(MessageFilter("logger-blocked"))
+    handler.addFilter(MessageFilter("handler-blocked"))
+    shared = logging.getLogger(level_logger.name)
+    with temporary_log_level(level_logger, "debug"):
+        assert shared.level == logging.DEBUG
+        shared.debug("logger-blocked")
+        shared.debug("handler-blocked")
+        shared.debug("visible")
+    assert shared.level == logging.WARNING
+    assert handler.stream.getvalue() == "DEBUG: visible\n"
+
+
+def test_temporary_log_level_restores_entry_value_after_block_changes(level_logger):
+    with temporary_log_level(level_logger, "info"):
+        level_logger.setLevel(logging.CRITICAL)
+    assert level_logger.level == logging.WARNING
+
+
+def test_temporary_log_level_registered_name(level_logger, monkeypatch):
+    monkeypatch.setitem(logging._nameToLevel, "NOTICE", 25)
+    with temporary_log_level(level_logger, "notice"):
+        assert level_logger.level == 25
+    assert level_logger.level == logging.WARNING
+
+
+def test_temporary_log_level_public_module_import(level_logger):
+    from py_simple.easy_logging import temporary_log_level as public_context
+
+    with public_context(level_logger, "debug"):
+        assert level_logger.level == logging.DEBUG
+    assert level_logger.level == logging.WARNING
 
 
 def test_log_step_logs_start_and_finish(caplog):
@@ -426,3 +666,20 @@ def test_filter_log_lines_raises_for_invalid_level(tmp_path):
 
     with pytest.raises(ValueError):
         filter_log_lines(str(log_file), "TRACE")
+@pytest.mark.parametrize("new_format", ["[%(levelname)s] %(message)s", "%(message)s"])
+def test_setup_file_logger_updates_existing_handler_format(tmp_path, new_format):
+    log_file = tmp_path / "reconfigured.log"
+    logger = setup_file_logger(str(log_file), format_string="old: %(message)s")
+    logger.info("before")
+    original_handlers = list(logger.handlers)
+
+    configured = setup_file_logger(str(log_file), format_string=new_format)
+    configured.info("after")
+
+    assert configured is logger
+    assert logger.handlers == original_handlers
+    expected = "[INFO] after" if new_format.startswith("[") else "after"
+    assert log_file.read_text(encoding="utf-8").splitlines() == [
+        "old: before",
+        expected,
+    ]

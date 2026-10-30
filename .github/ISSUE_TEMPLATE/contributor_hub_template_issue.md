@@ -3,7 +3,7 @@ name: 🧭 Add a new guide to the Contributor Hub
 about: Write a new template/guide for something not yet covered in the Contributor Hub
 title: 🧭 Add a new guide to the Contributor Hub
 labels: documentation, good first issue, help wanted, good-first-issue
-milestone: v0.9.0
+milestone: v1.0.0
 ---
 The [Contributor Hub](https://sara-czasak.github.io/py-simple-wrap/docs/contributor-hub/) exists so nobody has to guess how this project formats things — docstrings, tutorials, exceptions, and so on each have a fill-in-the-blanks template.
 

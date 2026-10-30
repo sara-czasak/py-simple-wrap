@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py_simple_wrap"
-version = "0.8.0"
+version = "0.9.0"
 authors = [
   { name = "Sara Czasak", email = "sara.p.czasak.m@gmail.com" },
 ]
@@ -13,7 +13,7 @@ maintainers = [
 ]
 description = "A package to make complex python functionality simple"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["python", "beginner-friendly", "wrapper", "education", "utilities", "helper-functions", "simple-api", "easy-to-use", "automation", "beginner", "learning", "students"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -21,7 +21,6 @@ classifiers = [
     "Intended Audience :: Education",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -43,6 +42,7 @@ Quickstart = "https://github.com/sara-czasak/py-simple-wrap/blob/main/QUICKSTART
 base = []
 ai = [
     "pydantic>=2.0.0",
+    "certifi>=2026.10.19",
     "langchain-core>=0.2.0",
     "langchain-openai>=0.1.0",
     "langchain-ollama>=0.1.0",
@@ -57,12 +57,13 @@ viz = [
     "matplotlib>=3.0.0",
 ]
 images = [
-    "Pillow>=10.0.0",
+    "Pillow>=13.0.0",
     "qrcode>=7.4.0",
 ]
 web = [
     "requests>=2.25.0",
     "beautifulsoup4>=4.9.0",
+    "certifi>=2026.10.19",
 ]
 config = [
     "GitPython>=3.1.0",

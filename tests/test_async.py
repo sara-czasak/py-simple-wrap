@@ -1,6 +1,7 @@
 import asyncio
 import gc
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
@@ -15,6 +16,8 @@ from py_simple_package.src.py_simple.easy_async import (
     run_after_delay,
     run_with_retry,
     run_periodically,
+    run_first_completed,
+    run_with_default,
 )
 
 
@@ -84,8 +87,6 @@ def test_run_with_timeout_success():
 
 def test_run_with_timeout_failure():
     """It should raise EasyAsyncError if execution times out or fails."""
-    import time
-
     def slow_func():
         time.sleep(0.4)
         return True
@@ -488,3 +489,193 @@ def test_run_periodically_invalid_times():
 
     with pytest.raises(EasyAsyncError, match="times"):
         asyncio.run(run_periodically(add, 0.5, -2))
+
+
+def test_run_first_completed_fastest_wins():
+    def slow_func():
+        time.sleep(0.3)
+        return "slow"
+
+    def fast_func():
+        return "fast"
+
+    name, result = asyncio.run(run_first_completed([slow_func, fast_func]))
+    assert name == "fast_func"
+    assert result == "fast"
+
+
+def test_run_first_completed_single_func():
+    def only_func():
+        return 42
+
+    name, result = asyncio.run(run_first_completed([only_func]))
+    assert name == "only_func"
+    assert result == 42
+
+
+def test_run_first_completed_first_raises_error():
+    def slow_func():
+        time.sleep(0.3)
+        return "slow"
+
+    def fast_error():
+        raise ValueError("instant failure")
+
+    with pytest.raises(EasyAsyncError):
+        asyncio.run(run_first_completed([slow_func, fast_error]))
+
+
+def test_run_first_completed_empty_list():
+    with pytest.raises(EasyAsyncError, match="non-empty list"):
+        asyncio.run(run_first_completed([]))
+
+
+def test_run_first_completed_invalid_type():
+    with pytest.raises(EasyAsyncError, match="non-empty list"):
+        asyncio.run(run_first_completed("not a list"))
+
+
+def test_run_first_completed_non_callable():
+    def valid_func():
+        return 1
+
+    with pytest.raises(EasyAsyncError, match="must be callable"):
+        asyncio.run(run_first_completed([valid_func, "not callable"]))
+
+
+def test_run_first_completed_public_import():
+    from py_simple import run_first_completed as public_runner
+    from py_simple.easy_async import run_first_completed as module_runner
+
+    assert public_runner is module_runner
+
+
+def test_run_first_completed_callable_object():
+    class CallableObj:
+        def __call__(self):
+            return "from_object"
+
+        def __repr__(self):
+            return "CallableObj()"
+
+    name, result = asyncio.run(run_first_completed([CallableObj()]))
+    assert name == "CallableObj()"
+    assert result == "from_object"
+
+
+def test_run_first_completed_bad_repr_with_name():
+    class BadReprCallable:
+        __name__ = "custom_func"
+
+        def __call__(self):
+            return 99
+
+        def __repr__(self):
+            raise RuntimeError("broken repr")
+
+    name, result = asyncio.run(run_first_completed([BadReprCallable()]))
+    assert name == "custom_func"
+    assert result == 99
+
+
+
+def test_run_first_completed_outer_cancellation():
+    async def scenario():
+        def slow_one():
+            time.sleep(0.5)
+            return "slow1"
+
+        def slow_two():
+            time.sleep(0.5)
+            return "slow2"
+
+        task = asyncio.create_task(run_first_completed([slow_one, slow_two]))
+        await asyncio.sleep(0.01)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    asyncio.run(scenario())
+
+
+def test_run_with_default_returns_result_on_success():
+    def add(a, b):
+        return a + b
+
+    assert asyncio.run(run_with_default(add, 0, 2, 3)) == ("add", 5)
+
+
+def test_run_with_default_returns_fallback_on_failure():
+    def failing():
+        raise ValueError("Something went wrong")
+
+    assert asyncio.run(run_with_default(failing, "default")) == (
+        "failing",
+        "default",
+    )
+
+
+def test_run_with_default_passes_args_and_keeps_name():
+    def greet(name):
+        raise RuntimeError("no greeting available")
+
+    assert asyncio.run(run_with_default(greet, "hello", "world")) == (
+        "greet",
+        "hello",
+    )
+
+
+def test_run_with_default_uses_repr_for_callables_without_name():
+    from functools import partial
+
+    def add(a, b):
+        return a + b
+
+    adder = partial(add, 2)
+    assert asyncio.run(run_with_default(adder, 0, 3)) == (repr(adder), 5)
+
+
+def test_run_with_default_fallback_uses_repr_for_callables_without_name():
+    from functools import partial
+
+    def failing(a):
+        raise ValueError("boom")
+
+    failer = partial(failing, 1)
+    assert asyncio.run(run_with_default(failer, "default")) == (
+        repr(failer),
+        "default",
+    )
+
+
+@pytest.mark.parametrize("runner", ["no_params", "with_params", "map"])
+@pytest.mark.parametrize("raises_later", [False, True])
+def test_concurrent_helpers_distinguish_returned_and_raised_exceptions(runner, raises_later):
+    returned_error = ValueError("returned as data")
+
+    def return_error(*args):
+        return returned_error
+
+    def second_result(*args):
+        if raises_later:
+            raise RuntimeError("actually raised")
+        return "ok"
+
+    def mapped(index):
+        return return_error() if index == 0 else second_result()
+
+    async def run():
+        if runner == "no_params":
+            return await run_at_the_same_time_no_params([return_error, second_result])
+        if runner == "with_params":
+            return await run_at_the_same_time_with_params([(return_error, 1), (second_result, 2)])
+        return await run_concurrent_map(mapped, [0, 1])
+
+    if raises_later:
+        with pytest.raises(EasyAsyncError, match="actually raised"):
+            asyncio.run(run())
+    else:
+        results = asyncio.run(run())
+        values = results if runner == "map" else [value for _, value in results]
+        assert values[0] is returned_error
+        assert values[1] == "ok"

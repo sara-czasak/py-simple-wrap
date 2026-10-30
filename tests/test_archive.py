@@ -1,3 +1,4 @@
+import os
 import zipfile
 
 import pytest
@@ -422,3 +423,47 @@ def test_get_zip_file_count_invalid_zip(tmp_path):
 
     with pytest.raises(EasyArchiveError, match="not a valid zip file"):
         get_zip_file_count(str(invalid_zip))
+
+
+@pytest.mark.parametrize("alias", ["same_path", "relative_path", "symlink", "hardlink"])
+def test_zip_files_rejects_output_alias_of_input_without_changing_files(tmp_path, monkeypatch, alias):
+    source = tmp_path / "source.zip"
+    original = b"original input contents"
+    source.write_bytes(original)
+    output = tmp_path / "output.zip"
+    if alias == "same_path":
+        output = source
+    elif alias == "relative_path":
+        monkeypatch.chdir(tmp_path)
+        output = "./source.zip"
+    elif alias == "symlink":
+        try:
+            output.symlink_to(source)
+        except (OSError, NotImplementedError):
+            pytest.skip("Symbolic links are unavailable")
+    else:
+        try:
+            os.link(source, output)
+        except (OSError, NotImplementedError):
+            pytest.skip("Hard links are unavailable")
+    note = tmp_path / "note.txt"
+    note.write_text("another input", encoding="utf-8")
+
+    with pytest.raises(EasyArchiveError, match="Output must not refer to an input file"):
+        zip_files([str(note), str(source)], str(output))
+
+    assert source.read_bytes() == original
+    assert note.read_text(encoding="utf-8") == "another input"
+
+
+def test_zip_files_allows_overwriting_unrelated_output(tmp_path):
+    source = tmp_path / "note.txt"
+    source.write_text("keep this note", encoding="utf-8")
+    output = tmp_path / "output.zip"
+    output.write_bytes(b"old output")
+
+    zip_files([str(source)], str(output))
+
+    with zipfile.ZipFile(output) as archive:
+        assert archive.namelist() == ["note.txt"]
+        assert archive.read("note.txt") == b"keep this note"

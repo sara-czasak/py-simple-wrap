@@ -29,13 +29,26 @@ def write_people_csv(path):
     )
 
 
+def _symlink_or_skip(link, target):
+    """Skip only when Windows denies the privilege to create symbolic links."""
+    try:
+        link.symlink_to(target)
+    except OSError as error:
+        if getattr(error, "winerror", None) == 1314:
+            pytest.skip("Creating symbolic links requires a Windows privilege")
+        raise
+
+
 class TestIterCsvRows:
-    def test_dict_rows_and_unicode(self, tmp_path):
+    @pytest.mark.parametrize("newline", ["\n", "\r\n"], ids=["lf", "crlf"])
+    def test_dict_rows_and_unicode(self, tmp_path, newline):
         path = tmp_path / "people.csv"
-        path.write_text('Name,Note\nŽan,"hello, world"\nAlice,"two\nlines"\n', encoding="utf-8")
+        # Write exact bytes so Windows does not translate the fixture's newlines.
+        content = f'Name,Note{newline}Žan,"hello, world"{newline}Alice,"two{newline}lines"{newline}'
+        path.write_bytes(content.encode("utf-8"))
         assert list(iter_csv_rows(str(path))) == [
             {"Name": "Žan", "Note": "hello, world"},
-            {"Name": "Alice", "Note": "two\nlines"},
+            {"Name": "Alice", "Note": f"two{newline}lines"},
         ]
 
     def test_list_rows_include_header_and_custom_delimiter(self, tmp_path):
@@ -192,7 +205,7 @@ class TestMergeCsvFiles:
             monkeypatch.chdir(tmp_path)
             output = "./second.csv"
         elif alias == "symlink":
-            output.symlink_to(second)
+            _symlink_or_skip(output, second)
         else:
             os.link(second, output)
         before = {path.name: path.read_bytes() for path in tmp_path.iterdir()}
@@ -208,7 +221,7 @@ class TestMergeCsvFiles:
         ]
         write_people_csv(source)
         target.write_bytes(b"leave alone")
-        output.symlink_to(target)
+        _symlink_or_skip(output, target)
 
         merge_csv_files([source], output)
 

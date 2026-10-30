@@ -79,6 +79,24 @@ and specify `"sha256"`, `"sha1"`, or `"md5"` (defaults to `"sha256"`). If
 either file cannot be read or the algorithm is unsupported, an `EasyHashError`
 is raised.
 
+## Fingerprint several files at once
+
+`hash_files()` returns one checksum per path. Use it when you want to
+check a handful of notes separately, instead of one checksum for a whole
+folder.
+
+```python
+from py_simple import hash_files
+
+checksums = hash_files(["notes.txt", "backup.txt"])
+print(checksums["notes.txt"])
+```
+
+Pass a list or a tuple. An empty list returns an empty dictionary. A
+string path by itself is rejected, because Python would otherwise walk
+its characters. Missing files and unsupported algorithms raise
+`EasyHashError`.
+
 ## Why use these helpers?
 
 The usual version is a few steps every time:

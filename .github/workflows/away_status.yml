@@ -1,33 +1,147 @@
-name: Away status on PR
+name: Away status on mention
 
 on:
-  pull_request:
-    types: [opened]
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: away-status-mentions
+  cancel-in-progress: false
 
 jobs:
   away-status:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
-      - uses: actions/checkout@v7
-      - name: Check if within away window and comment
+      - name: Reply to mentions made during away hours
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          set -euo pipefail
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import re
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from datetime import datetime, timedelta, timezone
+          from zoneinfo import ZoneInfo
 
-          # Europe/Warsaw handles CET/CEST DST switches automatically —
-          # no manual UTC offset math needed.
-          day=$(TZ='Europe/Warsaw' date +%u)   # 1=Mon ... 7=Sun
-          hour=$(TZ='Europe/Warsaw' date +%H)  # 00-23, local Warsaw time
+          repo = os.environ['REPO']
+          token = os.environ['GH_TOKEN']
+          base = f'https://api.github.com/repos/{repo}'
+          now = datetime.now(timezone.utc)
+          cutoff = now - timedelta(hours=3)
+          mention = re.compile(r'(?<![\w-])@sara-czasak(?![\w-])', re.I)
+          cache = {}
 
-          # Wed(3) through Sun(7), before 17:00 local time.
-          if [ "$day" -ge 3 ] && [ "$day" -le 7 ] && [ "$hour" -lt 17 ]; then
-            echo "Within away window (day=$day hour=$hour Warsaw time) — posting comment."
-            gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file .github/ISSUE_TEMPLATE/away_message.md
-          else
-            echo "Outside away window (day=$day hour=$hour Warsaw time) — skipping."
-          fi
+          def api(path, data=None):
+              url = path if path.startswith('https://') else base + path
+              headers = {
+                  'Authorization': f'Bearer {token}',
+                  'Accept': 'application/vnd.github+json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              }
+              body = None if data is None else json.dumps(data).encode()
+              request = urllib.request.Request(url, data=body, headers=headers)
+              if data is not None:
+                  request.method = 'POST'
+                  request.add_header('Content-Type', 'application/json')
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+
+          def pages(path, max_pages=10):
+              for page in range(1, max_pages + 1):
+                  separator = '&' if '?' in path else '?'
+                  batch = api(f'{path}{separator}per_page=100&page={page}')
+                  if not batch:
+                      break
+                  yield from batch
+                  if len(batch) < 100:
+                      break
+
+          def date(value):
+              return datetime.fromisoformat(value.replace('Z', '+00:00'))
+
+          def away(when):
+              local = when.astimezone(ZoneInfo('Europe/Warsaw'))
+              day = local.isoweekday()
+              hour = local.hour
+              return (3 <= day <= 5 and (hour < 14 or hour >= 18)) or (
+                  day >= 6 and (hour < 18 or hour >= 20)
+              )
+
+          def existing(pr):
+              if pr not in cache:
+                  bodies = []
+                  bodies.extend(c.get('body') or '' for c in pages(f'/issues/{pr}/comments'))
+                  bodies.extend(c.get('body') or '' for c in pages(f'/pulls/{pr}/comments'))
+                  cache[pr] = '\n'.join(bodies)
+              return cache[pr]
+
+          def respond(kind, item, pr, timestamp):
+              body = item.get('body') or ''
+              author = (item.get('user') or {}).get('login', '')
+              if author.lower() == 'sara-czasak' or author.lower().endswith('[bot]'):
+                  return
+              if not mention.search(body) or not timestamp:
+                  return
+              when = date(timestamp)
+              if not cutoff <= when <= now or not away(when):
+                  return
+              marker = f'<!-- away-reply:{kind}:{item["id"]} -->'
+              if marker in existing(pr):
+                  print(f'Already replied to {kind} #{item["id"]}')
+                  return
+              message = api('/contents/.github/ISSUE_TEMPLATE/away_message.md')
+              text = base64.b64decode(message['content']).decode().strip()
+              if kind == 'inline':
+                  root = item.get('in_reply_to_id') or item['id']
+                  api(f'/pulls/{pr}/comments/{root}/replies', {'body': f'{text}\n\n{marker}'})
+              else:
+                  quoted = '\n'.join('> ' + line for line in body[:300].splitlines())
+                  url = item.get('html_url') or f'https://github.com/{repo}/pull/{pr}'
+                  reply = f'↳ Replying to [this mention]({url}):\n\n{quoted}\n\n{text}\n\n{marker}'
+                  api(f'/issues/{pr}/comments', {'body': reply})
+              cache[pr] += '\n' + marker
+              print(f'Replied to {kind} mention {item["id"]} on PR #{pr}')
+
+          since = urllib.parse.quote(cutoff.isoformat().replace('+00:00', 'Z'))
+
+          # New PR descriptions and submitted review summaries.
+          recent_prs = []
+          for pr in pages('/pulls?state=all&sort=updated&direction=desc'):
+              if date(pr['updated_at']) < cutoff:
+                  break
+              number = pr['number']
+              recent_prs.append(number)
+              respond('pr', pr, number, pr['created_at'])
+
+          # Regular timeline comments, limited to PRs (not issues).
+          for comment in pages(f'/issues/comments?sort=created&direction=desc&since={since}'):
+              if date(comment['created_at']) < cutoff:
+                  continue
+              if not mention.search(comment.get('body') or ''):
+                  continue
+              number = int(comment['issue_url'].rstrip('/').split('/')[-1])
+              issue = api(f'/issues/{number}')
+              if 'pull_request' in issue:
+                  respond('comment', comment, number, comment['created_at'])
+
+          # Inline code-review comments across the repository.
+          for comment in pages(f'/pulls/comments?sort=created&direction=desc&since={since}'):
+              number = int(comment['pull_request_url'].rstrip('/').split('/')[-1])
+              respond('inline', comment, number, comment['created_at'])
+
+          # Submitted review summaries on recently active PRs.
+          for number in recent_prs:
+              for review in pages(f'/pulls/{number}/reviews'):
+                  respond('review', review, number, review.get('submitted_at'))
+          PY

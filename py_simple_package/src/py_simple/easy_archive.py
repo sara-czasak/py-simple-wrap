@@ -103,6 +103,12 @@ def zip_files(file_paths: list, zip_name: str) -> str:
     Returns:
         str: Path to the created zip file.
 
+    Raises:
+        EasyArchiveError: If an input is missing, no files are supplied,
+            the output does not end in '.zip', or the output refers to
+            an input file (including symbolic and hard links). Input/output
+            overlap is rejected before opening the output for writing.
+
     Example:
         === "The Py_simple Way"
             ```python
@@ -132,6 +138,14 @@ def zip_files(file_paths: list, zip_name: str) -> str:
 
     if not existing:
         raise EasyArchiveError("\n\n\nERROR: No valid files to zip.") from None
+
+    for path in existing:
+        if os.path.realpath(path) == os.path.realpath(zip_name) or (
+            os.path.exists(zip_name) and os.path.samefile(path, zip_name)
+        ):
+            raise EasyArchiveError(
+                f"\n\n\nERROR: Output must not refer to an input file: '{path}'."
+            )
 
     with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zf:
         used_names = set()

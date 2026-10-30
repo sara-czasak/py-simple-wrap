@@ -606,3 +606,173 @@ def plot_pie_chart(
         ax.set_title(title)
     plt.show()
 
+
+def plot_scatter_chart(
+    x_values: list[int | float],
+    y_values: list[int | float],
+    title: str | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
+) -> None:
+    """
+    Displays a scatter chart that plots individual data points along two axes.
+
+    Scatter charts are ideal for exploring relationships, trends, or
+    correlations between two quantitative measurements (such as study hours
+    versus test scores, or temperature versus sales).
+
+    Args:
+        x_values (list[int | float]): Numerical values for points along the horizontal (x) axis.
+        y_values (list[int | float]): Numerical values for points along the vertical (y) axis.
+        title (str, optional): Text shown above the chart. Defaults to
+            `None` (no title).
+        x_label (str, optional): Text shown under the x-axis. Defaults to
+            `None` (no label).
+        y_label (str, optional): Text shown beside the y-axis. Defaults to
+            `None` (no label).
+
+    Returns:
+        None: The scatter chart is rendered directly via `plt.show()`.
+
+    Raises:
+        ValueError: If `x_values` or `y_values` is empty, if they have
+            different lengths, or if any value in either list is not a number.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import plot_scatter_chart
+
+            plot_scatter_chart(
+                [1, 2, 3, 4, 5],
+                [10, 20, 25, 30, 50],
+                title="Study Hours vs Test Score",
+                x_label="Hours Studied",
+                y_label="Score (%)",
+            )
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import matplotlib.pyplot as plt
+
+            x = [1, 2, 3, 4, 5]
+            y = [10, 20, 25, 30, 50]
+            fig, ax = plt.subplots()
+            ax.scatter(x, y)
+            ax.set_title("Study Hours vs Test Score")
+            ax.set_xlabel("Hours Studied")
+            ax.set_ylabel("Score (%)")
+            ax.spines[["top", "right"]].set_visible(False)
+            plt.show()
+            ```
+    """
+    import matplotlib.pyplot as plt
+
+    if not x_values or not y_values:
+        raise ValueError("X and Y values cannot be empty.")
+
+    if len(x_values) != len(y_values):
+        raise ValueError("X and Y values must have the same length.")
+
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in x_values):
+        raise ValueError("All x_values must be numbers.")
+
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in y_values):
+        raise ValueError("All y_values must be numbers.")
+
+    _, ax = plt.subplots()
+    ax.scatter(x_values, y_values)
+
+    if title:
+        ax.set_title(title)
+    if x_label:
+        ax.set_xlabel(x_label)
+    if y_label:
+        ax.set_ylabel(y_label)
+
+    ax.spines[["top", "right"]].set_visible(False)
+    plt.show()
+
+
+def plot_histogram(
+    data: list[int | float],
+    bins: int | None = None,
+    title: str | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
+) -> None:
+    """
+    Displays a histogram for a numeric data series.
+
+    A histogram groups the values into bins and draws one bar per bin,
+    so you can see at a glance where values cluster and how they spread
+    out — for example, most test scores landing between 70 and 90.
+
+    Args:
+        data (list[int | float]): The numeric values to visualize.
+        bins (int, optional): Number of bins to group the values into.
+            Defaults to `None`, which lets matplotlib pick.
+        title (str, optional): Text shown above the chart. Defaults to
+            `None` (no title).
+        x_label (str, optional): Text shown under the x-axis. Defaults
+            to `None` (no label).
+        y_label (str, optional): Text shown beside the y-axis. Defaults
+            to `None` (no label).
+
+    Returns:
+        None: The histogram is rendered directly via `plt.show()`.
+
+    Raises:
+        ValueError: If `data` is empty, or if `bins` is not a positive
+            integer.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import plot_histogram
+
+            plot_histogram(
+                [65, 72, 78, 80, 82, 85, 88, 90, 92],
+                bins=3,
+                title="Test Scores",
+                x_label="Score",
+                y_label="Students",
+            )
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import matplotlib.pyplot as plt
+
+            data = [65, 72, 78, 80, 82, 85, 88, 90, 92]
+            fig, ax = plt.subplots()
+            ax.hist(data, bins=3)
+            ax.set_title("Test Scores")
+            ax.set_xlabel("Score")
+            ax.set_ylabel("Students")
+            plt.show()
+            ```
+    """
+    import matplotlib.pyplot as plt
+
+    if not data:
+        raise ValueError("The data series cannot be empty.")
+
+    if bins is not None and (not isinstance(bins, int) or isinstance(bins, bool) or bins < 1):
+        raise ValueError("bins must be a positive integer.")
+
+    _, ax = plt.subplots()
+    ax.hist(data, bins=bins)
+
+    if title:
+        ax.set_title(title)
+    if x_label:
+        ax.set_xlabel(x_label)
+    if y_label:
+        ax.set_ylabel(y_label)
+
+    ax.spines[["top", "right"]].set_visible(False)
+    plt.show()
+
+

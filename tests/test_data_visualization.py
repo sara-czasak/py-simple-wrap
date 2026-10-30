@@ -8,8 +8,10 @@ from py_simple_package.src.py_simple import (
     plot_bar_chart as public_plot_bar_chart,
     plot_box_plot as public_plot_box_plot,
     plot_heatmap as public_plot_heatmap,
+    plot_histogram as public_plot_histogram,
     plot_line_chart as public_plot_line_chart,
     plot_pie_chart as public_plot_pie_chart,
+    plot_scatter_chart as public_plot_scatter_chart,
 )
 from py_simple_package.src.py_simple.easy_data_visualization import (
     _infer_type,
@@ -17,8 +19,10 @@ from py_simple_package.src.py_simple.easy_data_visualization import (
     plot_box_plot,
     plot_data,
     plot_heatmap,
+    plot_histogram,
     plot_line_chart,
     plot_pie_chart,
+    plot_scatter_chart,
 )
 
 
@@ -474,3 +478,112 @@ def test_plot_bar_chart_boolean_value_raises_value_error():
 
 def test_plot_bar_chart_is_available_from_public_api():
     assert public_plot_bar_chart is plot_bar_chart
+
+
+def test_plot_scatter_chart_draws_points():
+    plot_scatter_chart([1, 2, 3], [10, 20, 30])
+    ax = plt.gca()
+    assert len(ax.collections) == 1
+    offsets = ax.collections[0].get_offsets()
+    assert len(offsets) == 3
+
+
+def test_plot_scatter_chart_sets_title_and_axis_labels():
+    plot_scatter_chart(
+        [1, 2],
+        [10, 20],
+        title="Hours vs Scores",
+        x_label="Hours",
+        y_label="Scores",
+    )
+    ax = plt.gca()
+    assert ax.get_title() == "Hours vs Scores"
+    assert ax.get_xlabel() == "Hours"
+    assert ax.get_ylabel() == "Scores"
+
+
+def test_plot_scatter_chart_without_title_or_labels_leaves_them_blank():
+    plot_scatter_chart([1, 2], [3, 4])
+    ax = plt.gca()
+    assert ax.get_title() == ""
+    assert ax.get_xlabel() == ""
+    assert ax.get_ylabel() == ""
+
+
+def test_plot_scatter_chart_accepts_floats_and_integers():
+    plot_scatter_chart([1.5, 2, 3.75], [10.2, 20, 35.5])
+    assert len(plt.gca().collections) == 1
+
+
+def test_plot_scatter_chart_empty_x_raises_value_error():
+    with pytest.raises(ValueError, match="cannot be empty"):
+        plot_scatter_chart([], [1, 2])
+
+
+def test_plot_scatter_chart_empty_y_raises_value_error():
+    with pytest.raises(ValueError, match="cannot be empty"):
+        plot_scatter_chart([1, 2], [])
+
+
+def test_plot_scatter_chart_mismatched_lengths_raises_value_error():
+    with pytest.raises(ValueError, match="same length"):
+        plot_scatter_chart([1, 2, 3], [10, 20])
+
+
+def test_plot_scatter_chart_non_numeric_x_raises_value_error():
+    with pytest.raises(ValueError, match="must be numbers"):
+        plot_scatter_chart(["one", 2], [10, 20])
+
+
+def test_plot_scatter_chart_non_numeric_y_raises_value_error():
+    with pytest.raises(ValueError, match="must be numbers"):
+        plot_scatter_chart([1, 2], [10, "twenty"])
+
+
+def test_plot_scatter_chart_boolean_value_raises_value_error():
+    with pytest.raises(ValueError, match="must be numbers"):
+        plot_scatter_chart([1, True], [10, 20])
+
+
+def test_plot_scatter_chart_is_available_from_public_api():
+    assert public_plot_scatter_chart is plot_scatter_chart
+
+
+# --- Tests for plot_histogram ---
+
+
+def test_plot_histogram_creates_bars():
+    plot_histogram([65, 72, 78, 80, 82, 85, 88, 90, 92], bins=3)
+
+    ax = plt.gca()
+    assert len(ax.patches) == 3
+
+
+def test_plot_histogram_uses_labels_and_title():
+    plot_histogram(
+        [65, 72, 78, 80, 82],
+        title="Test Scores",
+        x_label="Score",
+        y_label="Students",
+    )
+
+    ax = plt.gca()
+    assert ax.get_title() == "Test Scores"
+    assert ax.get_xlabel() == "Score"
+    assert ax.get_ylabel() == "Students"
+
+
+def test_plot_histogram_empty_series_raises_value_error():
+    with pytest.raises(ValueError, match="The data series cannot be empty."):
+        plot_histogram([])
+
+
+def test_plot_histogram_bad_bins_raises_value_error():
+    with pytest.raises(ValueError, match="bins must be a positive integer"):
+        plot_histogram([1, 2, 3], bins=0)
+    with pytest.raises(ValueError, match="bins must be a positive integer"):
+        plot_histogram([1, 2, 3], bins="three")
+
+
+def test_plot_histogram_is_available_from_public_api():
+    assert public_plot_histogram is plot_histogram

@@ -6,16 +6,21 @@ import tempfile
 import pytest
 from PIL import Image
 
-from py_simple_package.src.py_simple import create_thumbnail as public_create_thumbnail
-from py_simple_package.src.py_simple import flip_image as public_flip_image
 from py_simple_package.src.py_simple import (
+    adjust_brightness as public_adjust_brightness,
     convert_to_greyscale as public_convert_to_greyscale,
+    create_thumbnail as public_create_thumbnail,
+    crop_image as public_crop_image,
+    flip_image as public_flip_image,
 )
+
 from py_simple_package.src.py_simple.easy_images import (
     ImageProcessingError,
+    adjust_brightness,
     convert_image,
     convert_to_greyscale,
     create_thumbnail,
+    crop_image,
     flip_image,
     get_image_info,
     resize_image,
@@ -408,3 +413,136 @@ class TestConvertToGreyscale:
 
     def test_public_import(self):
         assert public_convert_to_greyscale is convert_to_greyscale
+
+class TestAdjustBrightness:
+    """Tests for adjust_brightness function."""
+
+    def test_brightens_image(self, tmp_workdir):
+        Image.new("RGB", (10, 10), (100, 100, 100)).save("gray.png")
+
+        adjust_brightness("gray.png", "bright.png", 1.5)
+
+        with Image.open("bright.png") as img:
+            assert img.getpixel((0, 0)) == (150, 150, 150)
+
+    def test_darkens_image(self, tmp_workdir):
+        Image.new("RGB", (10, 10), (100, 100, 100)).save("gray.png")
+
+        adjust_brightness("gray.png", "dark.png", 0.5)
+
+        with Image.open("dark.png") as img:
+            assert img.getpixel((0, 0)) == (50, 50, 50)
+
+    def test_zero_produces_black_image(self, tmp_workdir):
+        Image.new("RGB", (10, 10), (100, 150, 200)).save("image.png")
+
+        adjust_brightness("image.png", "black.png", 0)
+
+        with Image.open("black.png") as img:
+            assert img.getpixel((0, 0)) == (0, 0, 0)
+
+    def test_one_preserves_brightness(self, tmp_workdir):
+        Image.new("RGB", (10, 10), (100, 150, 200)).save("image.png")
+
+        adjust_brightness("image.png", "same.png", 1)
+
+        with Image.open("same.png") as img:
+            assert img.getpixel((0, 0)) == (100, 150, 200)
+
+    @pytest.mark.parametrize("value", [-1, float("nan"), float("inf"), -float("inf"), True, "1.5", None])
+    def test_invalid_value_raises_value_error(self, tmp_workdir, value):
+        Image.new("RGB", (10, 10)).save("image.png")
+
+        with pytest.raises(ValueError):
+            adjust_brightness("image.png", "output.png", value)
+    def test_palette_image_is_converted_and_brightened(self, tmp_workdir):
+        img = Image.new("P", (10, 10), 0)
+        img.putpalette([100, 100, 100] + [0] * 765)  # color slot 0 = gray 100
+        img.save("palette.png")
+
+        adjust_brightness("palette.png", "bright.png", 1.5)
+
+        with Image.open("bright.png") as img:
+            assert img.getpixel((0, 0)) == (150, 150, 150)
+
+    def test_rgba_image_can_be_saved_as_jpeg(self, tmp_workdir):
+        Image.new("RGBA", (10, 10), (100, 100, 100, 255)).save("rgba.png")
+
+        adjust_brightness("rgba.png", "bright.jpg", 1.5)
+
+        with Image.open("bright.jpg") as img:
+            assert img.mode == "RGB"
+            
+    def test_public_import(self):
+        assert public_adjust_brightness is adjust_brightness
+
+
+class TestCropImage:
+    """Tests for crop_image function."""
+
+    def test_crops_to_given_coordinates(self, sample_png):
+        crop_image(sample_png, "cropped.png", 10, 10, 50, 40)
+        assert os.path.exists("cropped.png")
+        with Image.open("cropped.png") as img:
+            assert img.size == (40, 30)
+
+    def test_crops_entire_image(self, sample_png):
+        crop_image(sample_png, "full_crop.png", 0, 0, 100, 60)
+        with Image.open("full_crop.png") as img:
+            assert img.size == (100, 60)
+
+    def test_crop_rgba_image_saved_as_jpeg(self, sample_rgba_png):
+        crop_image(sample_rgba_png, "cropped.jpg", 5, 5, 45, 35)
+        with Image.open("cropped.jpg") as img:
+            assert img.mode == "RGB"
+            assert img.size == (40, 30)
+
+    @pytest.mark.parametrize(
+        "coords",
+        [
+            (-1, 0, 50, 50),
+            (0, -1, 50, 50),
+            (0, 0, -1, 50),
+            (0, 0, 50, -1),
+            ("0", 0, 50, 50),
+            (0, 0, 50.5, 50),
+            (True, 0, 50, 50),
+            (0, False, 50, 50),
+            (None, 0, 50, 50),
+        ],
+    )
+    def test_invalid_coordinate_types_or_values(self, sample_png, coords):
+        with pytest.raises(ValueError, match="must be non-negative integers"):
+            crop_image(sample_png, "out.png", *coords)
+
+    @pytest.mark.parametrize(
+        "left, top, right, bottom",
+        [
+            (50, 10, 50, 30),  # left == right
+            (60, 10, 50, 30),  # left > right
+            (10, 30, 50, 30),  # top == bottom
+            (10, 40, 50, 30),  # top > bottom
+        ],
+    )
+    def test_inverted_coordinates_raise_value_error(self, sample_png, left, top, right, bottom):
+        with pytest.raises(ValueError):
+            crop_image(sample_png, "out.png", left, top, right, bottom)
+
+    @pytest.mark.parametrize(
+        "left, top, right, bottom",
+        [
+            (0, 0, 101, 60),   # right exceeds width (100)
+            (0, 0, 100, 61),   # bottom exceeds height (60)
+            (0, 0, 200, 200),  # both exceed
+        ],
+    )
+    def test_out_of_bounds_coordinates_raise_value_error(self, sample_png, left, top, right, bottom):
+        with pytest.raises(ValueError, match="exceed image dimensions"):
+            crop_image(sample_png, "out.png", left, top, right, bottom)
+
+    def test_missing_input_file_raises_error(self, tmp_workdir):
+        with pytest.raises(ImageProcessingError):
+            crop_image("nonexistent.png", "out.png", 0, 0, 10, 10)
+
+    def test_public_import(self):
+        assert public_crop_image is crop_image

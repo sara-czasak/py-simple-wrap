@@ -247,3 +247,15 @@ def test_is_phone_number_extracted(input_text, expected):
 
 def test_extract_phone_numbers_is_available_from_public_api():
     assert public_extract_phone_numbers is extract_phone_numbers
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("Contact user@mail.example.com.", ["user@mail.example.com"]),
+        ("Send to person+tag@dept.example.co.uk or user2@example.org!", ["person+tag@dept.example.co.uk", "user2@example.org"]),
+        ("<first.last@eu-west.team2.example.org>", ["first.last@eu-west.team2.example.org"]),
+    ],
+)
+def test_extract_emails_preserves_complete_subdomains(text, expected):
+    assert extract_emails(text) == expected

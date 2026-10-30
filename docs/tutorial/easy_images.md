@@ -110,6 +110,16 @@ with Image.open("photo.jpg") as img:
     img.convert("LA").save("photo_gray.png")
 ```
 
+## Crop an image
+
+To extract a specific region of an image, use `crop_image()` with left, top, right, and bottom pixel coordinates:
+
+```python
+from py_simple import crop_image
+
+crop_image("photo.jpg", "cropped.jpg", 10, 10, 200, 200)
+```
+
 ## Getting image information
 
 `get_image_info()` returns a dictionary containing:

@@ -2,6 +2,8 @@
 easy_numbers is built to simplify different types of number operations.
 """
 
+from math import isqrt
+
 
 def is_even(number: int) -> bool:
     """
@@ -170,6 +172,10 @@ def is_prime(number: int) -> bool:
     """
     Returns true if the number is prime and false if it is not.
 
+    Uses an integer square root to avoid floating-point overflow or
+    rounding when finding the trial-division limit. Trial division can
+    still be slow for large primes or numbers with large prime factors.
+
     Args:
         number (int): Number to check.
 
@@ -186,10 +192,12 @@ def is_prime(number: int) -> bool:
 
         === "The Traditional Way"
             ```python
+            from math import isqrt
+
             def is_prime(n):
                 if n < 2:
                     return False
-                for i in range(2, int(n ** 0.5) + 1):
+                for i in range(2, isqrt(n) + 1):
                     if n % i == 0:
                         return False
                 return True
@@ -197,20 +205,15 @@ def is_prime(number: int) -> bool:
             result = is_prime(2)
             ```
     """
-    if number > 0:
-        limit = int((number**0.5) + 1)
-    else:
-        return False
     if number < 2:
         return False
-    elif number == 2:
+    if number == 2:
         return True
-    elif is_even(number):
+    if is_even(number):
         return False
-    else:
-        for i in range(3, limit, 2):
-            if is_evenly_divisible(number, i):
-                return False
+    for i in range(3, isqrt(number) + 1, 2):
+        if is_evenly_divisible(number, i):
+            return False
     return True
 
 

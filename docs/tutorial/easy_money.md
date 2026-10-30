@@ -30,11 +30,44 @@ $17.36
 `add_tax()` takes the price and a percent, then returns the total rounded to
 cents.
 
+`remove_tax()` finds the original pre-tax price from a tax-inclusive total.
+
+`calculate_tip()` calculates the tip amount to add based on a percentage.
+
 `split_bill()` divides that total by the number of people and rounds each
 share to cents.
 
 `format_money()` prints the result with a dollar sign and two decimal places.
 Pass another symbol, such as `"€"`, when you need one.
+
+## Calculating tips and discounts
+
+Use `calculate_tip()` to find the tip on a bill:
+
+```python
+from py_simple import calculate_tip, format_money
+
+tip = calculate_tip(50, 18)
+print(format_money(tip))  # $9.00
+```
+
+Use `calculate_discount()` to find the price after subtracting a discount:
+
+```python
+from py_simple import calculate_discount, format_money
+
+sale_price = calculate_discount(100, 15)
+print(format_money(sale_price))  # $85.00
+```
+
+Use `remove_tax()` to reverse a tax rate and find the original pre-tax price:
+
+```python
+from py_simple import format_money, remove_tax
+
+pre_tax = remove_tax(10.85, 8.5)
+print(format_money(pre_tax))  # $10.00
+```
 
 ## Keep every cent when splitting a bill
 
@@ -65,6 +98,22 @@ Decimal context; precision or rounding-trap failures also raise `EasyMoneyError`
 
 `split_bill()` keeps its existing behavior: it returns one rounded share,
 so `split_bill(10, 3)` is still `Decimal('3.33')`.
+
+## Growing savings with compound interest
+
+Use `calculate_compound_interest()` to find what savings grow to when
+interest is added to the balance each period:
+
+```python
+from py_simple import calculate_compound_interest, format_money
+
+balance = calculate_compound_interest(1000, 5, 2)
+print(format_money(balance))  # $1102.50
+```
+
+Pass `12` as the fourth argument for monthly compounding instead of the
+default yearly compounding. The rate is a percent per year, and the result
+is rounded to cents.
 
 ## Why use these helpers?
 

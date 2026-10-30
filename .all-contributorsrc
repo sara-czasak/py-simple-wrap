@@ -935,6 +935,119 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "supergioo0",
+      "name": "Giorgio Ciafardoni",
+      "avatar_url": "https://github.com/supergioo0.png",
+      "profile": "https://github.com/supergioo0",
+      "contributions": [
+        "test",
+        "code"
+      ]
+    },
+    {
+      "login": "anisayakmitra-in",
+      "name": "Anisayak Mitra",
+      "avatar_url": "https://github.com/anisayakmitra-in.png",
+      "profile": "https://github.com/anisayakmitra-in",
+      "contributions": [
+        "test",
+        "code",
+        "documentation"
+      ]
+    },
+    {
+      "login": "Ash1-gif",
+      "name": "Ash",
+      "avatar_url": "https://github.com/Ash1-gif.png",
+      "profile": "https://github.com/Ash1-gif",
+      "contributions": [
+        "test",
+        "code",
+        "documentation"
+      ]
+    },
+    {
+      "login": "amandeavor",
+      "name": "Aman Awasthi",
+      "avatar_url": "https://github.com/amandeavor.png",
+      "profile": "https://github.com/amandeavor",
+      "contributions": [
+        "documentation"
+      ]
+    },
+    {
+      "login": "drudru18",
+      "name": "Doroiman Alexandru",
+      "avatar_url": "https://github.com/drudru18.png",
+      "profile": "https://github.com/drudru18",
+      "contributions": [
+        "test",
+        "code",
+        "documentation"
+      ]
+    },
+    {
+      "login": "Dikshant-Neupane",
+      "name": "Dikshant Neupane",
+      "avatar_url": "https://github.com/Dikshant-Neupane.png",
+      "profile": "https://github.com/Dikshant-Neupane",
+      "contributions": [
+        "test",
+        "code"
+      ]
+    },
+    {
+      "login": "spdly-studios",
+      "name": "Shivaprasad V",
+      "avatar_url": "https://github.com/spdly-studios.png",
+      "profile": "https://github.com/spdly-studios",
+      "contributions": [
+        "test",
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "geethika870",
+      "name": "geethika870",
+      "avatar_url": "https://github.com/geethika870.png",
+      "profile": "https://github.com/geethika870",
+      "contributions": [
+        "test",
+        "code",
+        "documentation"
+      ]
+    },
+    {
+      "login": "maestro-00",
+      "name": "Adam Tungtaiya Lukman",
+      "avatar_url": "https://github.com/maestro-00.png",
+      "profile": "https://github.com/maestro-00",
+      "contributions": [
+        "documentation"
+      ]
+    },
+    {
+      "login": "Renvian",
+      "name": "Renvil Vian Dsouza",
+      "avatar_url": "https://github.com/Renvian.png",
+      "profile": "https://github.com/Renvian",
+      "contributions": [
+        "documentation"
+      ]
+    },
+    {
+      "login": "deltaaa00",
+      "name": "Delta",
+      "avatar_url": "https://github.com/deltaaa00.png",
+      "profile": "https://github.com/deltaaa00",
+      "contributions": [
+        "test",
+        "code",
+        "documentation"
+      ]
     }
   ]
 }

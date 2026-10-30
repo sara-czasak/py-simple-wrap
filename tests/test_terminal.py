@@ -1,8 +1,13 @@
+import pytest
+
 from py_simple_package.src.py_simple import (
+    print_centered as public_print_centered,
     print_styled as public_print_styled,
 )
 from py_simple_package.src.py_simple.easy_terminal import (
     EasyTerminal,
+    print_centered,
+    print_rule,
     print_styled,
 )
 
@@ -24,8 +29,14 @@ def test_init_defaults():
 def test_set_color():
     terminal = EasyTerminal("Hello")
     colors = [
-        "red", "blue", "green", "yellow",
-        "#bee6c9", "#99238d", "#1c0219", "#454138",
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "#bee6c9",
+        "#99238d",
+        "#1c0219",
+        "#454138",
     ]
     for color in colors:
         result = terminal.set_color(color)
@@ -36,8 +47,14 @@ def test_set_color():
 def test_set_bg_color():
     terminal = EasyTerminal("Hello")
     colors = [
-        "red", "blue", "green", "yellow",
-        "#bee6c9", "#99238d", "#1c0219", "#454138",
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "#bee6c9",
+        "#99238d",
+        "#1c0219",
+        "#454138",
     ]
     for color in colors:
         result = terminal.set_bg_color(color)
@@ -101,7 +118,9 @@ def test_show_prints_text(capsys):
 
 
 def test_show_with_styles_still_prints_text(capsys):
-    terminal = EasyTerminal("Hello World").set_color("red").set_bg_color("blue").set_bold()
+    terminal = (
+        EasyTerminal("Hello World").set_color("red").set_bg_color("blue").set_bold()
+    )
     terminal.show()
     captured = capsys.readouterr()
     assert captured.out == "Hello World\n"
@@ -193,3 +212,95 @@ def test_print_styled_both_bold_and_dim_output(capsys):
 
 def test_print_styled_public_import():
     assert public_print_styled is print_styled
+
+
+def test_print_centered_with_explicit_width(capsys):
+    print_centered("Hi", width=10)
+    assert capsys.readouterr().out == "    Hi    \n"
+
+
+def test_print_centered_uses_terminal_width(monkeypatch, capsys):
+    import os
+    import shutil
+
+    monkeypatch.setattr(
+        shutil,
+        "get_terminal_size",
+        lambda *args, fallback=None, **kwargs: os.terminal_size((10, 24)),
+    )
+    print_centered("Hi")
+    assert capsys.readouterr().out == "    Hi    \n"
+
+
+def test_print_centered_long_text_does_not_crash(capsys):
+    print_centered("toolongtext", width=5)
+    out = capsys.readouterr().out.replace("\n", "").replace(" ", "")
+    assert out == "toolongtext"
+
+
+def test_print_centered_public_import():
+    assert public_print_centered is print_centered
+
+
+def test_print_rule_default_heading(monkeypatch, capsys):
+    monkeypatch.setenv("COLUMNS", "20")
+    assert print_rule() is None
+    captured = capsys.readouterr()
+    assert captured.out == "─" * 20 + "\n"
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    "title,expected",
+    [
+        ("", "─" * 20 + "\n"),
+        ("Hi", "──────── Hi ────────\n"),
+        ("雪", "──────── 雪 ────────\n"),
+        ("café", "─────── café ───────\n"),
+        ("[red]", "────── [red] ───────\n"),
+        (42, "──────── 42 ────────\n"),
+    ],
+)
+def test_print_rule_heading_output(title, expected, monkeypatch, capsys):
+    monkeypatch.setenv("COLUMNS", "20")
+    assert print_rule(title) is None
+    captured = capsys.readouterr()
+    assert captured.out == expected
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize("width", [1, 3, 8, 20])
+@pytest.mark.parametrize(
+    "title", ["", "A very long heading", "雪と月", "[bold]literal[/bold]"]
+)
+def test_print_rule_fits_narrow_console(width, title, monkeypatch, capsys):
+    from rich.cells import cell_len
+
+    monkeypatch.setenv("COLUMNS", str(width))
+    print_rule(title)
+    captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    assert len(lines) == 1
+    assert 0 < cell_len(lines[0]) <= width
+    assert "\x1b[" not in captured.out
+    assert captured.err == ""
+
+
+def test_print_rule_output_is_late_bound_to_stdout(monkeypatch, capsys):
+    monkeypatch.setenv("COLUMNS", "20")
+    print_rule("First")
+    first = capsys.readouterr()
+    print_rule("Second")
+    second = capsys.readouterr()
+    assert "First" in first.out and "Second" not in first.out
+    assert "Second" in second.out and "First" not in second.out
+
+
+def test_print_rule_public_imports(monkeypatch, capsys):
+    from py_simple import print_rule as public_print
+    from py_simple.easy_terminal import print_rule as module_print
+
+    monkeypatch.setenv("COLUMNS", "20")
+    assert public_print is module_print
+    public_print(title="Hi")
+    assert capsys.readouterr().out == "──────── Hi ────────\n"

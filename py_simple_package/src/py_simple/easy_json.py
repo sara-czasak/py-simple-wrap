@@ -166,7 +166,7 @@ def pretty_json(data: dict | None = None, filepath: str | None = None) -> str | 
         ) from None
     if data is not None and filepath is not None:
         raise EasyJsonError("\n\n\nERROR: Please provide data OR filepath.") from None
-    elif data:
+    elif data is not None:
         return json.dumps(data, indent=2)
     else:
         try:
@@ -356,6 +356,7 @@ def is_nested_json(
                 return True
             else:
                 continue
+        return False
     except Exception as e:
         raise EasyJsonError(f"\n\n\nERROR: {e}") from None
 

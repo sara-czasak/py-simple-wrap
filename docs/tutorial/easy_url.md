@@ -35,6 +35,32 @@ https://school.example/clubs?page=2
 `add_query_param()` adds `page=2`. Call it again with the same name and the
 old value is replaced instead of duplicated.
 
+## Read every value for a query parameter
+
+Links can use the same query name more than once. `get_query_values()`
+keeps those values in order, including blanks:
+
+```python
+from py_simple import get_query_values
+
+link = "https://school.example/clubs?tag=python&tag=&tag=art+club#list"
+print(get_query_values(link, "tag"))
+print(get_query_values(link, "missing"))
+```
+
+Example output:
+
+```text
+['python', '', 'art club']
+[]
+```
+
+Pass the decoded, case-sensitive name. Percent escapes are decoded and
+`+` becomes a space; a bare `tag` also produces an empty string. The
+fragment is ignored, and the input link is not changed. This uses the
+module's existing full-link validation rather than checking whether a
+link is safe to visit.
+
 ## Why use these helpers?
 
 A link without `https://` is rejected with a clear error, so a bare
