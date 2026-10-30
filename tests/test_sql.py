@@ -142,15 +142,14 @@ class TestRunSelect:
                 "name UNION SELECT sql FROM sqlite_master",
             )
 
+
 class TestTableExists:
     """Tests for table_exists function."""
 
     def setup_method(self):
         """Create a fresh in-memory database before each test."""
         self.conn, self.cursor = open_db(":memory:")
-        self.cursor.execute(
-            "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)"
-        )
+        self.cursor.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)")
         self.conn.commit()
 
     def teardown_method(self):
@@ -881,3 +880,17 @@ class TestListTables:
 
     def test_public_import(self):
         assert public_list_tables is list_tables
+
+
+@pytest.mark.parametrize("lookup", ["USERS", "Users", "uSeRs", "users"])
+def test_table_exists_matches_sqlite_identifier_case(lookup):
+    connection, cursor = open_db(":memory:")
+    try:
+        cursor.execute("CREATE TABLE Users (id INTEGER)")
+        cursor.execute("INSERT INTO Users VALUES (7)")
+        # Each spelling is an identifier SQLite itself accepts.
+        assert cursor.execute(f"SELECT id FROM {lookup}").fetchone() == (7,)
+        assert table_exists(connection, cursor, lookup) is True
+        assert table_exists(connection, cursor, "Missing") is False
+    finally:
+        connection.close()

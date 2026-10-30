@@ -554,14 +554,17 @@ def run_update(
             "\n\t- Lowercase letters (a-z)"
             "\n\t- Underscores  (_)."
         ) from None
+
+
 def table_exists(
     connection: sqlite3.Connection,
     cursor: sqlite3.Cursor,
     table_name: str,
 ) -> bool:
-
     """
     Checks whether a table exists in the SQLite database.
+
+    Matches ASCII table names case-insensitively, like SQLite identifiers.
 
     The `table_name` is validated before being used in the query because
     SQLite does not support parameterized table names. The validation
@@ -600,7 +603,7 @@ def table_exists(
 
             result = cursor.execute(
                 "SELECT name FROM sqlite_master "
-                "WHERE type = 'table' AND name = ?",
+                "WHERE type = 'table' AND name = ? COLLATE NOCASE",
                 ('users',)
             ).fetchone()
 
@@ -622,7 +625,7 @@ def table_exists(
     try:
         cursor.execute(
             "SELECT name FROM sqlite_master "
-            "WHERE type = 'table' AND name = ?",
+            "WHERE type = 'table' AND name = ? COLLATE NOCASE",
             (table_name,),
         )
         return cursor.fetchone() is not None
