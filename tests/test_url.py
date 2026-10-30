@@ -1,4 +1,7 @@
+from unittest.mock import Mock, patch
+
 import pytest
+
 
 from py_simple_package.src.py_simple import (
     get_path as public_get_path,
@@ -11,6 +14,7 @@ from py_simple_package.src.py_simple.easy_url import (
     get_query_values,
     is_https,
     remove_query_param,
+    get_url_status_code,
 )
 
 
@@ -194,3 +198,88 @@ def test_url_helpers_wrap_malformed_or_missing_hosts(url, helper):
 def test_get_domain_accepts_ipv6_and_user_information():
     assert get_domain("https://[::1]:443/path") == "::1"
     assert get_domain("https://user:password@school.example/path") == "school.example"
+
+
+def test_get_url_status_code_success():
+    mock_response = Mock(status_code=200, reason="OK")
+
+    with patch("py_simple_package.src.py_simple.easy_url.requests.get",
+               return_value=mock_response) as mock_get:
+        result = get_url_status_code("https://school.example")
+
+    assert result == {"status_code": 200, "message": "OK"}
+    mock_get.assert_called_once_with(
+        "https://school.example", timeout=5
+    )
+
+
+def test_get_url_status_code_not_found():
+    mock_response = Mock(status_code=404, reason="Not Found")
+
+    with patch(
+        "py_simple_package.src.py_simple.easy_url.requests.get",
+        return_value=mock_response,
+    ):
+        result = get_url_status_code("https://school.example/missing")
+
+    assert result == {"status_code": 404, "message": "Not Found"}
+
+
+def test_get_url_status_code_unsupported_scheme():
+    result = get_url_status_code("ftp://school.example/file")
+
+    assert result == {
+        "status_code": None,
+        "message": "Unsupported URL scheme. Only HTTP and HTTPS are supported.",
+    }
+
+
+def test_get_url_status_code_timeout():
+    import requests
+
+    with patch(
+        "py_simple_package.src.py_simple.easy_url.requests.get",
+        side_effect=requests.Timeout,
+    ):
+        result = get_url_status_code("https://school.example")
+
+    assert result == {
+        "status_code": None,
+        "message": "Connection timed out.",
+    }
+
+
+def test_get_url_status_code_connection_error():
+    import requests
+
+    with patch(
+        "py_simple_package.src.py_simple.easy_url.requests.get",
+        side_effect=requests.ConnectionError,
+    ):
+        result = get_url_status_code("https://school.example")
+
+    assert result == {
+        "status_code": None,
+        "message": "Connection failed.",
+    }
+
+
+def test_get_url_status_code_public_import():
+    from py_simple import get_url_status_code as public_get
+    from py_simple.easy_url import get_url_status_code as module_get
+
+    assert public_get is module_get
+
+def test_get_url_status_code_request_exception():
+    import requests
+
+    with patch(
+        "py_simple_package.src.py_simple.easy_url.requests.get",
+        side_effect=requests.RequestException,
+    ):
+        result = get_url_status_code("https://school.example")
+
+    assert result == {
+        "status_code": None,
+        "message": "Unable to complete the request.",
+    }

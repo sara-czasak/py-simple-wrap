@@ -389,6 +389,7 @@ from .easy_url import (
     get_query_values,
     is_https,
     remove_query_param,
+    get_url_status_code,
 )
 from .easy_web import (
     count_links,

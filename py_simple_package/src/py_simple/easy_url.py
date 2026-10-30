@@ -4,6 +4,7 @@ easy_url reads and edits links without the urllib boilerplate.
 
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
+import requests
 
 class EasyUrlError(Exception):
     """
@@ -91,6 +92,52 @@ def is_https(url: str) -> bool:
             ```
     """
     return _parsed(url).scheme == "https"
+
+
+def get_url_status_code(url: str, timeout: int = 5) -> dict:
+    """
+    Return the HTTP status code and response message for a URL.
+
+    Args:
+        url (str): A full HTTP or HTTPS URL.
+        timeout (int): Maximum time to wait for a response in seconds.
+
+    Returns:
+        dict: Contains status_code and message.
+    """
+    parsed = _parsed(url)
+
+    if parsed.scheme.lower() not in ("http", "https"):
+        return {
+            "status_code": None,
+            "message": "Unsupported URL scheme. Only HTTP and HTTPS are supported."
+        }
+
+    try:
+        response = requests.get(url, timeout=timeout)
+
+        return {
+            "status_code": response.status_code,
+            "message": response.reason
+        }
+
+    except requests.Timeout:
+        return {
+            "status_code": None,
+            "message": "Connection timed out."
+        }
+
+    except requests.ConnectionError:
+        return {
+            "status_code": None,
+            "message": "Connection failed."
+        }
+
+    except requests.RequestException:
+        return {
+            "status_code": None,
+            "message": "Unable to complete the request."
+        }
 
 
 def add_query_param(url: str, key: str, value: str) -> str:
