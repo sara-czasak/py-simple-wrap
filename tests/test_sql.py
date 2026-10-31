@@ -142,6 +142,13 @@ class TestRunSelect:
                 "name UNION SELECT sql FROM sqlite_master",
             )
 
+    def test_run_select_operational_error_raises_easy_sql_error(self):
+        """Test that operational errors raise EasySqlError."""
+        with pytest.raises(EasySqlError):
+            run_select(self.conn, self.cursor, "nonexistent", "*")
+        with pytest.raises(EasySqlError):
+            run_select(self.conn, self.cursor, "users", "nonexistent")
+
 
 class TestTableExists:
     """Tests for table_exists function."""
@@ -177,6 +184,12 @@ class TestTableExists:
         """Test that a non-string table name raises EasySqlError."""
         with pytest.raises(EasySqlError):
             table_exists(self.conn, self.cursor, 123)
+
+    def test_table_exists_operational_error_raises_easy_sql_error(self):
+        """Test that operational errors (e.g. on closed cursor) raise EasySqlError."""
+        self.cursor.close()
+        with pytest.raises(EasySqlError):
+            table_exists(self.conn, self.cursor, "users")
 
 
 class TestConditionalRunSelect:
@@ -297,6 +310,27 @@ class TestConditionalRunSelect:
                 (18,),
             )
 
+    def test_conditional_run_select_operational_error_raises_easy_sql_error(self):
+        """Test that operational errors raise EasySqlError."""
+        with pytest.raises(EasySqlError):
+            conditional_run_select(
+                self.conn,
+                self.cursor,
+                "nonexistent",
+                "*",
+                "id = ?",
+                (1,),
+            )
+        with pytest.raises(EasySqlError):
+            conditional_run_select(
+                self.conn,
+                self.cursor,
+                "users",
+                "nonexistent",
+                "id = ?",
+                (1,),
+            )
+
 
 class TestRunInsert:
     """Tests for run_insert function."""
@@ -411,6 +445,25 @@ class TestRunInsert:
                 ["name", "email"],
             )
 
+    def test_run_insert_operational_error_raises_easy_sql_error(self):
+        """Test that operational errors raise EasySqlError."""
+        with pytest.raises(EasySqlError):
+            run_insert(
+                self.conn,
+                self.cursor,
+                ["Alice", "alice@example.com"],
+                "nonexistent",
+                ["name", "email"],
+            )
+        with pytest.raises(EasySqlError):
+            run_insert(
+                self.conn,
+                self.cursor,
+                ["Alice", "alice@example.com"],
+                "users",
+                ["nonexistent_column", "email"],
+            )
+
 
 class TestRunDelete:
     """Tests for run_delete function."""
@@ -503,6 +556,17 @@ class TestRunDelete:
                 ("Alice",),
             )
 
+    def test_run_delete_operational_error_raises_easy_sql_error(self):
+        """Test that operational errors raise EasySqlError."""
+        with pytest.raises(EasySqlError):
+            run_delete(
+                self.conn,
+                self.cursor,
+                "nonexistent",
+                "id = ?",
+                (1,),
+            )
+
 
 class TestDeleteAllFromTable:
     """Tests for delete_all_from_table function."""
@@ -558,6 +622,11 @@ class TestDeleteAllFromTable:
             delete_all_from_table(
                 self.conn, self.cursor, "users UNION SELECT * FROM sqlite_master"
             )
+
+    def test_delete_all_from_table_operational_error_raises_easy_sql_error(self):
+        """Test that operational errors raise EasySqlError."""
+        with pytest.raises(EasySqlError):
+            delete_all_from_table(self.conn, self.cursor, "nonexistent")
 
 
 class TestCheckIfValid:
@@ -877,6 +946,14 @@ class TestListTables:
             list_tables(connection, other_cursor)
         connection.close()
         other.close()
+
+    def test_list_tables_operational_error_raises(self):
+        """Test that operational errors (e.g. on closed cursor) raise EasySqlError."""
+        connection, cursor = open_db(":memory:")
+        cursor.close()
+        with pytest.raises(EasySqlError):
+            list_tables(connection, cursor)
+        connection.close()
 
     def test_public_import(self):
         assert public_list_tables is list_tables
