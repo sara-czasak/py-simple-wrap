@@ -13,6 +13,7 @@ from py_simple_package.src.py_simple import (
 from py_simple_package.src.py_simple.easy_logging import (
     clear_log_file,
     count_log_levels,
+    filter_log_lines,
     find_log_lines,
     log_function,
     log_step,
@@ -622,6 +623,49 @@ def test_setup_file_logger_updates_level_on_existing_handler(tmp_path):
     assert "INFO - Captured after update" in content
 
 
+def test_filter_log_lines_return_matching_level(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text(
+        "2026-10-24 10:00:01,123 - INFO - Application started\n"
+        "2026-10-24 10:00:02,234 - ERROR - Connection failed\n"
+        "2026-10-24 10:00:03,345 - WARNING - ERROR appears in this message\n"
+        "2026-10-24 10:00:04,456 - ERROR - Retry failed\n"
+    )
+
+    assert filter_log_lines(str(log_file), "ERROR") == [
+        "2026-10-24 10:00:02,234 - ERROR - Connection failed",
+        "2026-10-24 10:00:04,456 - ERROR - Retry failed",
+    ]
+    assert len(filter_log_lines(str(log_file), "WARNING")) == 1
+
+
+def test_filter_log_lines_accepts_lowercase_level(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("2026-10-24 10:00:01,123 - ERROR - Connection failed\n")
+
+    assert len(filter_log_lines(str(log_file), "error")) == 1
+
+
+def test_filter_log_lines_returns_empty_list_for_empty_file(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("")
+
+    assert filter_log_lines(str(log_file), "ERROR") == []
+
+
+def test_filter_log_lines_raises_for_missing_file(tmp_path):
+    log_file = tmp_path / "missing.log"
+
+    with pytest.raises(FileNotFoundError):
+        filter_log_lines(str(log_file), "ERROR")
+
+
+def test_filter_log_lines_raises_for_invalid_level(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("2026-10-24 10:00:01,123 - INFO - Started\n")
+
+    with pytest.raises(ValueError):
+        filter_log_lines(str(log_file), "TRACE")
 @pytest.mark.parametrize("new_format", ["[%(levelname)s] %(message)s", "%(message)s"])
 def test_setup_file_logger_updates_existing_handler_format(tmp_path, new_format):
     log_file = tmp_path / "reconfigured.log"

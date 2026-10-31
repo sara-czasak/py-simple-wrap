@@ -534,3 +534,57 @@ def setup_file_logger(
         logger.addHandler(file_handler)
 
     return logger
+
+
+def filter_log_lines(file_path: str, level: str) -> list[str]:
+    """
+    Returns the log lines matching the specified logging level.
+
+    Args:
+        file_path (str): Path to the log file to search.
+        level (str): Logging level to filter by, such as "ERROR".
+
+    Returns:
+        list[str]: Matching log lines without trailing newline characters.
+            Returns an empty list if no lines match the specified level.
+
+    Raises:
+        FileNotFoundError: If the specified log file does not exist.
+        ValueError: If the specified logging level is invalid.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple.easy_logging import filter_log_lines
+
+            errors = filter_log_lines("app.log", "ERROR")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            errors = []
+            level = "ERROR"
+
+            with open("app.log", encoding="utf-8") as log_file:
+                for line in log_file:
+                    parts = line.split(" - ", 2)
+                    if len(parts) >= 3 and parts[1] == level:
+                        errors.append(line.rstrip("\\n"))
+            ```
+    """
+
+    levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    level_content = []
+    level = level.upper()
+
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"File not found {file_path}")
+    if level not in levels:
+        raise ValueError(f"Invalid log level {level}")
+
+    with open(file_path, encoding="utf-8") as log_file:
+        for line in log_file:
+            parts = line.split(" - ", 2)
+            if len(parts) >= 3 and parts[1] == level:
+                level_content.append(line.rstrip("\n"))
+    return level_content
