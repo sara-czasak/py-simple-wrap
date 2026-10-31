@@ -8,6 +8,7 @@ import pytest
 
 from py_simple_package.src.py_simple import (
     count_log_levels as public_count_log_levels,
+    read_first_log_lines as public_read_first_log_lines,
     setup_file_logger as public_setup_file_logger,
 )
 from py_simple_package.src.py_simple.easy_logging import (
@@ -17,6 +18,7 @@ from py_simple_package.src.py_simple.easy_logging import (
     log_function,
     log_step,
     log_to_file,
+    read_first_log_lines,
     read_recent_log_lines,
     setup_file_logger,
     temporary_log_level,
@@ -403,6 +405,44 @@ def test_read_recent_log_lines_returns_empty_list_for_invalid_count(tmp_path):
     log_file.write_text("line one\n")
 
     assert read_recent_log_lines(str(log_file), line_count=0) == []
+
+
+def test_read_first_log_lines_returns_initial_lines(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("line one\nline two\nline three\n")
+
+    assert read_first_log_lines(str(log_file), line_count=2) == [
+        "line one",
+        "line two",
+    ]
+
+
+def test_read_first_log_lines_returns_all_lines_when_count_is_large(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("line one\nline two\n")
+
+    assert read_first_log_lines(str(log_file), line_count=10) == [
+        "line one",
+        "line two",
+    ]
+
+
+def test_read_first_log_lines_returns_empty_list_when_missing(tmp_path):
+    missing_file = tmp_path / "missing.log"
+
+    assert not read_first_log_lines(str(missing_file))
+
+
+def test_read_first_log_lines_returns_empty_list_for_invalid_count(tmp_path):
+    log_file = tmp_path / "app.log"
+    log_file.write_text("line one\n")
+
+    assert not read_first_log_lines(str(log_file), line_count=0)
+    assert not read_first_log_lines(str(log_file), line_count=-2)
+
+
+def test_read_first_log_lines_public_import():
+    assert public_read_first_log_lines is read_first_log_lines
 
 
 def test_log_to_file_creates_file_and_writes_message(tmp_path):

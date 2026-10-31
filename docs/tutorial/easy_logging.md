@@ -69,6 +69,26 @@ particular, a handler set to INFO will still discard DEBUG records; configuring
 that handler remains the application's responsibility. Other users of the same
 logger see the temporary level too, so this does not provide thread isolation.
 
+## Inspect initial and recent log entries
+
+When reviewing log files, you often need to check how an application booted or
+inspect its latest messages. `read_first_log_lines()` lets you stream the initial
+lines of a log file without reading unneeded lines into memory, while
+`read_recent_log_lines()` fetches the tail of the log:
+
+```python
+from py_simple import read_first_log_lines, read_recent_log_lines
+
+# Read the first 3 lines (e.g. startup banners or initialization messages)
+startup_lines = read_first_log_lines("app.log", line_count=3)
+
+# Read the latest 5 lines (e.g. recent errors or heartbeats)
+recent_lines = read_recent_log_lines("app.log", line_count=5)
+```
+
+Both functions return a list of lines with trailing newline characters stripped,
+and return an empty list if the target file does not exist or if `line_count < 1`.
+
 ## Why use these helpers?
 
 These helpers handle the repeated start, success, and failure logging around an operation, keeping the code focused on its task. Use `log_step()` for a selected block and `log_function()` when every call to a synchronous function or method should be logged.

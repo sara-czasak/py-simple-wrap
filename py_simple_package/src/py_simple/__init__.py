@@ -264,6 +264,7 @@ from .easy_logging import (
     log_function,
     log_step,
     log_to_file,
+    read_first_log_lines,
     read_recent_log_lines,
     count_log_levels,
     setup_file_logger,

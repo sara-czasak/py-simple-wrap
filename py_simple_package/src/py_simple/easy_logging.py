@@ -249,6 +249,54 @@ def read_recent_log_lines(file_path: str, line_count: int = 10) -> list[str]:
         return [line.rstrip("\n") for line in log_file.readlines()[-line_count:]]
 
 
+def read_first_log_lines(file_path: str, line_count: int = 10) -> list[str]:
+    """
+    Reads the initial lines from a log file.
+
+    Args:
+        file_path (str): Path to the log file to read.
+        line_count (int, optional): Number of initial lines to return.
+            Defaults to `10`.
+
+    Returns:
+        list[str]: The first `line_count` lines without trailing newline
+            characters. Returns an empty list if the file does not exist
+            or if `line_count` is less than `1`.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import read_first_log_lines
+
+            initial_lines = read_first_log_lines("app.log", line_count=5)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import os
+
+            if os.path.exists("app.log"):
+                with open("app.log", encoding="utf-8") as log_file:
+                    initial_lines = [
+                        line.rstrip("\\n")
+                        for _, line in zip(range(5), log_file)
+                    ]
+            else:
+                initial_lines = []
+            ```
+    """
+    if line_count < 1 or not os.path.exists(file_path):
+        return []
+
+    lines = []
+    with open(file_path, encoding="utf-8") as log_file:
+        for line in log_file:
+            lines.append(line.rstrip("\n"))
+            if len(lines) >= line_count:
+                break
+    return lines
+
+
 def log_to_file(file_path: str, message: str) -> bool:
     """
     Appends a message to a log file.
