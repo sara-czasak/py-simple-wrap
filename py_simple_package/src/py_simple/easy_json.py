@@ -99,6 +99,8 @@ def save_json_data(filepath: str, data: dict) -> None:
     """
     Saves a dictionary to a JSON file. Raises an error if the file
     already exists, so you don't accidentally overwrite something.
+    Exclusive creation also protects files created by another writer
+    immediately before this function opens the path.
 
     Args:
         filepath (str): Path to the JSON file to create.
@@ -115,22 +117,20 @@ def save_json_data(filepath: str, data: dict) -> None:
         === "The Traditional Way"
             ```python
             import json
-            import os
 
             filepath = "config.json"
-            if os.path.exists(filepath):
-                print(f"File {filepath} already exists.")
-            else:
-                with open(filepath, "w") as json_file:
+            try:
+                with open(filepath, "x", encoding="utf-8") as json_file:
                     json.dump({"name": "Sara"}, json_file, indent=4)
+            except FileExistsError:
+                print(f"File {filepath} already exists.")
             ```
     """
-    if os.path.exists(filepath):
-        raise EasyJsonError(f"\n\n\nERROR: File {filepath} already exists.")
-
     try:
-        with open(filepath, "w", encoding="utf-8") as json_file:
+        with open(filepath, "x", encoding="utf-8") as json_file:
             json.dump(data, json_file, indent=4)
+    except FileExistsError:
+        raise EasyJsonError(f"\n\n\nERROR: File {filepath} already exists.") from None
     except Exception as e:
         raise EasyJsonError(f"\n\n\nERROR: {e}") from None
 

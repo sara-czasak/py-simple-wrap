@@ -441,3 +441,38 @@ def test_compare_json_left_list_longer():
 
     result = compare_json(data1=[1, 2], data2=[1])
     assert result["removed"]["[1]"] == 2
+
+
+def test_save_json_data_preserves_file_created_before_open(tmp_path, monkeypatch):
+    import builtins
+    from py_simple_package.src.py_simple import easy_json
+
+    path = tmp_path / "contested.json"
+    original = b'{"owner": "other writer"}'
+    real_open = builtins.open
+    created = []
+
+    def competing_open(filename, *args, **kwargs):
+        if str(filename) == str(path) and not created:
+            path.write_bytes(original)
+            created.append(True)
+        return real_open(filename, *args, **kwargs)
+
+    monkeypatch.setattr(easy_json, "open", competing_open, raising=False)
+    with pytest.raises(EasyJsonError, match="already exists"):
+        save_json_data(str(path), {"owner": "this writer"})
+    assert created == [True]
+    assert path.read_bytes() == original
+
+
+def test_save_json_data_rejects_dangling_symlink(tmp_path):
+    target = tmp_path / "target.json"
+    link = tmp_path / "link.json"
+    try:
+        link.symlink_to(target)
+    except (OSError, NotImplementedError):
+        pytest.skip("Symlinks are unavailable")
+    with pytest.raises(EasyJsonError, match="already exists"):
+        save_json_data(str(link), {"value": 1})
+    assert link.is_symlink()
+    assert not target.exists()
