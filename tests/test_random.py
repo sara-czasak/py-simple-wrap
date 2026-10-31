@@ -107,6 +107,7 @@ def test_random_bool(monkeypatch):
     )
     assert random_bool() is False
 
+
 def test_roll_dice_default_sides():
     for _ in range(40):
         result = roll_dice()
@@ -229,12 +230,15 @@ def test_random_float_with_decimals():
 def test_random_float_is_available_from_public_api():
     assert public_random_float is random_float
 
+
 def test_random_color():
     for _ in range(50):
         color = random_color()
         assert color.startswith("#")
         assert len(color) == 7
         int(color[1:], 16)
+
+
 def test_random_choice_weighted():
     items = ["apple", "banana", "cherry"]
     weights = [0.7, 0.2, 0.1]
@@ -243,9 +247,11 @@ def test_random_choice_weighted():
         result = random_choice_weighted(items, weights)
         assert result in items
 
+
 def test_random_choice_weighted_rejects_empty_items():
     with pytest.raises(ValueError, match="empty sequence"):
         random_choice_weighted([], [])
+
 
 def test_random_choice_weighted_rejects_mismatched_lengths():
     with pytest.raises(ValueError, match="same length"):
@@ -253,6 +259,7 @@ def test_random_choice_weighted_rejects_mismatched_lengths():
             ["apple", "banana"],
             [0.7],
         )
+
 
 def test_random_choice_weighted_uses_weights(monkeypatch):
     received = {}
@@ -323,3 +330,13 @@ def test_random_date_inclusive_bounds(monkeypatch):
 
 def test_random_date_is_available_from_public_api():
     assert public_random_date is random_date
+
+
+@pytest.mark.parametrize("weights", [[-1, 2], [2, -1], [-0.25, 1.25]])
+def test_weighted_choice_rejects_negative_probabilities(weights):
+    with pytest.raises(ValueError, match="non-negative"):
+        random_choice_weighted(["first", "second"], weights)
+
+
+def test_weighted_choice_allows_zero_weight():
+    assert random_choice_weighted(["excluded", "only choice"], [0, 1]) == "only choice"
