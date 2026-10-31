@@ -1,17 +1,22 @@
+import os
 import git
 import pytest
 
+from py_simple import (
+    gitignore_config as top_level_gitignore_config,
+    load_env_file as top_level_load_env_file,
+)
 from py_simple_package.src.py_simple.easy_config import (
     EasyConfigError,
     gh_workflow_config,
     create_env_file,
     create_env_example_file,
     read_env_file,
+    load_env_file,
     dockerfile_config,
     gitignore_config,
     requirements_config,
 )
-from py_simple import gitignore_config as top_level_gitignore_config
 
 
 def test_gh_workflow_config_writes_template_at_current_directory(tmp_path, monkeypatch):
@@ -153,6 +158,107 @@ def test_read_env_file_keeps_equals_signs_in_values(tmp_path):
 def test_read_env_file_wraps_missing_file_error(tmp_path):
     with pytest.raises(EasyConfigError, match="does_not_exist"):
         read_env_file(str(tmp_path / "does_not_exist.env"))
+
+
+@pytest.fixture(autouse=True)
+def clean_env():
+    """Snapshot and restore os.environ so all modifications are reverted."""
+    original = os.environ.copy()
+    try:
+        yield
+    finally:
+        os.environ.clear()
+        os.environ.update(original)
+
+
+def test_load_env_file_loads_into_os_environ(tmp_path, monkeypatch):
+    monkeypatch.delenv("PORT", raising=False)
+    monkeypatch.delenv("DEBUG", raising=False)
+    env_file = tmp_path / ".env"
+    env_file.write_text("PORT=9000\nDEBUG=False\n", encoding="utf-8")
+
+    result = load_env_file(str(env_file))
+    assert result == {"PORT": "9000", "DEBUG": "False"}
+    assert os.environ["PORT"] == "9000"
+    assert os.environ["DEBUG"] == "False"
+
+
+def test_load_env_file_respects_override_false(tmp_path, monkeypatch):
+    monkeypatch.setenv("PORT", "3000")
+    monkeypatch.delenv("DEBUG", raising=False)
+    env_file = tmp_path / ".env"
+    env_file.write_text("PORT=9000\nDEBUG=True\n", encoding="utf-8")
+
+    result = load_env_file(str(env_file), override=False)
+    assert result == {"PORT": "9000", "DEBUG": "True"}
+    assert os.environ["PORT"] == "3000"
+    assert os.environ["DEBUG"] == "True"
+
+
+def test_load_env_file_respects_override_true(tmp_path, monkeypatch):
+    monkeypatch.setenv("PORT", "3000")
+    env_file = tmp_path / ".env"
+    env_file.write_text("PORT=9000\n", encoding="utf-8")
+
+    result = load_env_file(str(env_file), override=True)
+    assert result == {"PORT": "9000"}
+    assert os.environ["PORT"] == "9000"
+
+
+def test_load_env_file_duplicate_keys_and_skipped_override(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setenv("PORT", "3000")
+    monkeypatch.delenv("DEBUG", raising=False)
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "PORT=9000\nDEBUG=False\nDEBUG=True\n", encoding="utf-8"
+    )
+
+    result = load_env_file(str(env_file), override=False)
+    assert result == {"PORT": "9000", "DEBUG": "True"}
+    assert os.environ["PORT"] == "3000"
+    assert os.environ["DEBUG"] == "False"
+
+
+def test_load_env_file_ignores_comments_and_blank_lines(
+    tmp_path, monkeypatch
+):
+    monkeypatch.delenv("APP_NAME", raising=False)
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "# Comment line\n\nAPP_NAME = pulsefit\nINVALID_LINE_NO_EQUALS\n",
+        encoding="utf-8",
+    )
+
+    result = load_env_file(str(env_file))
+    assert result == {"APP_NAME": "pulsefit"}
+    assert os.environ["APP_NAME"] == "pulsefit"
+
+
+def test_load_env_file_wraps_missing_file_error(tmp_path):
+    with pytest.raises(EasyConfigError, match="missing_file"):
+        load_env_file(str(tmp_path / "missing_file.env"))
+
+
+def test_load_env_file_restores_environment_after_cleanup(tmp_path):
+    env_file = tmp_path / ".env"
+    env_file.write_text("ISOLATED_TEST_VAR=isolated_123\n", encoding="utf-8")
+    assert "ISOLATED_TEST_VAR" not in os.environ
+
+    original = os.environ.copy()
+    try:
+        load_env_file(str(env_file))
+        assert os.environ["ISOLATED_TEST_VAR"] == "isolated_123"
+    finally:
+        os.environ.clear()
+        os.environ.update(original)
+
+    assert "ISOLATED_TEST_VAR" not in os.environ
+
+
+def test_top_level_import_load_env_file():
+    assert callable(top_level_load_env_file)
 
 
 def test_create_env_example_file_blanks_values_but_keeps_keys(tmp_path):
