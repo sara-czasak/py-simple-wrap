@@ -200,7 +200,7 @@ def generate_simple_password(length: int = 12, include_symbols: bool = True) -> 
     chars = string.ascii_letters + string.digits
     if include_symbols:
         chars += string.punctuation
-    return ''.join(random.choice(chars) for _ in range(length))
+    return "".join(random.choice(chars) for _ in range(length))
 
 
 def random_int(start: int, end: int) -> int:
@@ -261,7 +261,9 @@ def random_bool() -> bool:
     return random.choice([True, False])
 
 
-def random_float(start: float = 0.0, end: float = 1.0, decimals: int | None = None) -> float:
+def random_float(
+    start: float = 0.0, end: float = 1.0, decimals: int | None = None
+) -> float:
     """
     Generates a random float between start and end.
 
@@ -359,22 +361,22 @@ def random_date(start: date, end: date) -> date:
     return date.fromordinal(ordinal)
 
 
-def random_choice_weighted(
-    items: Sequence[Any], weights: Sequence[float]
-) -> Any:
+def random_choice_weighted(items: Sequence[Any], weights: Sequence[float]) -> Any:
     """
     Picks one random item using the given weights.
 
     Args:
         items (Sequence[Any]): The collection to choose from.
-        weights (Sequence[float]): The relative probability of each item.
+        weights (Sequence[float]): Non-negative relative probabilities.
+            Zero excludes an item; the total must be positive and finite.
 
     Returns:
         Any: A randomly chosen element from the sequence.
 
     Raises:
         ValueError: If items and weights have different lengths or
-            if the sequence is empty.
+            if the sequence is empty, a weight is negative, or the total
+            weight is not positive and finite.
 
     Example:
         === "The Py_simple Way"
@@ -402,5 +404,8 @@ def random_choice_weighted(
         raise ValueError("Cannot choose from an empty sequence.")
     if len(items) != len(weights):
         raise ValueError("items and weights must have the same length.")
+
+    if any(weight < 0 for weight in weights):
+        raise ValueError("weights must be non-negative.")
 
     return random.choices(items, weights=weights, k=1)[0]
