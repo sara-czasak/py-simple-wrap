@@ -4,22 +4,26 @@ import pytest
 
 from py_simple_package.src.py_simple import (
     decode_text as public_decode_text,
+    decode_url_text as public_decode_url_text,
     decode_to_bytes as public_decode_to_bytes,
     decode_to_file as public_decode_to_file,
     encode_bytes as public_encode_bytes,
     encode_file as public_encode_file,
     encode_text as public_encode_text,
+    encode_url_text as public_encode_url_text,
     encode_urlsafe_text as public_encode_urlsafe_text,
     is_base64 as public_is_base64,
 )
 from py_simple_package.src.py_simple.easy_base64 import (
     EasyBase64Error,
     decode_text,
+    decode_url_text,
     decode_to_bytes,
     decode_to_file,
     encode_bytes,
     encode_file,
     encode_text,
+    encode_url_text,
     encode_urlsafe_text,
     is_base64,
 )
@@ -177,3 +181,38 @@ def test_encode_text_wraps_unencodable_unicode(text):
 @pytest.mark.parametrize("text", ["", "café", "नमस्ते", "🎉"])
 def test_encode_text_preserves_valid_unicode(text):
     assert decode_text(encode_text(text)) == text
+
+
+@pytest.mark.parametrize("text, expected", [("", ""), ("f", "Zg=="), ("hello?", "aGVsbG8_"), ("~~~", "fn5-"), ("café", "Y2Fmw6k=")])
+def test_url_text_round_trip(text, expected):
+    assert encode_url_text(text) == expected
+    assert decode_url_text(expected) == text
+
+
+def test_url_text_public_imports():
+    assert public_encode_url_text is encode_url_text
+    assert public_decode_url_text is decode_url_text
+
+
+@pytest.mark.parametrize("value", [None, 123, b"hello"])
+def test_url_text_rejects_non_string(value):
+    with pytest.raises(EasyBase64Error):
+        encode_url_text(value)
+    with pytest.raises(EasyBase64Error):
+        decode_url_text(value)
+
+
+@pytest.mark.parametrize("encoded", ["aGVsbG8+", "fn5/", "aGVsbG8", "aGVsbG8_!", "aGVsbG8===", "/w=="])
+def test_decode_url_text_rejects_invalid_base64(encoded):
+    with pytest.raises(EasyBase64Error):
+        decode_url_text(encoded)
+
+
+def test_decode_url_text_rejects_non_utf8_bytes():
+    with pytest.raises(EasyBase64Error):
+        decode_url_text("_w==")
+
+
+def test_encode_url_text_rejects_invalid_unicode():
+    with pytest.raises(EasyBase64Error):
+        encode_url_text("\ud800")

@@ -326,12 +326,80 @@ def encode_urlsafe_text(text: str) -> str:
             ```
 
     Note:
-        Decode with `base64.urlsafe_b64decode(encoded).decode("utf-8")`.
-        `decode_text` accepts the standard Base64 alphabet, not '-' and '_'.
+        Decode with `decode_url_text(encoded)`.
     """
     if not isinstance(text, str):
         raise EasyBase64Error("\n\nERROR: text must be a string.")
     try:
         return base64.urlsafe_b64encode(text.encode("utf-8")).decode("ascii")
     except UnicodeEncodeError as error:
+        raise EasyBase64Error(f"\n\nERROR: {error}") from None
+
+
+def encode_url_text(text: str) -> str:
+    """
+    Encodes text as URL-safe Base64 with standard '=' padding.
+
+    Args:
+        text (str): Text to encode as UTF-8.
+
+    Returns:
+        str: URL-safe Base64 text, such as 'aGVsbG8_'.
+
+    Raises:
+        EasyBase64Error: If `text` is not a string or cannot be UTF-8 encoded.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import encode_url_text
+
+            encoded = encode_url_text("hello?")  # 'aGVsbG8_'
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import base64
+
+            encoded = base64.urlsafe_b64encode("hello?".encode("utf-8")).decode("ascii")
+            ```
+    """
+    return encode_urlsafe_text(text)
+
+
+def decode_url_text(encoded: str) -> str:
+    """
+    Decodes padded URL-safe Base64 text back into UTF-8 text.
+
+    Args:
+        encoded (str): URL-safe Base64 text, such as the result of `encode_url_text`.
+
+    Returns:
+        str: The original text, such as 'hello?'.
+
+    Raises:
+        EasyBase64Error: If `encoded` is not valid URL-safe Base64 or UTF-8 text.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import decode_url_text
+
+            message = decode_url_text("aGVsbG8_")  # 'hello?'
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import base64
+
+            message = base64.urlsafe_b64decode("aGVsbG8_").decode("utf-8")
+            ```
+    """
+    if not isinstance(encoded, str):
+        raise EasyBase64Error("\n\nERROR: encoded text must be a string.")
+    if any(char not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=" for char in encoded):
+        raise EasyBase64Error("\n\nERROR: encoded text must use the URL-safe Base64 alphabet.")
+    try:
+        return base64.b64decode(encoded, altchars=b"-_", validate=True).decode("utf-8")
+    except (binascii.Error, ValueError, UnicodeDecodeError) as error:
         raise EasyBase64Error(f"\n\nERROR: {error}") from None

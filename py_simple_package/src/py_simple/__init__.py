@@ -17,11 +17,13 @@ from .easy_ai import (
 from .easy_base64 import (
     EasyBase64Error,
     decode_text,
+    decode_url_text,
     decode_to_bytes,
     decode_to_file,
     encode_bytes,
     encode_file,
     encode_text,
+    encode_url_text,
     encode_urlsafe_text,
     is_base64,
 )
