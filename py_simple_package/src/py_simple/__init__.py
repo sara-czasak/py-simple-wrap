@@ -268,6 +268,7 @@ from .easy_logging import (
     count_log_levels,
     setup_file_logger,
     temporary_log_level,
+    filter_log_lines,
 )
 from .easy_math import (
     calculate_simple_interest,
