@@ -270,6 +270,81 @@ def read_env_file(file_path: str = ".env") -> dict[str, str]:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 
 
+def load_env_file(
+    file_path: str = ".env",
+    override: bool = False,
+) -> dict[str, str]:
+    """
+    Loads variables from a .env file directly into os.environ.
+
+    Reads key-value pairs from the specified file and sets them in the
+    current process environment (`os.environ`). Ignores blank lines and
+    comments. If override is False, variables that already exist in
+    `os.environ` are not overwritten.
+
+    Args:
+        file_path (str, optional): Path to the .env file to load.
+            Defaults to ".env".
+        override (bool, optional): Whether to overwrite environment
+            variables that are already present in `os.environ`.
+            Defaults to False.
+
+    Returns:
+        dict[str, str]: Dictionary of parsed configuration keys and values
+            from the file, including entries skipped from updating
+            `os.environ` when override is False.
+
+    Raises:
+        EasyConfigError: If the file cannot be read.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            import os
+            from py_simple import load_env_file
+
+            load_env_file(".env")
+            port = os.getenv("PORT")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import os
+
+            with open(".env", encoding="utf-8") as f:
+                for line in f:
+                    stripped = line.strip()
+                    if (
+                        stripped
+                        and not stripped.startswith("#")
+                        and "=" in stripped
+                    ):
+                        key, val = stripped.split("=", 1)
+                        key = key.strip()
+                        if key not in os.environ:
+                            os.environ[key] = val.strip()
+            ```
+    """
+    try:
+        loaded = {}
+        with open(file_path, encoding="utf-8") as f:
+            for line in f:
+                stripped_line = line.strip()
+                if not stripped_line or stripped_line.startswith("#"):
+                    continue
+                if "=" not in stripped_line:
+                    continue
+                key, value = stripped_line.split("=", 1)
+                key = key.strip()
+                value = value.strip()
+                if override or key not in os.environ:
+                    os.environ[key] = value
+                loaded[key] = value
+        return loaded
+    except Exception as e:
+        raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
+
 def create_env_example_file(
     file_path: str = ".env",
     example_path: str = ".env.example",

@@ -52,6 +52,37 @@ from py_simple import gh_workflow_config
 gh_workflow_config("checks", at_root=False)
 ```
 
+## Loading Environment Files
+
+When developing web services or CLI tools, configuration values are often stored
+in `.env` files. `load_env_file()` reads key-value pairs from a `.env` file and
+loads them directly into `os.environ` so standard calls like `os.getenv()` work
+without third-party dependencies:
+
+```python
+import os
+from py_simple import create_env_file, load_env_file
+
+# Create a sample .env file
+create_env_file({"PORT": "8080", "APP_ENV": "development"})
+
+# Load variables into os.environ
+load_env_file(".env")
+
+print(os.getenv("PORT"))
+print(os.getenv("APP_ENV"))
+```
+
+Example output:
+
+```text
+8080
+development
+```
+
+Existing environment variables can be preserved by keeping `override=False` (the
+default) or updated by passing `override=True`.
+
 ## Why use these helpers?
 
 Without this helper, you would need to create the `.github/workflows` folders,
