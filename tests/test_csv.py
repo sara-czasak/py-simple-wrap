@@ -1230,3 +1230,27 @@ def test_append_invalid_dict_leaves_unterminated_file_unchanged(tmp_path):
     with pytest.raises(ValueError):
         append_row_to_csv(str(path), {"Unknown": "value"})
     assert path.read_bytes() == b"Name\nAda"
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "values, ascending",
+    [
+        (
+            ["9007199254740993", "9007199254740992"],
+            ["9007199254740992", "9007199254740993"],
+        ),
+        (
+            ["1.00000000000000002", "1.00000000000000001"],
+            ["1.00000000000000001", "1.00000000000000002"],
+        ),
+        (["1e400", "1e399", "-1e400"], ["-1e400", "1e399", "1e400"]),
+        (["NaN", "2", "1", "text", ""], ["1", "2", "", "NaN", "text"]),
+    ],
+)
+def test_csv_numeric_sort_preserves_precision(tmp_path, reverse, values, ascending):
+    path = tmp_path / "numbers.csv"
+    write_csv_from_list(str(path), [{"value": value} for value in values])
+    sort_csv_by_column(str(path), "value", reverse=reverse)
+    expected = list(reversed(ascending)) if reverse else ascending
+    assert read_csv_column(str(path), "value") == expected
