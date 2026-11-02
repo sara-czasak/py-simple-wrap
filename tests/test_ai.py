@@ -377,6 +377,17 @@ def test_chunk_text_splits_a_word_longer_than_the_limit():
     assert chunk_text("abcdefghij", max_chars=4) == ["abcd", "efgh", "ij"]
 
 
+def test_chunk_text_flushes_current_before_long_word():
+    from py_simple_package.src.py_simple.easy_ai import chunk_text
+
+    assert chunk_text("hello superlongword", max_chars=5) == [
+        "hello",
+        "super",
+        "longw",
+        "ord",
+    ]
+
+
 def test_chunk_text_empty_string():
     from py_simple_package.src.py_simple.easy_ai import chunk_text
 
