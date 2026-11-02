@@ -1048,6 +1048,16 @@
         "code",
         "documentation"
       ]
+    },
+    {
+      "login": "uclthomasblaimont",
+      "name": "Thomas Blaimont",
+      "avatar_url": "https://github.com/uclthomasblaimont.png",
+      "profile": "https://github.com/uclthomasblaimont",
+      "contributions": [
+        "test",
+        "code"
+      ]
     }
   ]
 }
