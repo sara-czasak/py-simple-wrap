@@ -5,6 +5,7 @@ easy_csv is built to simplify reading and writing CSV files.
 import csv
 import io
 import os.path
+from decimal import Decimal, InvalidOperation
 from collections.abc import Generator
 from typing import Any
 import tempfile
@@ -498,7 +499,8 @@ def sort_csv_by_column(
         filepath (str): Path to the CSV file.
         column (str): Column name to sort by. For mixed data, values are
             sorted numerically first, followed by non-numeric strings
-            and empty cells.
+            and empty cells. Numeric comparisons preserve decimal precision;
+            NaN values are treated as non-numeric strings.
         reverse (bool): If True, sorts in descending order.
             For mixed data, this reverses the grouping.
         output_filepath (str | None): Output path. If None, overwrites
@@ -520,9 +522,12 @@ def sort_csv_by_column(
     def sort_key(row: dict[str, Any]) -> Any:
         val = row.get(column, "") or ""
         try:
-            return (0, float(val), "")
-        except ValueError:
-            return (1, 0.0, val)
+            number = Decimal(val)
+        except InvalidOperation:
+            return (1, Decimal(0), val)
+        if number.is_nan():
+            return (1, Decimal(0), val)
+        return (0, number, "")
 
     sorted_data = sorted(data, key=sort_key, reverse=reverse)
 
