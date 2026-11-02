@@ -205,15 +205,11 @@ def test_load_env_file_respects_override_true(tmp_path, monkeypatch):
     assert os.environ["PORT"] == "9000"
 
 
-def test_load_env_file_duplicate_keys_and_skipped_override(
-    tmp_path, monkeypatch
-):
+def test_load_env_file_duplicate_keys_and_skipped_override(tmp_path, monkeypatch):
     monkeypatch.setenv("PORT", "3000")
     monkeypatch.delenv("DEBUG", raising=False)
     env_file = tmp_path / ".env"
-    env_file.write_text(
-        "PORT=9000\nDEBUG=False\nDEBUG=True\n", encoding="utf-8"
-    )
+    env_file.write_text("PORT=9000\nDEBUG=False\nDEBUG=True\n", encoding="utf-8")
 
     result = load_env_file(str(env_file), override=False)
     assert result == {"PORT": "9000", "DEBUG": "True"}
@@ -221,9 +217,7 @@ def test_load_env_file_duplicate_keys_and_skipped_override(
     assert os.environ["DEBUG"] == "False"
 
 
-def test_load_env_file_ignores_comments_and_blank_lines(
-    tmp_path, monkeypatch
-):
+def test_load_env_file_ignores_comments_and_blank_lines(tmp_path, monkeypatch):
     monkeypatch.delenv("APP_NAME", raising=False)
     env_file = tmp_path / ".env"
     env_file.write_text(
