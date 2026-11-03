@@ -1,7 +1,7 @@
 # Easy Base64
 
-Sometimes a program needs to tuck a short message into a form field, a
-filename, or a chat that only allows plain text. Base64 does that, but the
+Sometimes a program needs to tuck a short message into a form field or a
+chat that only allows plain text. Base64 does that, but the
 standard library asks you to juggle bytes and encodings. `easy_base64` keeps
 the job to one readable call.
 
@@ -70,6 +70,25 @@ print(safe_code)
 original = decode_urlsafe_text(safe_code)
 print(original)
 ```
+
+## Working with bytes
+
+Text functions are for words and sentences. If you already have **bytes**
+(the raw contents of an image or another file), use `encode_bytes()` instead:
+
+```python
+from py_simple import encode_bytes, decode_to_bytes
+
+raw_data = b"hello"
+code = encode_bytes(raw_data)
+print(code)  # aGVsbG8=
+
+restored_data = decode_to_bytes(code)
+print(restored_data)  # b'hello'
+```
+
+`decode_to_bytes()` gives you bytes back. Use `decode_text()` when you want a
+sentence back, or `decode_to_file()` when you want to save the result to disk.
 
 ## Why use these helpers?
 
