@@ -501,3 +501,31 @@ def test_add_to_zip_rejects_itself_before_writing(tmp_path, monkeypatch, alias_k
     with pytest.raises(EasyArchiveError, match="itself"):
         add_to_zip(str(archive), str(source))
     assert archive.read_bytes() == before
+
+
+def test_zip_folder_preserves_empty_subdirectories(tmp_path):
+    source = tmp_path / "project"
+    (source / "empty").mkdir(parents=True)
+    (source / "nested" / "also-empty").mkdir(parents=True)
+    (source / "note.txt").write_text("hello", encoding="utf-8")
+    archive = tmp_path / "project.zip"
+    zip_folder(str(source), str(archive))
+    restored = tmp_path / "restored"
+    with zipfile.ZipFile(archive) as zf:
+        assert zf.getinfo("empty/").is_dir()
+        assert zf.getinfo("nested/also-empty/").is_dir()
+        zf.extractall(restored)
+    assert (restored / "empty").is_dir()
+    assert (restored / "nested" / "also-empty").is_dir()
+    assert (restored / "note.txt").read_text(encoding="utf-8") == "hello"
+
+
+def test_zip_folder_preserves_subdirectory_containing_only_output(tmp_path):
+    source = tmp_path / "project"
+    output_dir = source / "archives"
+    output_dir.mkdir(parents=True)
+    archive = output_dir / "backup.zip"
+    zip_folder(str(source), str(archive))
+    with zipfile.ZipFile(archive) as zf:
+        assert zf.namelist() == ["archives/"]
+        assert zf.getinfo("archives/").is_dir()
