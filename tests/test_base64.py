@@ -218,6 +218,8 @@ def test_decode_urlsafe_text_rejects_invalid_base64():
         decode_urlsafe_text("not-valid-base64!!!")
     with pytest.raises(EasyBase64Error):
         decode_urlsafe_text("!!!!")
+    with pytest.raises(EasyBase64Error):
+        decode_urlsafe_text("a")
     with pytest.raises(EasyBase64Error, match="invalid URL-safe characters"):
         decode_urlsafe_text("aGVsbG8+")
     with pytest.raises(EasyBase64Error, match="invalid URL-safe characters"):
