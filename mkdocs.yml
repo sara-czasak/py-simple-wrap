@@ -94,6 +94,7 @@ nav:
           - Website Health Monitor: tutorial/website-health-monitor-project.md
           - Club Badge: tutorial/club-badge-project.md
           - Secret Message Vault: tutorial/secret-message-vault-project.md
+          - Subscription Budget Planner: tutorial/subscription-planner-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
