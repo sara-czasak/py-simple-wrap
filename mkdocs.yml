@@ -95,6 +95,7 @@ nav:
           - Club Badge: tutorial/club-badge-project.md
           - Secret Message Vault: tutorial/secret-message-vault-project.md
           - Arcade Leaderboard: tutorial/arcade-leaderboard-project.md
+          - Game Asset Packager: tutorial/game-asset-packager-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
