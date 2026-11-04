@@ -17,10 +17,10 @@ Install `pytest-cov` using your environment tool:
     python -m pip install pytest-cov
     ```
 
-Run coverage targeting the specific module file you modified (substitute `easy_<module>` with your module name, e.g. `easy_bytes`):
+Run coverage targeting the specific module you modified (substitute `easy_<module>` with your module name, e.g. `easy_bytes`):
 
 ```bash
-pytest --cov=py_simple_package/src/py_simple/easy_<module>.py --cov-report=term-missing tests/test_<module>.py
+pytest --cov=py_simple.easy_<module> --cov-report=term-missing tests/test_<module>.py
 ```
 
 Example output:
@@ -101,7 +101,7 @@ except json.JSONDecodeError as error:
 If line numbers in the terminal are hard to navigate, generate a color-coded HTML report:
 
 ```bash
-pytest --cov=py_simple_package/src/py_simple/easy_<module>.py --cov-report=html tests/test_<module>.py
+pytest --cov=py_simple.easy_<module> --cov-report=html tests/test_<module>.py
 ```
 
 This creates an `htmlcov/` folder. Open `htmlcov/index.html` in your browser:
@@ -129,7 +129,7 @@ Write a test for each red line until the whole file is green.
 
 ## Rules of thumb
 
-- **Target only your module during development.** Running pytest over the entire repository takes longer. Using `--cov=py_simple_package/src/py_simple/easy_<module>.py` gives you targeted feedback in seconds.
+- **Target only your module during development.** Running pytest over the entire repository takes longer. Using `--cov=py_simple.easy_<module>` gives you targeted feedback in seconds.
 - **Never commit `htmlcov/` or `.coverage`.** These are local generated artifacts. The project's `.gitignore` already ignores them, but keep `git status` clean by not force-adding them.
 - **Understand Project Coverage vs. Patch Coverage.** Codecov measures two distinct metrics on every pull request:
     - **Project Coverage:** The overall test coverage percentage across the entire repository (which aims for 94%+).
