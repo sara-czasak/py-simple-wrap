@@ -1,6 +1,6 @@
 # Code Coverage Guide
 
-Every pull request in `py-simple-wrap` automatically runs test coverage checks in GitHub Actions, and the project maintains a **94%+ overall test coverage target**. If a pull request adds new lines of code without tests for them, Codecov flags the pull request. This guide shows how to measure coverage locally, read the `Missing` lines report, and write tests to cover missing branches before pushing.
+Every pull request in `py-simple-wrap` automatically runs test coverage checks in GitHub Actions, and the repository maintains a **94%+ overall test coverage target**. In addition to overall project coverage, Codecov tracks **patch coverage**—measuring whether the specific new or modified lines in your pull request are exercised by tests. This guide shows how to measure coverage locally, read the `Missing` lines report, and write tests to cover missing branches before pushing.
 
 ## Copy this workflow
 
@@ -17,10 +17,10 @@ Install `pytest-cov` using your environment tool:
     python -m pip install pytest-cov
     ```
 
-Run coverage on only the module you modified (substitute `easy_<module>` with your module name, e.g. `easy_bytes`):
+Run coverage targeting the specific module file you modified (substitute `easy_<module>` with your module name, e.g. `easy_bytes`):
 
 ```bash
-pytest --cov=py_simple_package/src/py_simple/easy_<module> --cov-report=term-missing tests/test_<module>.py
+pytest --cov=py_simple_package/src/py_simple/easy_<module>.py --cov-report=term-missing tests/test_<module>.py
 ```
 
 Example output:
@@ -101,7 +101,7 @@ except json.JSONDecodeError as error:
 If line numbers in the terminal are hard to navigate, generate a color-coded HTML report:
 
 ```bash
-pytest --cov=py_simple_package/src/py_simple/easy_<module> --cov-report=html tests/test_<module>.py
+pytest --cov=py_simple_package/src/py_simple/easy_<module>.py --cov-report=html tests/test_<module>.py
 ```
 
 This creates an `htmlcov/` folder. Open `htmlcov/index.html` in your browser:
@@ -129,6 +129,9 @@ Write a test for each red line until the whole file is green.
 
 ## Rules of thumb
 
-- **Target only your module during development.** Running `--cov=py_simple_package` across the whole repository takes significantly longer. Using `--cov=py_simple_package/src/py_simple/easy_<module>` gives you feedback in seconds.
+- **Target only your module during development.** Running pytest over the entire repository takes longer. Using `--cov=py_simple_package/src/py_simple/easy_<module>.py` gives you targeted feedback in seconds.
 - **Never commit `htmlcov/` or `.coverage`.** These are local generated artifacts. The project's `.gitignore` already ignores them, but keep `git status` clean by not force-adding them.
-- **Run the check before opening a PR.** If your local coverage shows 100% (or above 94%) on the files you modified, Codecov's patch check on GitHub will pass automatically.
+- **Understand Project Coverage vs. Patch Coverage.** Codecov measures two distinct metrics on every pull request:
+    - **Project Coverage:** The overall test coverage percentage across the entire repository (which aims for 94%+).
+    - **Patch Coverage:** The coverage percentage of *only the newly added or modified lines in your pull request diff*.
+    Even if a module already has high overall coverage, Codecov will flag a PR if the specific lines you touched are missing tests. Aim to test 100% of your new lines—including input validation and error branches—so that the patch check passes cleanly.
