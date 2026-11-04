@@ -36,8 +36,8 @@ with TemporaryDirectory() as workspace:
     dialogue = folder / "quest_dialogue.txt"
     map_data = folder / "dungeon_layout.json"
 
-    dialogue.write_text("Hero: Halt! Who goes there?\n" * 200, encoding="utf-8")
-    map_data.write_text('{"tile": "stone", "walkable": true}\n' * 150, encoding="utf-8")
+    dialogue.write_text("Hero: Halt! Who goes there?\n" * 200, encoding="utf-8", newline="")
+    map_data.write_text('{"tile": "stone", "walkable": true}\n' * 150, encoding="utf-8", newline="")
 
     asset_files = [str(dialogue), str(map_data)]
     total_uncompressed = add_bytes([dialogue.stat().st_size, map_data.stat().st_size])
@@ -74,9 +74,9 @@ Example output:
 --- Game Asset Bundle Report ---
 Files packed: 2
 Archive contents: ['quest_dialogue.txt', 'dungeon_layout.json']
-Original size: 11.1 KB
-Compressed size: 388 B (3.4% of original)
-Space saved: 10.7 KB
+Original size: 10.7 KB
+Compressed size: 383 B (3.5% of original)
+Space saved: 10.4 KB
 Is bundle smaller: True
 ```
 
@@ -92,9 +92,9 @@ Is bundle smaller: True
 
 `remaining_bytes()` computes how many bytes of disk space were freed up by taking the compressed archive size and the original uncompressed total.
 
-`percent_used()` calculates what percentage of the original footprint the compressed file occupies (in this case, shrinking the assets down to just 3.4% of their original size).
+`percent_used()` calculates what percentage of the original footprint the compressed file occupies (in this case, shrinking the assets down to just 3.5% of their original size).
 
-`bytes_to_human()` converts raw integer byte numbers (like 11350 and 388) into friendly, human-readable strings like `11.1 KB` and `388 B`.
+`bytes_to_human()` converts raw integer byte numbers (like 11000 and 383) into friendly, human-readable strings like `10.7 KB` and `383 B`.
 
 `is_smaller()` compares the archive size against the original total to confirm that compression reduced the overall file footprint.
 
@@ -109,7 +109,7 @@ Is bundle smaller: True
 Without `py-simple-wrap`, achieving this with Python's standard library requires importing both `zipfile` and `math` while writing manual helper functions:
 - Setting up a `zipfile.ZipFile` context manager with `zipfile.ZIP_DEFLATED`, iterating over files, and extracting relative names with `os.path.basename` to avoid storing deep directory trees.
 - Manually reading `infolist()` or `namelist()` to count and inspect members.
-- Writing custom formatting functions to calculate logarithms or unit division loops (`size / 1024 ** power`) just to print human-friendly file sizes like "11.1 KB".
+- Writing custom formatting functions to calculate logarithms or unit division loops (`size / 1024 ** power`) just to print human-friendly file sizes like "10.7 KB".
 
 Combining `easy_archive` and `easy_bytes` replaces archive plumbing and byte math with concise, descriptive functions.
 
