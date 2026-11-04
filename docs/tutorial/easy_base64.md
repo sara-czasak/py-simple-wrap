@@ -57,6 +57,20 @@ from py_simple import decode_to_file
 decode_to_file(image_data, "restored_icon.png")
 ```
 
+## URL-safe Base64
+
+When embedding Base64 strings into URLs, tokens, or filenames, standard characters like `+` and `/` can cause issues. Use `encode_urlsafe_text()` and `decode_urlsafe_text()` to use `-` and `_` instead:
+
+```python
+from py_simple import decode_urlsafe_text, encode_urlsafe_text
+
+safe_code = encode_urlsafe_text("hello?world")
+print(safe_code)
+
+original = decode_urlsafe_text(safe_code)
+print(original)
+```
+
 ## Why use these helpers?
 
 The usual version needs `encode`, `decode`, and a `validate=True` flag that

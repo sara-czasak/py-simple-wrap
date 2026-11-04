@@ -19,6 +19,7 @@ from .easy_base64 import (
     decode_text,
     decode_to_bytes,
     decode_to_file,
+    decode_urlsafe_text,
     encode_bytes,
     encode_file,
     encode_text,
