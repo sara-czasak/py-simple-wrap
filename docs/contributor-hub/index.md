@@ -45,6 +45,9 @@ The [Pull Request Workflow Guide](pr_workflow_template.md) breaks down the compl
 **🎲 "My helper uses randomness. How can its tests pass reliably?"**
 The [Testing Random Helpers](random_tests_template.md) guide shows controlled draws, boundary cases, and shuffle checks that accept every valid ordering.
 
+**🧩 "My module needs an external third-party package like pygame or matplotlib. How do I handle and test it gracefully?"**
+The [Optional Dependency Guide](optional_dependencies_template.md) shows how to safely import optional dependencies, raise friendly custom errors, and test missing package branches with `monkeypatch`.
+
 ## Still stuck, or something's not covered here?
 
 That's okay too. Open an issue, or mention it in your pull request, and it'll get sorted out together — see [CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) for how to reach out. Nobody's expected to figure this out alone.

@@ -105,6 +105,7 @@ nav:
       - Keeping Tests Isolated: contributor-hub/test_isolation_template.md
       - Testing Random Helpers: contributor-hub/random_tests_template.md
       - Network Test Template: contributor-hub/network_tests_template.md
+      - Optional Dependency Guide: contributor-hub/optional_dependencies_template.md
       - Public API Export Template: contributor-hub/public_api_template.md
       - Pre-commit Guide: contributor-hub/pre_commit_template.md
       - Pull Request Workflow Guide: contributor-hub/pr_workflow_template.md
