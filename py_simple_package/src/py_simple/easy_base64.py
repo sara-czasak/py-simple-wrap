@@ -384,3 +384,45 @@ def decode_urlsafe_text(encoded: str) -> str:
         return base64.b64decode(standard_b64, validate=True).decode("utf-8")
     except (ValueError, UnicodeDecodeError, binascii.Error) as error:
         raise EasyBase64Error(f"\n\nERROR: {error}") from None
+
+def encode_urlsafe_bytes(data: bytes) -> str:
+    """
+    Encode raw bytes as Base64 using the URL-safe alphabet.
+
+    Uses '-' and '_' instead of '+' and '/'. Standard '=' padding is kept;
+    use a URL query builder when placing the result in a query string.
+    Useful for binary payloads (tokens, digests, small files) that must travel
+    in a URL path or query. Base64 is reversible encoding, not encryption.
+
+    Args:
+        data (bytes): The bytes to encode.
+
+    Returns:
+        str: URL-safe Base64 text, or an empty string for empty input.
+
+    Raises:
+        EasyBase64Error: If `data` is not bytes.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import encode_urlsafe_bytes
+
+            encoded = encode_urlsafe_bytes(b"\x00\xff?")  # 'AP8_'
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import base64
+
+            encoded = base64.urlsafe_b64encode(b"\x00\xff?").decode("ascii")
+            ```
+
+    Note:
+        Pair with `decode_urlsafe_text` when the payload is UTF-8 text. For
+        arbitrary binary round-trips, decode with `base64.urlsafe_b64decode`.
+    """
+    if not isinstance(data, bytes):
+        raise EasyBase64Error("\n\nERROR: data must be bytes.")
+    return base64.urlsafe_b64encode(data).decode("ascii")
+
