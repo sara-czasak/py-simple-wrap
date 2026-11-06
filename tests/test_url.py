@@ -56,14 +56,31 @@ def test_rejects_incomplete_url():
     "query,key,value,expected",
     [
         ("tag=python&tag=beginner", "page", "2", "tag=python&tag=beginner&page=2"),
-        ("tag=python&page=1&tag=beginner&page=3", "page", "2", "tag=python&page=2&tag=beginner"),
+        (
+            "tag=python&page=1&tag=beginner&page=3",
+            "page",
+            "2",
+            "tag=python&page=2&tag=beginner",
+        ),
         ("tag=&tag=python&empty=", "page", "2", "tag=&tag=python&empty=&page=2"),
-        ("tag=c%2B%2B&tag=a%26b", "q", "hello world", "tag=c%2B%2B&tag=a%26b&q=hello+world"),
+        (
+            "tag=c%2B%2B&tag=a%26b",
+            "q",
+            "hello world",
+            "tag=c%2B%2B&tag=a%26b&q=hello+world",
+        ),
     ],
 )
-def test_add_query_param_preserves_other_repeated_parameters(query, key, value, expected):
+def test_add_query_param_preserves_other_repeated_parameters(
+    query, key, value, expected
+):
     url = f"https://school.example/clubs?{query}#results"
-    assert add_query_param(url, key, value) == f"https://school.example/clubs?{expected}#results"
+    assert (
+        add_query_param(url, key, value)
+        == f"https://school.example/clubs?{expected}#results"
+    )
+
+
 def test_remove_query_param():
     start = "https://school.example/clubs?page=2&sort=name"
     assert remove_query_param(start, "page") == "https://school.example/clubs?sort=name"
@@ -196,8 +213,20 @@ def test_get_query_values_public_imports():
     ]
 
 
-@pytest.mark.parametrize("url", ["https://[", "https://[invalid]", "https://example.com／path", "https://user@", "https://:443"])
-@pytest.mark.parametrize("helper", [get_domain, get_path, is_https, lambda url: add_query_param(url, "page", "2")])
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://[",
+        "https://[invalid]",
+        "https://example.com／path",
+        "https://user@",
+        "https://:443",
+    ],
+)
+@pytest.mark.parametrize(
+    "helper",
+    [get_domain, get_path, is_https, lambda url: add_query_param(url, "page", "2")],
+)
 def test_url_helpers_wrap_malformed_or_missing_hosts(url, helper):
     with pytest.raises(EasyUrlError):
         helper(url)
@@ -206,3 +235,28 @@ def test_url_helpers_wrap_malformed_or_missing_hosts(url, helper):
 def test_get_domain_accepts_ipv6_and_user_information():
     assert get_domain("https://[::1]:443/path") == "::1"
     assert get_domain("https://user:password@school.example/path") == "school.example"
+
+
+@pytest.mark.parametrize("port", ["abc", "-1", "65536", "80.5"])
+@pytest.mark.parametrize("host", ["example.com", "[::1]"])
+def test_url_helpers_reject_invalid_ports(host, port):
+    url = f"https://{host}:{port}/path?tag=one"
+    helpers = [
+        get_domain,
+        get_path,
+        is_https,
+        lambda link: add_query_param(link, "page", "2"),
+        lambda link: remove_query_param(link, "tag"),
+        lambda link: get_query_values(link, "tag"),
+    ]
+    for helper in helpers:
+        with pytest.raises(EasyUrlError):
+            helper(url)
+
+
+@pytest.mark.parametrize("port", ["0", "443", "65535"])
+def test_url_helpers_preserve_valid_port_boundaries(port):
+    url = f"https://[::1]:{port}/path"
+    assert get_domain(url) == "::1"
+    assert get_path(url) == "/path"
+    assert add_query_param(url, "page", "2") == url + "?page=2"

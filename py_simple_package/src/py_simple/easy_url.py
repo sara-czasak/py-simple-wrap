@@ -24,6 +24,8 @@ def _parsed(url: str):
     try:
         parsed = urlparse(url)
         hostname = parsed.hostname
+        # urllib validates the port only when this property is accessed.
+        _ = parsed.port
     except ValueError as error:
         raise EasyUrlError(f"\n\nERROR: {error}") from None
     if not parsed.scheme or not hostname:
@@ -42,7 +44,7 @@ def get_domain(url: str) -> str:
         str: The host, such as `"school.example"`.
 
     Raises:
-        EasyUrlError: If `url` is not a full link.
+        EasyUrlError: If `url` is not a full link or has an invalid port.
 
     Example:
         === "The Py_simple Way"
@@ -73,7 +75,7 @@ def is_https(url: str) -> bool:
         bool: True when the scheme is `https`.
 
     Raises:
-        EasyUrlError: If `url` is not a full link.
+        EasyUrlError: If `url` is not a full link or has an invalid port.
 
     Example:
         === "The Py_simple Way"
@@ -171,7 +173,7 @@ def get_path(url: str) -> str:
         str: The path, such as `"/clubs/art"`. Returns `"/"` if no path is given.
 
     Raises:
-        EasyUrlError: If `url` is not a full link.
+        EasyUrlError: If `url` is not a full link or has an invalid port.
 
     Example:
         === "The Py_simple Way"
