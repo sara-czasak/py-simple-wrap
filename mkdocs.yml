@@ -96,6 +96,7 @@ nav:
           - Secret Message Vault: tutorial/secret-message-vault-project.md
           - Arcade Leaderboard: tutorial/arcade-leaderboard-project.md
           - Game Asset Packager: tutorial/game-asset-packager-project.md
+          - Profile Intake Sanitizer: tutorial/profile-intake-sanitizer-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
