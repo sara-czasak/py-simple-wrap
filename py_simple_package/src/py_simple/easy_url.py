@@ -214,8 +214,6 @@ def remove_query_param(url: str, key: str) -> str:
         return url
     return urlunparse(parsed._replace(query=urlencode(remaining)))
 
-from urllib.parse import urlparse
-
 
 def get_url_scheme(url: str) -> str:
     """Return the protocol scheme of a URL in lowercase.
@@ -230,18 +228,25 @@ def get_url_scheme(url: str) -> str:
     Raises:
         TypeError: If url is not a string.
 
-    Example:
-        === "Python"
-            ```python
-            from py_simple.easy_url import get_url_scheme
+    Examples:
+    === "Py_simple Way"
+        ```python
+        from py_simple.easy_url import get_url_scheme
 
-            scheme = get_url_scheme("[https://example.com/path](https://example.com/path)")
-            print(scheme)
-            ```
-        === "Output"
-            ```text
-            https
-            ```
+        scheme = get_url_scheme("[https://example.com/path](https://example.com/path)")
+        print(scheme)
+        # Output: https
+        ```
+
+    === "Traditional Way"
+        ```python
+        from urllib.parse import urlparse
+
+        parsed = urlparse("[https://example.com/path](https://example.com/path)")
+        scheme = parsed.scheme
+        print(scheme)
+        # Output: https
+        ```
     """
     if not isinstance(url, str):
         raise TypeError(f"Expected str, got {type(url).__name__}")

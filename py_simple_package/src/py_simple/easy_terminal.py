@@ -346,18 +346,18 @@ def confirm_prompt(prompt: str = "Continue?", default: bool = True) -> bool:
         TypeError: If prompt is not a string or default is not a boolean.
 
     Examples:
-        === "Python"
-            ```python
-            from py_simple.easy_terminal import confirm_prompt
+    === "Py_simple Way"
+        ```python
+        from py_simple.easy_terminal import <helper_name>
 
-            if confirm_prompt("Do you want to proceed?", default=True):
-                print("Proceeding...")
-            ```
-        === "Output"
-            ```text
-            Do you want to proceed? [Y/n]: y
-            Proceeding...
-            ```
+        <helper_name>(...)
+        ```
+
+    === "Traditional Way"
+        ```python
+        import sys  # or os / subprocess
+        ...
+        ```
     """
     if not isinstance(prompt, str):
         raise TypeError(f"prompt must be a string, got {type(prompt).__name__}")
