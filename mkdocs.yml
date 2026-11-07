@@ -96,7 +96,10 @@ nav:
           - Secret Message Vault: tutorial/secret-message-vault-project.md
           - Arcade Leaderboard: tutorial/arcade-leaderboard-project.md
           - Game Asset Packager: tutorial/game-asset-packager-project.md
+ docs/blog-catalog-tutorial
           - Blog Article Catalog: tutorial/blog-article-catalog-project.md
+          - Trail Stage Planner: tutorial/trail-stage-planner-project.md
+ main
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
