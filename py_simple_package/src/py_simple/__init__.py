@@ -59,7 +59,7 @@ from .easy_bytes import (
     add_bytes,
     average_bytes,
     is_larger,
-    is_smaller
+    is_smaller,
 )
 from .easy_colors import (
     contrast_ratio,
@@ -80,6 +80,7 @@ from .easy_config import (
     create_env_example_file,
     dockerfile_config,
     gitignore_config,
+    get_nested,
     requirements_config,
 )
 from .easy_converter import (

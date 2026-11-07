@@ -3,6 +3,7 @@ import git
 import pytest
 
 from py_simple import (
+    get_nested as top_level_get_nested,
     gitignore_config as top_level_gitignore_config,
     load_env_file as top_level_load_env_file,
 )
@@ -14,6 +15,7 @@ from py_simple_package.src.py_simple.easy_config import (
     read_env_file,
     load_env_file,
     dockerfile_config,
+    get_nested,
     gitignore_config,
     requirements_config,
 )
@@ -578,3 +580,61 @@ def test_env_example_rejects_hardlinked_source(tmp_path, overwrite):
         create_env_example_file(str(source), str(target), overwrite=overwrite)
     assert source.read_bytes() == original
     assert target.read_bytes() == original
+
+
+def test_get_nested_reads_deep_dotted_path():
+    config = {"server": {"tls": {"certificate": "/etc/ssl/server.pem"}}}
+
+    assert get_nested(config, "server.tls.certificate") == "/etc/ssl/server.pem"
+
+
+def test_get_nested_reads_shallow_key():
+    config = {"debug": True, "port": 8000}
+
+    assert get_nested(config, "debug") is True
+    assert get_nested(config, "port") == 8000
+
+
+def test_get_nested_keeps_falsy_values():
+    config = {"workers": 0, "feature": {"enabled": False}, "name": ""}
+
+    assert get_nested(config, "workers") == 0
+    assert get_nested(config, "feature.enabled") is False
+    assert get_nested(config, "name") == ""
+
+
+def test_get_nested_returns_default_for_missing_key():
+    config = {"server": {"host": "localhost"}}
+
+    assert get_nested(config, "server.port", default=8000) == 8000
+    assert get_nested(config, "database.host", default="localhost") == "localhost"
+
+
+def test_get_nested_returns_none_for_missing_key_without_default():
+    config = {"server": {"host": "localhost"}}
+
+    assert get_nested(config, "server.port") is None
+
+
+def test_get_nested_returns_default_when_intermediate_value_is_not_dict():
+    config = {"server": {"host": "localhost", "tags": ["web", "prod"]}}
+
+    assert get_nested(config, "server.host.name", default="missing") == "missing"
+    assert get_nested(config, "server.tags.0", default="missing") == "missing"
+
+
+@pytest.mark.parametrize("config", [None, [], ["server"], "server.host", 42])
+def test_get_nested_returns_default_for_non_dict_config(config):
+    assert get_nested(config, "server.host", default="missing") == "missing"
+
+
+@pytest.mark.parametrize("path", ["", ".", "server..host", "server."])
+def test_get_nested_returns_default_for_empty_path_parts(path):
+    config = {"server": {"host": "localhost"}}
+
+    assert get_nested(config, path, default="missing") == "missing"
+
+
+def test_get_nested_imported_from_py_simple():
+    assert callable(top_level_get_nested)
+    assert top_level_get_nested({"a": {"b": 1}}, "a.b") == 1
