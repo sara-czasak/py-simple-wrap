@@ -115,6 +115,7 @@ nav:
       - Project-Based Tutorial Template: contributor-hub/project_tutorial_template.md
       - Rebase Conflicts on Shared Files: contributor-hub/rebase_conflicts_template.md
       - Code Coverage Guide: contributor-hub/coverage_template.md
+      - Understanding the Codebase Layout: contributor-hub/codebase_layout_template.md
   - Reference:
       - Easy AI: reference/easy_ai.md
       - Easy Archive: reference/easy_archive.md
