@@ -1,4 +1,3 @@
-
 from bookquest import (
     get_month_labels,
     get_monthly_totals,

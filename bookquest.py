@@ -1,4 +1,3 @@
-
 from datetime import date
 
 from py_simple import (
@@ -18,6 +17,7 @@ DATA_FILE = "books.json"
 
 
 # ---------- Easy JSON: save and load data ----------
+
 
 def load_data():
     """Load the reading tracker or create a new one."""
@@ -45,6 +45,7 @@ def save_data(data):
 
 
 # ---------- Add and view books ----------
+
 
 def add_book(data):
     """Add a book to the reading shelf."""
@@ -93,12 +94,10 @@ def view_books(data):
 
 # ---------- Mark a book as completed ----------
 
+
 def finish_book(data):
     """Record when a book is finished."""
-    unfinished = [
-        book for book in data["books"]
-        if book["status"] == "reading"
-    ]
+    unfinished = [book for book in data["books"] if book["status"] == "reading"]
 
     if not unfinished:
         print("\nYou have no books in progress.")
@@ -130,6 +129,7 @@ def finish_book(data):
 
 # ---------- Set monthly reading goal ----------
 
+
 def set_monthly_goal(data):
     """Set a target for books completed each month."""
     try:
@@ -150,6 +150,7 @@ def set_monthly_goal(data):
 
 
 # ---------- Calculate monthly totals ----------
+
 
 def get_monthly_totals(data):
     """Count books in the month they were finished."""
@@ -183,6 +184,7 @@ def get_month_labels(start_month, end_month):
 
 
 # ---------- Reading summary, statistics and charts ----------
+
 
 def reading_summary(data):
     """Show monthly progress, statistics and labeled charts."""
@@ -239,8 +241,7 @@ def reading_summary(data):
 
     # Easy Data Visualization: labeled month names on the x-axis.
     display_months = [
-        date(int(month[:4]), int(month[5:7]), 1).strftime("%b %Y")
-        for month in months
+        date(int(month[:4]), int(month[5:7]), 1).strftime("%b %Y") for month in months
     ]
 
     print("\nOpening monthly bar chart...")
@@ -263,6 +264,7 @@ def reading_summary(data):
 
 
 # ---------- Main menu ----------
+
 
 def main():
     """Run BookQuest."""

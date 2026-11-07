@@ -138,9 +138,7 @@ def get_model(
         return model
 
     else:
-        raise EasyAIError(
-            f"\n\n\nERROR: Provider '{provider}' is not supported yet!"
-        )
+        raise EasyAIError(f"\n\n\nERROR: Provider '{provider}' is not supported yet!")
 
 
 def ask_ai(
@@ -453,32 +451,36 @@ def detect_language(text: str) -> str:
     """
 
     if not isinstance(text, str) or not text.strip():
-        raise EasyAIError(
-            "ERROR: detect_language() requires a non-empty string."
-        )
+        raise EasyAIError("ERROR: detect_language() requires a non-empty string.")
 
     words = set(re.findall(r"[a-zà-öø-ÿ]+", text.lower()))
 
     scores = {
         "English": sum(
-            word in words
-            for word in ["the", "and", "is", "you", "are", "hello"]
+            word in words for word in ["the", "and", "is", "you", "are", "hello"]
         ),
         "Italian": sum(
-            word in words
-            for word in ["il", "la", "che", "di", "sono", "ciao"]
+            word in words for word in ["il", "la", "che", "di", "sono", "ciao"]
         ),
         "Spanish": sum(
-            word in words
-            for word in ["el", "la", "que", "de", "es", "hola"]
+            word in words for word in ["el", "la", "que", "de", "es", "hola"]
         ),
         "French": sum(
-            word in words
-            for word in ["le", "la", "et", "est", "vous", "bonjour"]
+            word in words for word in ["le", "la", "et", "est", "vous", "bonjour"]
         ),
         "German": sum(
             word in words
-            for word in ["der", "die", "und", "ist", "du", "hallo", "wie", "geht", "dir"]
+            for word in [
+                "der",
+                "die",
+                "und",
+                "ist",
+                "du",
+                "hallo",
+                "wie",
+                "geht",
+                "dir",
+            ]
         ),
     }
 

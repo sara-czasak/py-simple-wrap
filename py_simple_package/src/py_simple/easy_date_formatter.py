@@ -550,9 +550,9 @@ def past_iso_8601(num_days_ago: int):
             )
             ```
     """
-    return ((datetime.now(timezone.utc) -
-            timedelta(days=num_days_ago))
-            .strftime("%Y-%m-%dT%H:%M:%SZ"))
+    return (datetime.now(timezone.utc) - timedelta(days=num_days_ago)).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )
 
 
 def future_iso_8601(num_days_from_now: int):
@@ -582,6 +582,6 @@ def future_iso_8601(num_days_from_now: int):
             )
             ```
     """
-    return ((datetime.now(timezone.utc) +
-            timedelta(days=num_days_from_now))
-            .strftime("%Y-%m-%dT%H:%M:%SZ"))
+    return (datetime.now(timezone.utc) + timedelta(days=num_days_from_now)).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )

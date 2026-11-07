@@ -141,7 +141,6 @@ def test_calculate_tip_public_imports():
     assert public_helper is module_helper
 
 
-
 @pytest.mark.parametrize(
     "total,people,expected",
     [
@@ -315,12 +314,10 @@ def test_split_bill_exact_public_imports():
         (0, 5, 10, 1, "0.00"),
     ],
 )
-def test_calculate_compound_interest(
-    principal, rate, years, compounds, expected
-):
-    assert calculate_compound_interest(
-        principal, rate, years, compounds
-    ) == Decimal(expected)
+def test_calculate_compound_interest(principal, rate, years, compounds, expected):
+    assert calculate_compound_interest(principal, rate, years, compounds) == Decimal(
+        expected
+    )
 
 
 def test_calculate_compound_interest_default_is_yearly():

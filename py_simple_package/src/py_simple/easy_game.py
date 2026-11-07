@@ -2,6 +2,7 @@
 easy_game is built on top of pygame to simplify the tricky parts of
 building games.
 """
+
 from __future__ import annotations
 
 

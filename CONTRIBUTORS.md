@@ -1421,7 +1421,7 @@ Every tile below is a real person who showed up for this project. 💛
 ## How to get your name here? 🛠️
 I welcome contributions of all sizes! Whether you are fixing a typo in the README, suggesting a new "Simple" module, reporting a bug, or writing code, I'd love to have you involved — and to give you a tile of your very own.
 
-Check out [CONTRIBUTING.md](./CONTRIBUTING.md) to see how you can get started!
+Check out [CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) to see how you can get started!
 
 ---
 
@@ -1431,7 +1431,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
 
 ⭐ **[Star the repo](https://github.com/sara-czasak/py-simple-wrap)** if py-simple-wrap made your life easier — it costs nothing and it's how the next beginner finds us.
 
-🤝 **[Read CONTRIBUTING.md](./CONTRIBUTING.md)** and claim your tile.
+🤝 **[Read CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md)** and claim your tile.
 
 
 ## 🫶 The Full Roster

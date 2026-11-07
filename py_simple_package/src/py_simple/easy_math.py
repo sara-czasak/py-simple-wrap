@@ -277,7 +277,7 @@ def is_armstrong_number(n: int) -> bool:
     """
     Returns whether a non-negative integer is an Armstrong number.
 
-    An Armstrong number (or narcissistic number) is a number that is equal 
+    An Armstrong number (or narcissistic number) is a number that is equal
     to the sum of its own digits each raised to the power of the number of digits.
     For example, 153 is an Armstrong number because 1^3 + 5^3 + 3^3 = 153.
 
@@ -308,10 +308,11 @@ def is_armstrong_number(n: int) -> bool:
     """
     if not isinstance(n, int) or n < 0:
         raise ValueError("'n' must be a non-negative integer.")
-    
+
     num_str = str(n)
     num_digits = len(num_str)
     return sum(int(digit) ** num_digits for digit in num_str) == n
+
 
 def is_triangular_number(n: int) -> bool:
     """
@@ -346,7 +347,7 @@ def is_triangular_number(n: int) -> bool:
     """
     if not isinstance(n, int) or n < 0:
         raise ValueError("'n' must be a non-negative integer.")
-    
+
     k = int((2 * n) ** 0.5)
     return k * (k + 1) // 2 == n
 
@@ -383,7 +384,7 @@ def is_harshad_number(n: int) -> bool:
     """
     if not isinstance(n, int) or n < 1:
         raise ValueError("'n' must be a positive integer.")
-    
+
     digit_sum = sum(int(d) for d in str(n))
     return n % digit_sum == 0
 
@@ -419,7 +420,7 @@ def digit_count(n: int) -> int:
     """
     if not isinstance(n, int):
         raise ValueError("'n' must be an integer.")
-    
+
     return len(str(abs(n)))
 
 
@@ -452,7 +453,7 @@ def reverse_digits(n: int) -> int:
     """
     if not isinstance(n, int):
         raise ValueError("'n' must be an integer.")
-    
+
     sign = -1 if n < 0 else 1
     return int(str(abs(n))[::-1]) * sign
 
@@ -461,7 +462,7 @@ def is_abundant_number(n: int) -> bool:
     """
     Returns whether a positive integer is an abundant number.
 
-    An abundant number is one where the sum of its proper divisors 
+    An abundant number is one where the sum of its proper divisors
     (excluding the number itself) is greater than the number.
     For example, 12 is abundant because 1 + 2 + 3 + 4 + 6 = 16 > 12.
 
@@ -491,7 +492,7 @@ def is_abundant_number(n: int) -> bool:
     """
     if not isinstance(n, int) or n < 1:
         raise ValueError("'n' must be a positive integer.")
-    
+
     proper_divisors_sum = sum(i for i in range(1, n // 2 + 1) if n % i == 0)
     return proper_divisors_sum > n
 
@@ -524,7 +525,7 @@ def distance_between_points(x1: float, y1: float, x2: float, y2: float) -> float
             result = math.sqrt((3 - 0)**2 + (4 - 0)**2)
             ```
     """
-    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
 def midpoint(x1: float, y1: float, x2: float, y2: float) -> tuple[float, float]:
@@ -585,7 +586,7 @@ def sum_of_squares(numbers: list[float]) -> float:
     """
     if not isinstance(numbers, list):
         raise ValueError("'numbers' must be a list.")
-    
+
     return sum(x**2 for x in numbers)
 
 
@@ -620,7 +621,7 @@ def calculate_simple_interest(principal: float, rate: float, time: float) -> flo
     """
     if not all(isinstance(x, (int, float)) for x in (principal, rate, time)):
         raise ValueError("principal, rate, and time must be numbers.")
-    
+
     return (principal * rate * time) / 100
 
 
@@ -659,7 +660,7 @@ def collatz_sequence(n: int) -> list[int]:
     """
     if not isinstance(n, int) or n < 1:
         raise ValueError("'n' must be a positive integer.")
-    
+
     sequence = [n]
     while n != 1:
         n = n // 2 if n % 2 == 0 else 3 * n + 1

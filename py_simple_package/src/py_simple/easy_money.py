@@ -416,9 +416,7 @@ def calculate_compound_interest(
         if not amount.is_finite() or not percent.is_finite():
             raise EasyMoneyError("\n\nERROR: amount must be finite.") from None
         if amount < 0:
-            raise EasyMoneyError(
-                "\n\nERROR: principal cannot be negative."
-            ) from None
+            raise EasyMoneyError("\n\nERROR: principal cannot be negative.") from None
         if percent < 0:
             raise EasyMoneyError(
                 "\n\nERROR: interest rate cannot be negative."

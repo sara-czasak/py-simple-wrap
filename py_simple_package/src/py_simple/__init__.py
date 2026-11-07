@@ -59,7 +59,7 @@ from .easy_bytes import (
     add_bytes,
     average_bytes,
     is_larger,
-    is_smaller
+    is_smaller,
 )
 from .easy_colors import (
     contrast_ratio,

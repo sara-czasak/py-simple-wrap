@@ -416,7 +416,9 @@ def run_if(condition: bool, func, *args, default_value=None, **kwargs):
     return default_value
 
 
-def wait_until(condition, timeout: float | int = 5, interval: float | int = 0.1) -> bool:
+def wait_until(
+    condition, timeout: float | int = 5, interval: float | int = 0.1
+) -> bool:
     """
     Waits until a condition function returns True, or until a timeout
     is reached.

@@ -1,6 +1,6 @@
 <div align="center" markdown="1">
 
-⚡[Quickstart](QUICKSTART.md) · 📦[Modules](MODULES.md) · 🆘[Support](SUPPORT.md) · 🚀[Contributing](CONTRIBUTING.md) · 🌟[Contributors](CONTRIBUTORS.md) · 📜[Changelog](CHANGELOG.md) · 🔒[Security](SECURITY.md) · 🌱[Code of Conduct](CODE_OF_CONDUCT.md) · ⚖️[License](LICENSE.md)
+⚡[Quickstart](https://github.com/sara-czasak/py-simple-wrap/blob/main/QUICKSTART.md) · 📦[Modules](https://github.com/sara-czasak/py-simple-wrap/blob/main/MODULES.md) · 🆘[Support](https://github.com/sara-czasak/py-simple-wrap/blob/main/SUPPORT.md) · 🚀[Contributing](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) · 🌟[Contributors](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTORS.md) · 📜[Changelog](https://github.com/sara-czasak/py-simple-wrap/blob/main/CHANGELOG.md) · 🔒[Security](https://github.com/sara-czasak/py-simple-wrap/blob/main/SECURITY.md) · 🌱[Code of Conduct](https://github.com/sara-czasak/py-simple-wrap/blob/main/CODE_OF_CONDUCT.md) · ⚖️[License](https://github.com/sara-czasak/py-simple-wrap/blob/main/LICENSE.md)
 
 </div>
 <br>
@@ -17,9 +17,9 @@
 [![PyPI](https://img.shields.io/pypi/v/py-simple-wrap?style=flat-square&logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/py-simple-wrap/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/sara-czasak/py-simple-wrap/tests.yml?style=flat-square&logo=github&label=tests)](https://github.com/sara-czasak/py-simple-wrap/actions/workflows/tests.yml)
 [![Security: SkillsLLM](https://skillsllm.com/security-check/badge.svg?owner=sara-czasak&repo=py-simple-wrap)](https://skillsllm.com/security-check/ClrqG49aEoiZ)
-[![Contributors](https://img.shields.io/badge/contributors-99-orange?style=flat-square)](CONTRIBUTORS.md)
+[![Contributors](https://img.shields.io/badge/contributors-99-orange?style=flat-square)](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTORS.md)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/py-simple-wrap?period=total&units=NONE&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/py-simple-wrap)
-[![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](LICENSE.md)
+[![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](https://github.com/sara-czasak/py-simple-wrap/blob/main/LICENSE.md)
 [![Discord](https://img.shields.io/discord/1533803449895092245?style=flat-square&logo=discord&logoColor=white&label=discord&color=5865F2)](https://discord.gg/f9PUGNaVZ)
  
 </div>
@@ -158,7 +158,7 @@ Supported versions: **Python 3.11, 3.12, 3.13, and 3.14.**
 
 If you're using Python 3.10, please upgrade to a supported version before installing v0.9.0 or later.
 
-For more details, see our [Security Policy](SECURITY.md).
+For more details, see our [Security Policy](https://github.com/sara-czasak/py-simple-wrap/blob/main/SECURITY.md).
 
 <br>
 
@@ -166,7 +166,7 @@ For more details, see our [Security Policy](SECURITY.md).
 pip install py-simple-wrap
 ```
 
-This installs the lightweight core; a few modules need extra packages — see [Installation](QUICKSTART.md#installation) in the Quickstart for the full list.
+This installs the lightweight core; a few modules need extra packages — see [Installation](https://github.com/sara-czasak/py-simple-wrap/blob/main/QUICKSTART.md#installation) in the Quickstart for the full list.
  
 ```python
 from py_simple import make_blank_file, miles_to_km, is_valid_email
@@ -176,7 +176,7 @@ print(miles_to_km(26.2))  # 42.16...
 print(is_valid_email("hello@example.com"))  # True
 ```
  
-> Full walkthrough in [QUICKSTART.md](QUICKSTART.md), or browse the **[documentation site](https://sara-czasak.github.io/py-simple-wrap/docs/)**.
+> Full walkthrough in [QUICKSTART.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/QUICKSTART.md), or browse the **[documentation site](https://sara-czasak.github.io/py-simple-wrap/docs/)**.
  
 <br>
 
@@ -228,8 +228,8 @@ gets built next. **[Take the 2-minute survey →](https://docs.google.com/forms/
 
 <div align="center" markdown="1">
 
-**[Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [License](LICENSE.md)**
+**[Contributing](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) · [Changelog](https://github.com/sara-czasak/py-simple-wrap/blob/main/CHANGELOG.md) · [License](https://github.com/sara-czasak/py-simple-wrap/blob/main/LICENSE.md)**
  
-<sub>Built for beginners, grown by 80+ contributors ✨</sub>
+<sub>Built for beginners, grown by 90+ contributors ✨</sub>
  
 </div>

@@ -263,10 +263,11 @@ def test_rewrite_text_success():
     mock_response = MagicMock()
     mock_response.content = "hello py-simple-wrap devs."
     mock_model.invoke.return_value = mock_response
-        
-    result = rewrite_text(mock_model,"hello devs")
+
+    result = rewrite_text(mock_model, "hello devs")
     assert result == "hello py-simple-wrap devs."
     mock_model.invoke.assert_called_once()
+
 
 def test_rewrite_text_error():
     mock_model = MagicMock()
@@ -293,6 +294,7 @@ def test_rewrite_text_default_tone():
     rewrite_text(mock_model, "hello devs")
     assert "calm" in mock_model.invoke.call_args[0][0]
 
+
 def test_analyze_sentiment_success():
     """Test that analyze_sentiment returns the model's response content."""
     mock_model = MagicMock()
@@ -316,7 +318,7 @@ def test_analyze_sentiment_error():
     with pytest.raises(EasyAIError) as exc_info:
         analyze_sentiment(mock_model, "Some text")
 
-    assert "API rate limit exceeded" in str(exc_info.value)    
+    assert "API rate limit exceeded" in str(exc_info.value)
 
 
 def test_detect_language_english():

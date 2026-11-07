@@ -363,8 +363,7 @@ def test_wait_until_checks_condition_after_timeout(monkeypatch):
 def test_script_runner_executes_main_guard(runner, tmp_path, capsys):
     script = tmp_path / "guarded.py"
     script.write_text(
-        "if __name__ == '__main__':\n"
-        "    print('main entry point ran')\n",
+        "if __name__ == '__main__':\n" "    print('main entry point ran')\n",
         encoding="utf-8",
     )
 
@@ -391,7 +390,6 @@ def test_script_runner_handles_errors_in_main_guard(runner, tmp_path):
         assert runner(str(script)) == (False, "main entry point failed")
 
 
-
 def test_time_it_preserves_metadata_and_signature(capsys):
     import inspect
 
@@ -413,7 +411,9 @@ def test_time_it_preserves_metadata_and_signature(capsys):
 
 @pytest.mark.parametrize("clock_shift", [-3600, 3600])
 @pytest.mark.parametrize("decorated", [False, True])
-def test_timing_helpers_ignore_wall_clock_adjustments(monkeypatch, capsys, clock_shift, decorated):
+def test_timing_helpers_ignore_wall_clock_adjustments(
+    monkeypatch, capsys, clock_shift, decorated
+):
     wall_times = iter([10000.0, 10000.0 + clock_shift])
     elapsed_times = iter([20.0, 20.25])
     monkeypatch.setattr(time, "time", lambda: next(wall_times))
