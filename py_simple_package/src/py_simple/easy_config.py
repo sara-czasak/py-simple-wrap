@@ -346,6 +346,61 @@ def load_env_file(
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 
 
+def get_nested(
+    config: dict,
+    path: str,
+    default: object = None,
+) -> object:
+    """
+    Returns a value from a nested config dictionary using a dotted path.
+
+    Walks one dictionary level per part of the path, so "server.host"
+    reads config["server"]["host"]. Missing keys, empty path parts and
+    non-dictionary intermediate values return the default instead of raising.
+    The final value is returned unchanged, regardless of its type.
+
+    Args:
+        config (dict): Configuration dictionary to search in.
+        path (str): Dot-separated keys, e.g. "server.host".
+        default (object, optional): Value to return when the path is
+            missing. Defaults to None.
+
+    Returns:
+        object: The value stored at the path, or default. For example,
+            get_nested({"server": {"host": "localhost"}}, "server.host")
+            returns 'localhost'.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_nested
+
+            config = {"server": {"host": "localhost", "port": 8000}}
+            host = get_nested(config, "server.host")
+            workers = get_nested(config, "server.workers", default=4)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            config = {"server": {"host": "localhost", "port": 8000}}
+
+            server = config.get("server")
+            if isinstance(server, dict):
+                host = server.get("host")
+                workers = server.get("workers", 4)
+            else:
+                host = None
+                workers = 4
+            ```
+    """
+    current = config
+    for part in path.split("."):
+        if not part or not isinstance(current, dict) or part not in current:
+            return default
+        current = current[part]
+    return current
+
+
 def create_env_example_file(
     file_path: str = ".env",
     example_path: str = ".env.example",
