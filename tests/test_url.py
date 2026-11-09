@@ -6,8 +6,10 @@ from py_simple_package.src.py_simple import (
 from py_simple_package.src.py_simple.easy_url import (
     EasyUrlError,
     add_query_param,
+    add_query_value,
     get_domain,
     get_path,
+    get_query_value,
     get_query_values,
     is_https,
     remove_query_param,
@@ -206,3 +208,47 @@ def test_url_helpers_wrap_malformed_or_missing_hosts(url, helper):
 def test_get_domain_accepts_ipv6_and_user_information():
     assert get_domain("https://[::1]:443/path") == "::1"
     assert get_domain("https://user:password@school.example/path") == "school.example"
+
+
+def test_get_query_value_returns_first_blank_or_missing_value():
+    url = "https://school.example/?tag=art+club&tag=music&blank=&bare#list"
+    assert get_query_value(url, "tag") == "art club"
+    assert get_query_value(url, "blank") == ""
+    assert get_query_value(url, "bare") == ""
+    assert get_query_value(url, "missing") is None
+
+
+def test_get_query_value_validates_input():
+    with pytest.raises(EasyUrlError):
+        get_query_value("https://school.example", "")
+    with pytest.raises(EasyUrlError):
+        get_query_value("school.example", "tag")
+
+
+def test_add_query_value_appends_or_creates_parameter():
+    url = "https://school.example/clubs?tag=art&other=&tag=music#list"
+    assert add_query_value(url, "tag", "dance") == (
+        "https://school.example/clubs?tag=art&other=&tag=music&tag=dance#list"
+    )
+    assert add_query_value("https://school.example/clubs#list", "tag", "art club") == (
+        "https://school.example/clubs?tag=art+club#list"
+    )
+    assert add_query_value(url, "tag", "").endswith("&tag=#list")
+
+
+def test_add_query_value_validates_input():
+    for key, value in [("", "x"), (None, "x"), ("tag", None)]:
+        with pytest.raises(EasyUrlError):
+            add_query_value("https://school.example", key, value)
+    with pytest.raises(EasyUrlError):
+        add_query_value("school.example", "tag", "x")
+
+
+def test_new_query_helpers_are_public():
+    from py_simple import add_query_value as public_add
+    from py_simple import get_query_value as public_get
+    from py_simple.easy_url import add_query_value as module_add
+    from py_simple.easy_url import get_query_value as module_get
+
+    assert public_add is module_add
+    assert public_get is module_get
