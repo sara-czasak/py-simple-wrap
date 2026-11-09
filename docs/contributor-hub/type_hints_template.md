@@ -73,8 +73,8 @@ from pathlib import Path
 
 
 def verify_file_hash(
-    file_path: str | Path,
-    expected_checksum: str,
+    filepath: str | Path,
+    expected: str,
     algorithm: str = "sha256",
 ) -> bool:
     """Check whether a file matches an expected hash checksum."""
@@ -82,8 +82,8 @@ def verify_file_hash(
 ```
 
 Notice how:
-- `file_path: str | Path` accepts either a string path (`"data/notes.txt"`) or a `pathlib.Path` object.
-- `expected_checksum: str` explicitly expects a hexadecimal checksum string.
+- `filepath: str | Path` accepts either a string path (`"data/notes.txt"`) or a `pathlib.Path` object.
+- `expected: str` explicitly expects a hexadecimal checksum string.
 - `algorithm: str = "sha256"` specifies a default string argument.
 - `-> bool` clearly documents that the function returns `True` if the hash matches, and `False` otherwise.
 
