@@ -10,6 +10,7 @@ from py_simple_package.src.py_simple import (
     encode_bytes as public_encode_bytes,
     encode_file as public_encode_file,
     encode_text as public_encode_text,
+    encode_urlsafe_bytes as public_encode_urlsafe_bytes,
     encode_urlsafe_text as public_encode_urlsafe_text,
     is_base64 as public_is_base64,
 )
@@ -22,6 +23,7 @@ from py_simple_package.src.py_simple.easy_base64 import (
     encode_bytes,
     encode_file,
     encode_text,
+    encode_urlsafe_bytes,
     encode_urlsafe_text,
     is_base64,
 )
@@ -233,3 +235,27 @@ def test_decode_urlsafe_text_wraps_invalid_utf8():
 
 def test_public_import_includes_decode_urlsafe_text():
     assert public_decode_urlsafe_text is decode_urlsafe_text
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    [(b"", ""), (b"f", "Zg=="), (b"hello?", "aGVsbG8_"), (b"\x00\xff?", "AP8_")],
+)
+def test_encode_urlsafe_bytes_known_values(data, expected):
+    assert encode_urlsafe_bytes(data) == expected
+
+
+def test_encode_urlsafe_bytes_avoids_plus_slash():
+    encoded = encode_urlsafe_bytes(bytes(range(256)))
+    assert "+" not in encoded and "/" not in encoded
+    assert base64.urlsafe_b64decode(encoded) == bytes(range(256))
+
+
+@pytest.mark.parametrize("value", [None, 123, "hello", ["bytes"]])
+def test_encode_urlsafe_bytes_rejects_non_bytes(value):
+    with pytest.raises(EasyBase64Error, match="data must be bytes"):
+        encode_urlsafe_bytes(value)
+
+
+def test_public_import_includes_encode_urlsafe_bytes():
+    assert public_encode_urlsafe_bytes is encode_urlsafe_bytes
