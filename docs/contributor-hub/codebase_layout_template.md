@@ -7,7 +7,7 @@ New to `py-simple-wrap`? The list of folders can look intimidating, but the layo
 ```
 py-simple-wrap/
 ├── py_simple_package/src/py_simple/   # the importable package — this is where modules live
-│   ├── __init__.py                    # re-exports every public function
+│   ├── __init__.py                    # re-exports selected helpers for flat imports
 │   └── easy_<name>.py                 # one module per feature: easy_config.py, easy_url.py, ...
 ├── tests/
 │   └── test_<name>.py                 # tests mirror the modules (test_config.py for easy_config.py)
@@ -22,7 +22,7 @@ py-simple-wrap/
 
 ## Where the actual Python code lives
 
-Everything importable lives in **`py_simple_package/src/py_simple/`**. You'll see both a directory *and* a file named `py_simple` in the repo root — the directory is the source of truth; the file is a thin shim so imports work during development. Don't add code there.
+Everything importable lives in **`py_simple_package/src/py_simple/`** — that is the one true source of the importable package. Don't add code anywhere else.
 
 Each feature is one `easy_<name>.py` file:
 
