@@ -61,6 +61,16 @@ fragment is ignored, and the input link is not changed. This uses the
 module's existing full-link validation rather than checking whether a
 link is safe to visit.
 
+If you only need the first value, use `get_query_value()`. It returns `None`
+when the name is missing, and `""` when the name is present but blank.
+
+```python
+from py_simple import get_query_value
+
+print(get_query_value(link, "tag"))  # python
+print(get_query_value(link, "missing"))  # None
+```
+
 ## Why use these helpers?
 
 A link without `https://` is rejected with a clear error, so a bare
