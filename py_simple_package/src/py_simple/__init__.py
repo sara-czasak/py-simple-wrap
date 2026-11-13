@@ -389,6 +389,7 @@ from .easy_validator import (
 from .easy_url import (
     EasyUrlError,
     add_query_param,
+    add_query_value,
     get_domain,
     get_path,
     get_query_value,

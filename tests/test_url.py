@@ -6,6 +6,7 @@ from py_simple_package.src.py_simple import (
 from py_simple_package.src.py_simple.easy_url import (
     EasyUrlError,
     add_query_param,
+    add_query_value,
     get_domain,
     get_path,
     get_query_value,
@@ -282,3 +283,29 @@ def test_get_query_value_is_public():
     from py_simple.easy_url import get_query_value as module_get
 
     assert public_get is module_get
+
+
+def test_add_query_value_appends_or_creates_parameter():
+    url = "https://school.example/clubs?tag=art&other=&tag=music#list"
+    assert add_query_value(url, "tag", "dance") == (
+        "https://school.example/clubs?tag=art&other=&tag=music&tag=dance#list"
+    )
+    assert add_query_value("https://school.example/clubs#list", "tag", "art club") == (
+        "https://school.example/clubs?tag=art+club#list"
+    )
+    assert add_query_value(url, "tag", "").endswith("&tag=#list")
+
+
+def test_add_query_value_validates_input():
+    for key, value in [("", "x"), (None, "x"), ("tag", None)]:
+        with pytest.raises(EasyUrlError):
+            add_query_value("https://school.example", key, value)
+    with pytest.raises(EasyUrlError):
+        add_query_value("school.example", "tag", "x")
+
+
+def test_add_query_value_is_public():
+    from py_simple import add_query_value as public_add
+    from py_simple.easy_url import add_query_value as module_add
+
+    assert public_add is module_add

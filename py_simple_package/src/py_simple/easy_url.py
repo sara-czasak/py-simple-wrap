@@ -323,3 +323,47 @@ def get_query_value(url: str, key: str) -> str | None:
     """
     values = get_query_values(url, key)
     return values[0] if values else None
+
+
+def add_query_value(url: str, key: str, value: str) -> str:
+    """
+    Append a query value without replacing existing values for the key.
+
+    Args:
+        url (str): A full link.
+        key (str): Non-empty parameter name.
+        value (str): Parameter value, including an empty string if needed.
+
+    Returns:
+        str: The link with the new value added after existing parameters.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link, or `key` or `value`
+            is not a string, or `key` is empty.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import add_query_value
+
+            print(add_query_value("https://school.example/?tag=art", "tag", "music"))
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+
+            parsed = urlparse("https://school.example/?tag=art")
+            pairs = parse_qsl(parsed.query, keep_blank_values=True)
+            pairs.append(("tag", "music"))
+            print(urlunparse(parsed._replace(query=urlencode(pairs))))
+            ```
+    """
+    if not isinstance(key, str) or not isinstance(value, str) or key == "":
+        raise EasyUrlError(
+            "\n\nERROR: key and value must be strings, and key cannot be empty."
+        ) from None
+    parsed = _parsed(url)
+    pairs = parse_qsl(parsed.query, keep_blank_values=True)
+    pairs.append((key, value))
+    return urlunparse(parsed._replace(query=urlencode(pairs)))
