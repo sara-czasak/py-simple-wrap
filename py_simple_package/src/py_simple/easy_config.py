@@ -96,6 +96,7 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
     except Exception as e:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 
+
 def create_env_file(
     variables: dict[str, str],
     file_path: str = ".env",
@@ -373,7 +374,7 @@ def create_env_example_file(
         EasyConfigError: If the source file cannot be read or the
             example file cannot be written.
         EasyConfigError: If the source and destination paths point to
-            the same file.
+            the same file, including symbolic links and hard links.
 
     Example:
         === "The Py_simple Way"
@@ -397,7 +398,11 @@ def create_env_example_file(
                         target.write(f"{key}=\\n")
             ```
     """
-    if os.path.realpath(file_path) == os.path.realpath(example_path):
+    if os.path.realpath(file_path) == os.path.realpath(example_path) or (
+        os.path.exists(file_path)
+        and os.path.exists(example_path)
+        and os.path.samefile(file_path, example_path)
+    ):
         raise EasyConfigError(
             "\n\n\nERROR: source and destination must be different files"
         )
@@ -503,49 +508,49 @@ def dockerfile_config(at_root: bool = True) -> None:
 
 def gitignore_config(at_root: bool = True) -> None:
     """
-    Creates a starter .gitignore file for Python projects from a template.
+        Creates a starter .gitignore file for Python projects from a template.
 
-    The .gitignore is written to '.gitignore'. If the file already exists,
-    it is left alone. Any missing parent directories are created
-    automatically.
+        The .gitignore is written to '.gitignore'. If the file already exists,
+        it is left alone. Any missing parent directories are created
+        automatically.
 
-    Args:
-        at_root (bool, optional): When True, the path is relative to the
-            current working directory. When False, the git repository
-            root is looked up and the .gitignore is placed there.
-            Defaults to True.
+        Args:
+            at_root (bool, optional): When True, the path is relative to the
+                current working directory. When False, the git repository
+                root is looked up and the .gitignore is placed there.
+                Defaults to True.
 
-    Returns:
-        None
+        Returns:
+            None
 
-    Raises:
-        EasyConfigError: If the template cannot be read, the git repository
-            cannot be found, or the file cannot be written.
+        Raises:
+            EasyConfigError: If the template cannot be read, the git repository
+                cannot be found, or the file cannot be written.
 
-    Example:
-        === "The Py_simple Way"
-            ```python
-            from py_simple import gitignore_config
+        Example:
+            === "The Py_simple Way"
+                ```python
+                from py_simple import gitignore_config
 
-            gitignore_config()
-            ```
+                gitignore_config()
+                ```
 
-        === "The Traditional Way"
-            ```python
-            template = \"\"\"# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+            === "The Traditional Way"
+                ```python
+                template = \"\"\"# Byte-compiled / optimized / DLL files
+    __pycache__/
+    *.py[cod]
 
-# Virtual environments
-venv/
-.venv/
+    # Virtual environments
+    venv/
+    .venv/
 
-# Environment variables
-.env
-\"\"\"
-            with open(".gitignore", "w", encoding="utf-8") as f:
-                f.write(template)
-            ```
+    # Environment variables
+    .env
+    \"\"\"
+                with open(".gitignore", "w", encoding="utf-8") as f:
+                    f.write(template)
+                ```
     """
     try:
         if at_root:

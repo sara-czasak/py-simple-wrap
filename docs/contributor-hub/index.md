@@ -7,7 +7,7 @@ Pick whatever's stressing you out below, and go straight to it. You don't need t
 ## What do you need help with?
 
 **📝 "I need to write a docstring and I don't know what that even means."**
-Totally normal. The [Docstring Template](docstring_template.md) has a copy-paste block — just fill in the blanks. It also explains *why* the format looks the way it does, in case you're curious, but you don't have to read that part to use it.
+The [Docstring Template](docstring_template.md) has a copy-paste block — just fill in the blanks. It also explains *why* the format looks the way it does, in case you're curious, but you don't have to read that part to use it.
 
 **📖 "I added a new module and need to write a tutorial page, but I've never written docs before."**
 The [Tutorial Template](tutorial_template.md) walks through the exact structure every tutorial page in this project uses, with a real example to copy from. You're not writing from a blank page.
@@ -44,6 +44,9 @@ The [Pull Request Workflow Guide](pr_workflow_template.md) breaks down the compl
 
 **🎲 "My helper uses randomness. How can its tests pass reliably?"**
 The [Testing Random Helpers](random_tests_template.md) guide shows controlled draws, boundary cases, and shuffle checks that accept every valid ordering.
+
+**📊 "Codecov says my PR dropped coverage, or I want to know which lines my tests missed."**
+The [Code Coverage Guide](coverage_template.md) shows how to run `pytest-cov` locally, read the `Missing` lines report, and write tests to hit uncovered branches before you push.
 
 ## Still stuck, or something's not covered here?
 

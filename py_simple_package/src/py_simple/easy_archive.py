@@ -31,7 +31,10 @@ def _ensure_zip_extension(zip_name: str) -> str:
 
 def zip_folder(folder_path: str, zip_name: str | None = None) -> str:
     """
-    Zips an entire folder (including subfolders) into a single .zip file.
+    Zips an entire folder (including empty subfolders) into a single .zip file.
+
+    Entries are relative to the source folder. An empty source folder
+    produces an empty archive.
 
     Args:
         folder_path (str): Path to the folder to zip.
@@ -57,7 +60,10 @@ def zip_folder(folder_path: str, zip_name: str | None = None) -> str:
             folder_path = "my_project"
             zip_name = "my_project.zip"
             with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zf:
-                for root, _, files in os.walk(folder_path):
+                for root, dirs, files in os.walk(folder_path):
+                    relative_root = os.path.relpath(root, folder_path)
+                    if not dirs and not files and relative_root != ".":
+                        zf.write(root, relative_root)
                     for file in files:
                         full_path = os.path.join(root, file)
                         arcname = os.path.relpath(full_path, folder_path)
@@ -77,11 +83,17 @@ def zip_folder(folder_path: str, zip_name: str | None = None) -> str:
     zip_abspath = os.path.abspath(zip_name)
 
     with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zf:
-        for root, _, files in os.walk(folder_path):
+        for root, dirs, files in os.walk(folder_path):
+            files = [
+                name
+                for name in files
+                if os.path.abspath(os.path.join(root, name)) != zip_abspath
+            ]
+            relative_root = os.path.relpath(root, folder_path)
+            if not dirs and not files and relative_root != ".":
+                zf.write(root, relative_root)
             for file in files:
                 full_path = os.path.join(root, file)
-                if os.path.abspath(full_path) == zip_abspath:
-                    continue
                 arcname = os.path.relpath(full_path, folder_path)
                 zf.write(full_path, arcname)
 
