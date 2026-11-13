@@ -5,6 +5,8 @@ easy_config aims to simplify creating configuration files.
 import os
 from importlib.resources import files
 
+from .easy_dict import get_nested_value as _get_nested_value
+
 
 class EasyConfigError(Exception):
     """
@@ -393,12 +395,7 @@ def get_nested(
                 workers = 4
             ```
     """
-    current = config
-    for part in path.split("."):
-        if not part or not isinstance(current, dict) or part not in current:
-            return default
-        current = current[part]
-    return current
+    return _get_nested_value(config, path, default)
 
 
 def create_env_example_file(
