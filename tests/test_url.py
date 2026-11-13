@@ -8,6 +8,7 @@ from py_simple_package.src.py_simple.easy_url import (
     add_query_param,
     get_domain,
     get_path,
+    get_query_value,
     get_query_values,
     is_https,
     remove_query_param,
@@ -235,3 +236,49 @@ def test_url_helpers_wrap_malformed_or_missing_hosts(url, helper):
 def test_get_domain_accepts_ipv6_and_user_information():
     assert get_domain("https://[::1]:443/path") == "::1"
     assert get_domain("https://user:password@school.example/path") == "school.example"
+
+
+@pytest.mark.parametrize("port", ["abc", "-1", "65536", "80.5"])
+@pytest.mark.parametrize("host", ["example.com", "[::1]"])
+def test_url_helpers_reject_invalid_ports(host, port):
+    url = f"https://{host}:{port}/path?tag=one"
+    helpers = [
+        get_domain,
+        get_path,
+        is_https,
+        lambda link: add_query_param(link, "page", "2"),
+        lambda link: remove_query_param(link, "tag"),
+        lambda link: get_query_values(link, "tag"),
+    ]
+    for helper in helpers:
+        with pytest.raises(EasyUrlError):
+            helper(url)
+
+
+@pytest.mark.parametrize("port", ["0", "443", "65535"])
+def test_url_helpers_preserve_valid_port_boundaries(port):
+    url = f"https://[::1]:{port}/path"
+    assert get_domain(url) == "::1"
+    assert get_path(url) == "/path"
+    assert add_query_param(url, "page", "2") == url + "?page=2"
+
+def test_get_query_value_returns_first_blank_or_missing_value():
+    url = "https://school.example/?tag=art+club&tag=music&blank=&bare#list"
+    assert get_query_value(url, "tag") == "art club"
+    assert get_query_value(url, "blank") == ""
+    assert get_query_value(url, "bare") == ""
+    assert get_query_value(url, "missing") is None
+
+
+def test_get_query_value_validates_input():
+    with pytest.raises(EasyUrlError):
+        get_query_value("https://school.example", "")
+    with pytest.raises(EasyUrlError):
+        get_query_value("school.example", "tag")
+
+
+def test_get_query_value_is_public():
+    from py_simple import get_query_value as public_get
+    from py_simple.easy_url import get_query_value as module_get
+
+    assert public_get is module_get

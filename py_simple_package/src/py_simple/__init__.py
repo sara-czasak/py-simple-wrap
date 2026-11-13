@@ -390,6 +390,7 @@ from .easy_url import (
     add_query_param,
     get_domain,
     get_path,
+    get_query_value,
     get_query_values,
     is_https,
     remove_query_param,
