@@ -45,6 +45,9 @@ The [Pull Request Workflow Guide](pr_workflow_template.md) breaks down the compl
 **🎲 "My helper uses randomness. How can its tests pass reliably?"**
 The [Testing Random Helpers](random_tests_template.md) guide shows controlled draws, boundary cases, and shuffle checks that accept every valid ordering.
 
+**🧩 "My module needs an external third-party package like pygame or matplotlib. How do I handle and test it gracefully?"**
+The [Optional Dependency Guide](optional_dependencies_template.md) shows how to safely import optional dependencies, raise friendly custom errors, and test missing package branches with `monkeypatch`.
+
 **📊 "Codecov says my PR dropped coverage, or I want to know which lines my tests missed."**
 The [Code Coverage Guide](coverage_template.md) shows how to run `pytest-cov` locally, read the `Missing` lines report, and write tests to hit uncovered branches before you push.
 
