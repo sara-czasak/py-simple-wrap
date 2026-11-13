@@ -80,6 +80,7 @@ from .easy_config import (
     create_env_example_file,
     dockerfile_config,
     gitignore_config,
+    get_nested,
     requirements_config,
 )
 from .easy_converter import (

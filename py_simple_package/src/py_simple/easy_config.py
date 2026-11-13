@@ -5,6 +5,8 @@ easy_config aims to simplify creating configuration files.
 import os
 from importlib.resources import files
 
+from .easy_dict import get_nested_value as _get_nested_value
+
 
 class EasyConfigError(Exception):
     """
@@ -344,6 +346,56 @@ def load_env_file(
         return loaded
     except Exception as e:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
+
+def get_nested(
+    config: dict,
+    path: str,
+    default: object = None,
+) -> object:
+    """
+    Returns a value from a nested config dictionary using a dotted path.
+
+    Walks one dictionary level per part of the path, so "server.host"
+    reads config["server"]["host"]. Missing keys, empty path parts and
+    non-dictionary intermediate values return the default instead of raising.
+    The final value is returned unchanged, regardless of its type.
+
+    Args:
+        config (dict): Configuration dictionary to search in.
+        path (str): Dot-separated keys, e.g. "server.host".
+        default (object, optional): Value to return when the path is
+            missing. Defaults to None.
+
+    Returns:
+        object: The value stored at the path, or default. For example,
+            get_nested({"server": {"host": "localhost"}}, "server.host")
+            returns 'localhost'.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_nested
+
+            config = {"server": {"host": "localhost", "port": 8000}}
+            host = get_nested(config, "server.host")
+            workers = get_nested(config, "server.workers", default=4)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            config = {"server": {"host": "localhost", "port": 8000}}
+
+            server = config.get("server")
+            if isinstance(server, dict):
+                host = server.get("host")
+                workers = server.get("workers", 4)
+            else:
+                host = None
+                workers = 4
+            ```
+    """
+    return _get_nested_value(config, path, default)
 
 
 def create_env_example_file(
