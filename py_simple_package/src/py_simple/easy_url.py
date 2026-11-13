@@ -284,3 +284,40 @@ def get_query_values(url: str, key: str) -> list[str]:
         for name, value in parse_qsl(parsed.query, keep_blank_values=True)
         if name == key
     ]
+
+
+def get_query_value(url: str, key: str) -> str | None:
+    """
+    Return the first value for a query parameter, or None if it is absent.
+
+    Args:
+        url (str): A full link, including a scheme and host.
+        key (str): Non-empty parameter name.
+
+    Returns:
+        str | None: The first decoded value, including an empty string for a
+        blank value, or None when the parameter is absent.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link, or `key` is not a
+            non-empty string.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_query_value
+
+            print(get_query_value("https://school.example/?tag=art&tag=music", "tag"))
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import parse_qsl, urlparse
+
+            url = "https://school.example/?tag=art&tag=music"
+            values = [v for k, v in parse_qsl(urlparse(url).query) if k == "tag"]
+            print(values[0] if values else None)
+            ```
+    """
+    values = get_query_values(url, key)
+    return values[0] if values else None

@@ -8,6 +8,7 @@ from py_simple_package.src.py_simple.easy_url import (
     add_query_param,
     get_domain,
     get_path,
+    get_query_value,
     get_query_values,
     is_https,
     remove_query_param,
@@ -206,3 +207,25 @@ def test_url_helpers_wrap_malformed_or_missing_hosts(url, helper):
 def test_get_domain_accepts_ipv6_and_user_information():
     assert get_domain("https://[::1]:443/path") == "::1"
     assert get_domain("https://user:password@school.example/path") == "school.example"
+
+
+def test_get_query_value_returns_first_blank_or_missing_value():
+    url = "https://school.example/?tag=art+club&tag=music&blank=&bare#list"
+    assert get_query_value(url, "tag") == "art club"
+    assert get_query_value(url, "blank") == ""
+    assert get_query_value(url, "bare") == ""
+    assert get_query_value(url, "missing") is None
+
+
+def test_get_query_value_validates_input():
+    with pytest.raises(EasyUrlError):
+        get_query_value("https://school.example", "")
+    with pytest.raises(EasyUrlError):
+        get_query_value("school.example", "tag")
+
+
+def test_get_query_value_is_public():
+    from py_simple import get_query_value as public_get
+    from py_simple.easy_url import get_query_value as module_get
+
+    assert public_get is module_get

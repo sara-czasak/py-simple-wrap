@@ -127,6 +127,9 @@ def save_json_data(filepath: str, data: dict) -> None:
             ```
     """
     try:
+        if os.path.lexists(filepath):
+            raise FileExistsError
+
         with open(filepath, "x", encoding="utf-8") as json_file:
             json.dump(data, json_file, indent=4)
     except FileExistsError:

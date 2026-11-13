@@ -68,6 +68,7 @@ def test_gh_workflow_config_wraps_template_errors(tmp_path, monkeypatch):
     with pytest.raises(EasyConfigError, match="template missing"):
         gh_workflow_config("broken")
 
+
 def test_create_env_file_creates_file_with_variables(tmp_path):
     env_file = tmp_path / ".env"
     create_env_file({"PORT": "8000", "DEBUG": "True"}, file_path=str(env_file))
@@ -257,9 +258,7 @@ def test_top_level_import_load_env_file():
 
 def test_create_env_example_file_blanks_values_but_keeps_keys(tmp_path):
     env_file = tmp_path / ".env"
-    env_file.write_text(
-        "# local config\n\nPORT=8000\nDEBUG=True\n", encoding="utf-8"
-    )
+    env_file.write_text("# local config\n\nPORT=8000\nDEBUG=True\n", encoding="utf-8")
     example_file = tmp_path / ".env.example"
 
     create_env_example_file(str(env_file), str(example_file))
@@ -393,6 +392,7 @@ def test_gitignore_config_wraps_permission_errors(tmp_path, monkeypatch):
 def test_gitignore_config_imported_from_py_simple():
     assert callable(top_level_gitignore_config)
 
+
 def test_dockerfile_config_creates_file_at_current_directory(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
 
@@ -478,10 +478,9 @@ def test_requirements_config_creates_file(tmp_path):
 
     assert requirements_file.exists()
     assert requirements_file.read_text(encoding="utf-8") == (
-        "numpy\n"
-        "pandas\n"
-        "scikit-learn\n"
+        "numpy\n" "pandas\n" "scikit-learn\n"
     )
+
 
 def test_requirements_config_does_not_overwrite_by_default(tmp_path):
     requirements_file = tmp_path / "requirements.txt"
@@ -493,7 +492,8 @@ def test_requirements_config_does_not_overwrite_by_default(tmp_path):
     )
 
     assert requirements_file.read_text(encoding="utf-8") == "old-package\n"
-    
+
+
 def test_requirements_config_overwrites_when_flag_is_true(tmp_path):
     requirements_file = tmp_path / "requirements.txt"
     requirements_file.write_text("old-package\n", encoding="utf-8")
@@ -504,11 +504,9 @@ def test_requirements_config_overwrites_when_flag_is_true(tmp_path):
         overwrite=True,
     )
 
-    assert requirements_file.read_text(encoding="utf-8") == (
-        "numpy\n"
-        "pandas\n"
-    )
-    
+    assert requirements_file.read_text(encoding="utf-8") == ("numpy\n" "pandas\n")
+
+
 def test_requirements_config_creates_parent_directories(tmp_path):
     requirements_file = tmp_path / "config" / "requirements.txt"
 
@@ -518,11 +516,9 @@ def test_requirements_config_creates_parent_directories(tmp_path):
     )
 
     assert requirements_file.exists()
-    assert requirements_file.read_text(encoding="utf-8") == (
-        "numpy\n"
-        "pandas\n"
-    )
-    
+    assert requirements_file.read_text(encoding="utf-8") == ("numpy\n" "pandas\n")
+
+
 def test_requirements_config_wraps_errors(tmp_path, monkeypatch):
     requirements_file = tmp_path / "requirements.txt"
 
@@ -536,7 +532,8 @@ def test_requirements_config_wraps_errors(tmp_path, monkeypatch):
             ["numpy"],
             file_path=str(requirements_file),
         )
-        
+
+
 def test_requirements_config_imported_from_py_simple():
     from py_simple import requirements_config as imported_function
 
@@ -544,18 +541,40 @@ def test_requirements_config_imported_from_py_simple():
 
 
 @pytest.mark.parametrize("error_kind", ["missing_repo", "git_command"])
-def test_gh_workflow_config_wraps_repository_lookup_errors(tmp_path, monkeypatch, error_kind):
+def test_gh_workflow_config_wraps_repository_lookup_errors(
+    tmp_path, monkeypatch, error_kind
+):
     monkeypatch.chdir(tmp_path)
     if error_kind == "missing_repo":
         error = git.InvalidGitRepositoryError("not a repository")
     else:
-        error = git.GitCommandError("git rev-parse", 128, stderr="repository lookup failed")
+        error = git.GitCommandError(
+            "git rev-parse", 128, stderr="repository lookup failed"
+        )
 
     def failing_repo(*args, **kwargs):
         raise error
 
     monkeypatch.setattr(git, "Repo", failing_repo)
 
-    with pytest.raises(EasyConfigError, match="not a repository|repository lookup failed"):
+    with pytest.raises(
+        EasyConfigError, match="not a repository|repository lookup failed"
+    ):
         gh_workflow_config("release", at_root=False)
     assert not (tmp_path / ".github").exists()
+
+
+@pytest.mark.parametrize("overwrite", [False, True])
+def test_env_example_rejects_hardlinked_source(tmp_path, overwrite):
+    source = tmp_path / ".env"
+    target = tmp_path / ".env.example"
+    original = b"TOKEN=keep-this-value\nPORT=8000\n"
+    source.write_bytes(original)
+    try:
+        os.link(source, target)
+    except (OSError, NotImplementedError):
+        pytest.skip("Hard links are unavailable")
+    with pytest.raises(EasyConfigError, match="different files"):
+        create_env_example_file(str(source), str(target), overwrite=overwrite)
+    assert source.read_bytes() == original
+    assert target.read_bytes() == original

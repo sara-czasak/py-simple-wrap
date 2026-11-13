@@ -326,7 +326,7 @@ def encode_urlsafe_text(text: str) -> str:
             ```
 
     Note:
-        Decode with `base64.urlsafe_b64decode(encoded).decode("utf-8")`.
+        Decode with `decode_urlsafe_text(encoded)`.
         `decode_text` accepts the standard Base64 alphabet, not '-' and '_'.
     """
     if not isinstance(text, str):
@@ -334,4 +334,53 @@ def encode_urlsafe_text(text: str) -> str:
     try:
         return base64.urlsafe_b64encode(text.encode("utf-8")).decode("ascii")
     except UnicodeEncodeError as error:
+        raise EasyBase64Error(f"\n\nERROR: {error}") from None
+
+
+def decode_urlsafe_text(encoded: str) -> str:
+    """
+    Decode URL-safe Base64 text back to a Unicode string.
+
+    Uses '-' and '_' instead of '+' and '/'. Handles strings with or without
+    standard '=' padding.
+
+    Args:
+        encoded (str): URL-safe Base64 encoded text.
+
+    Returns:
+        str: Decoded UTF-8 text string, or an empty string for empty input.
+
+    Raises:
+        EasyBase64Error: If `encoded` is not a string, contains invalid Base64,
+            or cannot be decoded as UTF-8.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import decode_urlsafe_text
+
+            text = decode_urlsafe_text("aGVsbG8_")  # 'hello?'
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import base64
+
+            text = base64.urlsafe_b64decode("aGVsbG8_").decode("utf-8")
+            ```
+    """
+    if not isinstance(encoded, str):
+        raise EasyBase64Error("\n\nERROR: encoded text must be a string.")
+    if not encoded:
+        return ""
+    if "+" in encoded or "/" in encoded:
+        raise EasyBase64Error(
+            "\n\nERROR: encoded text contains invalid URL-safe characters."
+        )
+    try:
+        rem = len(encoded) % 4
+        padded = encoded + ("=" * (4 - rem)) if rem in (2, 3) else encoded
+        standard_b64 = padded.translate(str.maketrans("-_", "+/"))
+        return base64.b64decode(standard_b64, validate=True).decode("utf-8")
+    except (ValueError, UnicodeDecodeError, binascii.Error) as error:
         raise EasyBase64Error(f"\n\nERROR: {error}") from None
