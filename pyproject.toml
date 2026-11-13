@@ -13,7 +13,7 @@ maintainers = [
 ]
 description = "A package to make complex python functionality simple"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11.5"
 keywords = ["python", "beginner-friendly", "wrapper", "education", "utilities", "helper-functions", "simple-api", "easy-to-use", "automation", "beginner", "learning", "students"]
 classifiers = [
     "Development Status :: 4 - Beta",

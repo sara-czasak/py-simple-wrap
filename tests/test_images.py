@@ -414,6 +414,7 @@ class TestConvertToGreyscale:
     def test_public_import(self):
         assert public_convert_to_greyscale is convert_to_greyscale
 
+
 class TestAdjustBrightness:
     """Tests for adjust_brightness function."""
 
@@ -449,12 +450,15 @@ class TestAdjustBrightness:
         with Image.open("same.png") as img:
             assert img.getpixel((0, 0)) == (100, 150, 200)
 
-    @pytest.mark.parametrize("value", [-1, float("nan"), float("inf"), -float("inf"), True, "1.5", None])
+    @pytest.mark.parametrize(
+        "value", [-1, float("nan"), float("inf"), -float("inf"), True, "1.5", None]
+    )
     def test_invalid_value_raises_value_error(self, tmp_workdir, value):
         Image.new("RGB", (10, 10)).save("image.png")
 
         with pytest.raises(ValueError):
             adjust_brightness("image.png", "output.png", value)
+
     def test_palette_image_is_converted_and_brightened(self, tmp_workdir):
         img = Image.new("P", (10, 10), 0)
         img.putpalette([100, 100, 100] + [0] * 765)  # color slot 0 = gray 100
@@ -472,7 +476,7 @@ class TestAdjustBrightness:
 
         with Image.open("bright.jpg") as img:
             assert img.mode == "RGB"
-            
+
     def test_public_import(self):
         assert public_adjust_brightness is adjust_brightness
 
@@ -524,19 +528,23 @@ class TestCropImage:
             (10, 40, 50, 30),  # top > bottom
         ],
     )
-    def test_inverted_coordinates_raise_value_error(self, sample_png, left, top, right, bottom):
+    def test_inverted_coordinates_raise_value_error(
+        self, sample_png, left, top, right, bottom
+    ):
         with pytest.raises(ValueError):
             crop_image(sample_png, "out.png", left, top, right, bottom)
 
     @pytest.mark.parametrize(
         "left, top, right, bottom",
         [
-            (0, 0, 101, 60),   # right exceeds width (100)
-            (0, 0, 100, 61),   # bottom exceeds height (60)
+            (0, 0, 101, 60),  # right exceeds width (100)
+            (0, 0, 100, 61),  # bottom exceeds height (60)
             (0, 0, 200, 200),  # both exceed
         ],
     )
-    def test_out_of_bounds_coordinates_raise_value_error(self, sample_png, left, top, right, bottom):
+    def test_out_of_bounds_coordinates_raise_value_error(
+        self, sample_png, left, top, right, bottom
+    ):
         with pytest.raises(ValueError, match="exceed image dimensions"):
             crop_image(sample_png, "out.png", left, top, right, bottom)
 

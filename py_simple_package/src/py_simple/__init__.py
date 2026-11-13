@@ -19,6 +19,7 @@ from .easy_base64 import (
     decode_text,
     decode_to_bytes,
     decode_to_file,
+    decode_urlsafe_text,
     encode_bytes,
     encode_file,
     encode_text,
@@ -58,7 +59,7 @@ from .easy_bytes import (
     add_bytes,
     average_bytes,
     is_larger,
-    is_smaller
+    is_smaller,
 )
 from .easy_colors import (
     contrast_ratio,
@@ -79,6 +80,7 @@ from .easy_config import (
     create_env_example_file,
     dockerfile_config,
     gitignore_config,
+    get_nested,
     requirements_config,
 )
 from .easy_converter import (
@@ -389,6 +391,7 @@ from .easy_url import (
     add_query_param,
     get_domain,
     get_path,
+    get_query_value,
     get_query_values,
     is_https,
     remove_query_param,

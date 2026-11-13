@@ -15,6 +15,7 @@ from py_simple_package.src.py_simple import (
 )
 from py_simple_package.src.py_simple.easy_data_visualization import (
     _infer_type,
+    get_data_range,
     plot_bar_chart,
     plot_box_plot,
     plot_data,
@@ -122,17 +123,12 @@ def test_plot_box_plot_creates_box_plot():
 
 
 def test_plot_box_plot_empty_series_raises_value_error():
-    with pytest.raises(ValueError,
-                       match="The data series cannot be empty."):
+    with pytest.raises(ValueError, match="The data series cannot be empty."):
         plot_box_plot([])
 
 
 def test_plot_box_plot_is_available_from_public_api():
     assert public_plot_box_plot is plot_box_plot
-
-
-import pytest
-from py_simple.easy_data_visualization import get_data_range
 
 
 def test_get_data_range_success():

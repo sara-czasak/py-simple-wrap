@@ -707,7 +707,7 @@ def test_filter_log_lines_raises_for_invalid_level(tmp_path):
     with pytest.raises(ValueError):
         filter_log_lines(str(log_file), "TRACE")
 
-        
+
 @pytest.mark.parametrize("new_format", ["[%(levelname)s] %(message)s", "%(message)s"])
 def test_setup_file_logger_updates_existing_handler_format(tmp_path, new_format):
     log_file = tmp_path / "reconfigured.log"

@@ -220,7 +220,7 @@ def extract_ipv4_addresses(text: str) -> list:
     """
     # (?<![\d.]) ensures IP is NOT preceded by a digit or dot
     # (?![\d.]) ensures IP is NOT followed by a digit or dot
-    pattern = r'(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])'
+    pattern = r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])"
     return re.findall(pattern, text)
 
 
@@ -228,7 +228,7 @@ def extract_hashtags(text: str) -> list:
     r"""
     Returns a list of all hashtags found in the text.
 
-    A hashtag is defined as a hash symbol (#) followed by one or more 
+    A hashtag is defined as a hash symbol (#) followed by one or more
     alphanumeric characters or underscores.
 
     Arguments:
@@ -255,7 +255,7 @@ def extract_hashtags(text: str) -> list:
             # -> ['#Python', '#OpenSource']
             ```
     """
-    pattern = r'#\w+'
+    pattern = r"#\w+"
     return re.findall(pattern, text)
 
 
@@ -299,7 +299,7 @@ def extract_mentions(text: str) -> list:
     r"""
     Returns a list of all username mentions found in the text.
 
-    A mention is defined as an @ symbol followed by one or more 
+    A mention is defined as an @ symbol followed by one or more
     alphanumeric characters or underscores.
 
     Arguments:
@@ -326,7 +326,7 @@ def extract_mentions(text: str) -> list:
             # -> ['@alice', '@dev_team']
             ```
     """
-    pattern = r'@\w+'
+    pattern = r"@\w+"
     return re.findall(pattern, text)
 
 
@@ -360,7 +360,7 @@ def clean_extra_whitespace(text: str) -> str:
             # -> 'Hello world this is Python'
             ```
     """
-    return re.sub(r'\s+', ' ', text).strip()
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def extract_phone_numbers(text: str) -> list[str]:

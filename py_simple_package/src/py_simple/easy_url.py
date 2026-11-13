@@ -24,6 +24,8 @@ def _parsed(url: str):
     try:
         parsed = urlparse(url)
         hostname = parsed.hostname
+        # urllib validates the port only when this property is accessed.
+        _ = parsed.port
     except ValueError as error:
         raise EasyUrlError(f"\n\nERROR: {error}") from None
     if not parsed.scheme or not hostname:
@@ -42,7 +44,7 @@ def get_domain(url: str) -> str:
         str: The host, such as `"school.example"`.
 
     Raises:
-        EasyUrlError: If `url` is not a full link.
+        EasyUrlError: If `url` is not a full link or has an invalid port.
 
     Example:
         === "The Py_simple Way"
@@ -73,7 +75,7 @@ def is_https(url: str) -> bool:
         bool: True when the scheme is `https`.
 
     Raises:
-        EasyUrlError: If `url` is not a full link.
+        EasyUrlError: If `url` is not a full link or has an invalid port.
 
     Example:
         === "The Py_simple Way"
@@ -171,7 +173,7 @@ def get_path(url: str) -> str:
         str: The path, such as `"/clubs/art"`. Returns `"/"` if no path is given.
 
     Raises:
-        EasyUrlError: If `url` is not a full link.
+        EasyUrlError: If `url` is not a full link or has an invalid port.
 
     Example:
         === "The Py_simple Way"
@@ -284,3 +286,40 @@ def get_query_values(url: str, key: str) -> list[str]:
         for name, value in parse_qsl(parsed.query, keep_blank_values=True)
         if name == key
     ]
+
+
+def get_query_value(url: str, key: str) -> str | None:
+    """
+    Return the first value for a query parameter, or None if it is absent.
+
+    Args:
+        url (str): A full link, including a scheme and host.
+        key (str): Non-empty parameter name.
+
+    Returns:
+        str | None: The first decoded value, including an empty string for a
+        blank value, or None when the parameter is absent.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link, or `key` is not a
+            non-empty string.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_query_value
+
+            print(get_query_value("https://school.example/?tag=art&tag=music", "tag"))
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import parse_qsl, urlparse
+
+            url = "https://school.example/?tag=art&tag=music"
+            values = [v for k, v in parse_qsl(urlparse(url).query) if k == "tag"]
+            print(values[0] if values else None)
+            ```
+    """
+    values = get_query_values(url, key)
+    return values[0] if values else None

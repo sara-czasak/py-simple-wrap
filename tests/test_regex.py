@@ -126,7 +126,10 @@ def test_hashtags_are_extracted(input_text, expected):
         ("No mentions here", []),
         ("Multiple @user1 @user2 @user3", ["@user1", "@user2", "@user3"]),
         ("Ignores just an @ symbol", []),
-        ("Handles @under_scores but stops at @hyphen-users", ["@under_scores", "@hyphen"]),
+        (
+            "Handles @under_scores but stops at @hyphen-users",
+            ["@under_scores", "@hyphen"],
+        ),
     ],
 )
 def test_mentions_are_extracted(input_text, expected):
@@ -253,8 +256,14 @@ def test_extract_phone_numbers_is_available_from_public_api():
     "text,expected",
     [
         ("Contact user@mail.example.com.", ["user@mail.example.com"]),
-        ("Send to person+tag@dept.example.co.uk or user2@example.org!", ["person+tag@dept.example.co.uk", "user2@example.org"]),
-        ("<first.last@eu-west.team2.example.org>", ["first.last@eu-west.team2.example.org"]),
+        (
+            "Send to person+tag@dept.example.co.uk or user2@example.org!",
+            ["person+tag@dept.example.co.uk", "user2@example.org"],
+        ),
+        (
+            "<first.last@eu-west.team2.example.org>",
+            ["first.last@eu-west.team2.example.org"],
+        ),
     ],
 )
 def test_extract_emails_preserves_complete_subdomains(text, expected):

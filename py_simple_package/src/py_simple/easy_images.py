@@ -6,6 +6,7 @@ easy_images is meant to simplify common image processing tasks
 from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from PIL import Image
 
@@ -320,6 +321,7 @@ def flip_image(input_path: str, output_path: str, direction: str = "horizontal")
     with _open_image(input_path) as img:
         img.transpose(flips[direction]).save(output_path)
 
+
 def adjust_brightness(input_path: str, output_path: str, value: float):
     """
     Adjusts the brightness of an image by darkening or brightening it.
@@ -352,6 +354,7 @@ def adjust_brightness(input_path: str, output_path: str, value: float):
     """
     from PIL import ImageEnhance
     import math
+
     if (
         not isinstance(value, (int, float))
         or isinstance(value, bool)
@@ -413,8 +416,7 @@ def crop_image(
     """
     coords = (left, top, right, bottom)
     if any(
-        not isinstance(val, int) or isinstance(val, bool) or val < 0
-        for val in coords
+        not isinstance(val, int) or isinstance(val, bool) or val < 0 for val in coords
     ):
         raise ValueError("Crop coordinates must be non-negative integers.")
 
@@ -438,4 +440,3 @@ def crop_image(
             img = img.convert("RGB")
         cropped = img.crop((left, top, right, bottom))
         cropped.save(output_path)
-

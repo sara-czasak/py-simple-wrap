@@ -1289,6 +1289,14 @@ Every tile below is a real person who showed up for this project. 💛
       </a>
     </td>
   </tr>
+  <tr>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/mii0829">
+        <img src="https://github.com/mii0829.png" width="100px;" alt="niko"/><br />
+        <sub><b>niko</b></sub>
+      </a>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -1421,7 +1429,7 @@ Every tile below is a real person who showed up for this project. 💛
 ## How to get your name here? 🛠️
 I welcome contributions of all sizes! Whether you are fixing a typo in the README, suggesting a new "Simple" module, reporting a bug, or writing code, I'd love to have you involved — and to give you a tile of your very own.
 
-Check out [CONTRIBUTING.md](./CONTRIBUTING.md) to see how you can get started!
+Check out [CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) to see how you can get started!
 
 ---
 
@@ -1431,7 +1439,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
 
 ⭐ **[Star the repo](https://github.com/sara-czasak/py-simple-wrap)** if py-simple-wrap made your life easier — it costs nothing and it's how the next beginner finds us.
 
-🤝 **[Read CONTRIBUTING.md](./CONTRIBUTING.md)** and claim your tile.
+🤝 **[Read CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md)** and claim your tile.
 
 
 ## 🫶 The Full Roster
@@ -1571,6 +1579,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/deltaaa00"><img src="https://github.com/deltaaa00.png?size=80" width="80px" height="80px" alt="Delta"/><br /><sub><b>Delta</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=deltaaa00" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=deltaaa00" title="Code">💻</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=deltaaa00" title="Docs">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/uclthomasblaimont"><img src="https://github.com/uclthomasblaimont.png?size=80" width="80px" height="80px" alt="Thomas Blaimont"/><br /><sub><b>Thomas Blaimont</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=uclthomasblaimont" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=uclthomasblaimont" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mii0829"><img src="https://github.com/mii0829.png?size=80" width="80px" height="80px" alt="niko"/><br /><sub><b>niko</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=mii0829" title="Docs">📖</a></td>
     </tr>
   </tbody>
 </table>

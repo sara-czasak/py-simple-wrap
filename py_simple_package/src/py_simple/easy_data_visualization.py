@@ -451,7 +451,6 @@ def plot_bar_chart(
     plt.show()
 
 
-
 def plot_line_chart(
     labels: list[str],
     values: list[int | float],
@@ -675,10 +674,14 @@ def plot_scatter_chart(
     if len(x_values) != len(y_values):
         raise ValueError("X and Y values must have the same length.")
 
-    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in x_values):
+    if not all(
+        isinstance(v, (int, float)) and not isinstance(v, bool) for v in x_values
+    ):
         raise ValueError("All x_values must be numbers.")
 
-    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in y_values):
+    if not all(
+        isinstance(v, (int, float)) and not isinstance(v, bool) for v in y_values
+    ):
         raise ValueError("All y_values must be numbers.")
 
     _, ax = plt.subplots()
@@ -759,7 +762,9 @@ def plot_histogram(
     if not data:
         raise ValueError("The data series cannot be empty.")
 
-    if bins is not None and (not isinstance(bins, int) or isinstance(bins, bool) or bins < 1):
+    if bins is not None and (
+        not isinstance(bins, int) or isinstance(bins, bool) or bins < 1
+    ):
         raise ValueError("bins must be a positive integer.")
 
     _, ax = plt.subplots()
@@ -774,5 +779,3 @@ def plot_histogram(
 
     ax.spines[["top", "right"]].set_visible(False)
     plt.show()
-
-

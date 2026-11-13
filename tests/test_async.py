@@ -87,6 +87,7 @@ def test_run_with_timeout_success():
 
 def test_run_with_timeout_failure():
     """It should raise EasyAsyncError if execution times out or fails."""
+
     def slow_func():
         time.sleep(0.4)
         return True
@@ -578,7 +579,6 @@ def test_run_first_completed_bad_repr_with_name():
     assert result == 99
 
 
-
 def test_run_first_completed_outer_cancellation():
     async def scenario():
         def slow_one():
@@ -650,7 +650,9 @@ def test_run_with_default_fallback_uses_repr_for_callables_without_name():
 
 @pytest.mark.parametrize("runner", ["no_params", "with_params", "map"])
 @pytest.mark.parametrize("raises_later", [False, True])
-def test_concurrent_helpers_distinguish_returned_and_raised_exceptions(runner, raises_later):
+def test_concurrent_helpers_distinguish_returned_and_raised_exceptions(
+    runner, raises_later
+):
     returned_error = ValueError("returned as data")
 
     def return_error(*args):
@@ -668,7 +670,9 @@ def test_concurrent_helpers_distinguish_returned_and_raised_exceptions(runner, r
         if runner == "no_params":
             return await run_at_the_same_time_no_params([return_error, second_result])
         if runner == "with_params":
-            return await run_at_the_same_time_with_params([(return_error, 1), (second_result, 2)])
+            return await run_at_the_same_time_with_params(
+                [(return_error, 1), (second_result, 2)]
+            )
         return await run_concurrent_map(mapped, [0, 1])
 
     if raises_later:

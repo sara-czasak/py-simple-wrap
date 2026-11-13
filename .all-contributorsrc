@@ -1058,6 +1058,15 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "mii0829",
+      "name": "niko",
+      "avatar_url": "https://github.com/mii0829.png",
+      "profile": "https://github.com/mii0829",
+      "contributions": [
+        "documentation"
+      ]
     }
   ]
 }

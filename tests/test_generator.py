@@ -396,6 +396,7 @@ def test_generate_passphrase_rejects_invalid_word_count(words):
     with pytest.raises(EasyGeneratorError, match="at least 1"):
         generate_passphrase(words)
 
+
 def test_generate_coupon_code_uses_readable_alphabet():
     alphabet = set("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
     code = generate_coupon_code(12)
@@ -487,4 +488,3 @@ def test_generate_random_hex_rejects_invalid_length(length):
 def test_generate_random_hex_rejects_invalid_count(count):
     with pytest.raises(EasyGeneratorError, match="at least 1"):
         generate_random_hex(length=16, count=count)
-

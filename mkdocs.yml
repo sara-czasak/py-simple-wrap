@@ -94,6 +94,12 @@ nav:
           - Website Health Monitor: tutorial/website-health-monitor-project.md
           - Club Badge: tutorial/club-badge-project.md
           - Secret Message Vault: tutorial/secret-message-vault-project.md
+          - Subscription Budget Planner: tutorial/subscription-planner-project.md
+          - Arcade Leaderboard: tutorial/arcade-leaderboard-project.md
+          - Game Asset Packager: tutorial/game-asset-packager-project.md
+          - Blog Article Catalog: tutorial/blog-article-catalog-project.md
+          - Trail Stage Planner: tutorial/trail-stage-planner-project.md
+          - Sleep Diary: tutorial/sleep-diary-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
@@ -113,6 +119,7 @@ nav:
       - Adding a Function to an Existing Module: contributor-hub/expand_module_template.md
       - Project-Based Tutorial Template: contributor-hub/project_tutorial_template.md
       - Rebase Conflicts on Shared Files: contributor-hub/rebase_conflicts_template.md
+      - Code Coverage Guide: contributor-hub/coverage_template.md
   - Reference:
       - Easy AI: reference/easy_ai.md
       - Easy Archive: reference/easy_archive.md
@@ -128,7 +135,7 @@ nav:
       - Easy Dict: reference/easy_dict.md
       - Easy File Manager: reference/easy_file_manager.md
       - Easy Flow: reference/easy_flow.md
-      - Easy Game: reference/easy_game
+      - Easy Game: reference/easy_game.md
       - Easy Generator: reference/easy_generator.md
       - Easy Hash: reference/easy_hash.md
       - Easy Images: reference/easy_images.md

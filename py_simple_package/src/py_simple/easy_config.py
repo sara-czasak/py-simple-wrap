@@ -5,6 +5,8 @@ easy_config aims to simplify creating configuration files.
 import os
 from importlib.resources import files
 
+from .easy_dict import get_nested_value as _get_nested_value
+
 
 class EasyConfigError(Exception):
     """
@@ -95,6 +97,7 @@ def gh_workflow_config(filename: str, at_root: bool = True) -> None:
                         f.write(line)
     except Exception as e:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
 
 def create_env_file(
     variables: dict[str, str],
@@ -345,6 +348,56 @@ def load_env_file(
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 
 
+def get_nested(
+    config: dict,
+    path: str,
+    default: object = None,
+) -> object:
+    """
+    Returns a value from a nested config dictionary using a dotted path.
+
+    Walks one dictionary level per part of the path, so "server.host"
+    reads config["server"]["host"]. Missing keys, empty path parts and
+    non-dictionary intermediate values return the default instead of raising.
+    The final value is returned unchanged, regardless of its type.
+
+    Args:
+        config (dict): Configuration dictionary to search in.
+        path (str): Dot-separated keys, e.g. "server.host".
+        default (object, optional): Value to return when the path is
+            missing. Defaults to None.
+
+    Returns:
+        object: The value stored at the path, or default. For example,
+            get_nested({"server": {"host": "localhost"}}, "server.host")
+            returns 'localhost'.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_nested
+
+            config = {"server": {"host": "localhost", "port": 8000}}
+            host = get_nested(config, "server.host")
+            workers = get_nested(config, "server.workers", default=4)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            config = {"server": {"host": "localhost", "port": 8000}}
+
+            server = config.get("server")
+            if isinstance(server, dict):
+                host = server.get("host")
+                workers = server.get("workers", 4)
+            else:
+                host = None
+                workers = 4
+            ```
+    """
+    return _get_nested_value(config, path, default)
+
+
 def create_env_example_file(
     file_path: str = ".env",
     example_path: str = ".env.example",
@@ -373,7 +426,7 @@ def create_env_example_file(
         EasyConfigError: If the source file cannot be read or the
             example file cannot be written.
         EasyConfigError: If the source and destination paths point to
-            the same file.
+            the same file, including symbolic links and hard links.
 
     Example:
         === "The Py_simple Way"
@@ -397,7 +450,11 @@ def create_env_example_file(
                         target.write(f"{key}=\\n")
             ```
     """
-    if os.path.realpath(file_path) == os.path.realpath(example_path):
+    if os.path.realpath(file_path) == os.path.realpath(example_path) or (
+        os.path.exists(file_path)
+        and os.path.exists(example_path)
+        and os.path.samefile(file_path, example_path)
+    ):
         raise EasyConfigError(
             "\n\n\nERROR: source and destination must be different files"
         )
@@ -503,49 +560,49 @@ def dockerfile_config(at_root: bool = True) -> None:
 
 def gitignore_config(at_root: bool = True) -> None:
     """
-    Creates a starter .gitignore file for Python projects from a template.
+        Creates a starter .gitignore file for Python projects from a template.
 
-    The .gitignore is written to '.gitignore'. If the file already exists,
-    it is left alone. Any missing parent directories are created
-    automatically.
+        The .gitignore is written to '.gitignore'. If the file already exists,
+        it is left alone. Any missing parent directories are created
+        automatically.
 
-    Args:
-        at_root (bool, optional): When True, the path is relative to the
-            current working directory. When False, the git repository
-            root is looked up and the .gitignore is placed there.
-            Defaults to True.
+        Args:
+            at_root (bool, optional): When True, the path is relative to the
+                current working directory. When False, the git repository
+                root is looked up and the .gitignore is placed there.
+                Defaults to True.
 
-    Returns:
-        None
+        Returns:
+            None
 
-    Raises:
-        EasyConfigError: If the template cannot be read, the git repository
-            cannot be found, or the file cannot be written.
+        Raises:
+            EasyConfigError: If the template cannot be read, the git repository
+                cannot be found, or the file cannot be written.
 
-    Example:
-        === "The Py_simple Way"
-            ```python
-            from py_simple import gitignore_config
+        Example:
+            === "The Py_simple Way"
+                ```python
+                from py_simple import gitignore_config
 
-            gitignore_config()
-            ```
+                gitignore_config()
+                ```
 
-        === "The Traditional Way"
-            ```python
-            template = \"\"\"# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+            === "The Traditional Way"
+                ```python
+                template = \"\"\"# Byte-compiled / optimized / DLL files
+    __pycache__/
+    *.py[cod]
 
-# Virtual environments
-venv/
-.venv/
+    # Virtual environments
+    venv/
+    .venv/
 
-# Environment variables
-.env
-\"\"\"
-            with open(".gitignore", "w", encoding="utf-8") as f:
-                f.write(template)
-            ```
+    # Environment variables
+    .env
+    \"\"\"
+                with open(".gitignore", "w", encoding="utf-8") as f:
+                    f.write(template)
+                ```
     """
     try:
         if at_root:

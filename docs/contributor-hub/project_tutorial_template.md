@@ -52,7 +52,7 @@ paragraph. Link the two module tutorials at the end.>
 ## Where it goes
 
 Add **one** line under `Tutorial: > Project-Based Tutorials:` in
-[`mkdocs.yml`](../../mkdocs.yml), after the last existing project, using
+[mkdocs.yml](https://github.com/sara-czasak/py-simple-wrap/blob/main/mkdocs.yml), after the last existing project, using
 the same indent as the others:
 
 ```yaml
