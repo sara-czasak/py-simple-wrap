@@ -105,6 +105,7 @@ nav:
   - Contributor Hub:
       - Overview: contributor-hub/index.md
       - Docstring Template: contributor-hub/docstring_template.md
+      - Writing the Two-Panel Examples: contributor-hub/example_panels_template.md
       - Tutorial Template: contributor-hub/tutorial_template.md
       - Custom Exception Template: contributor-hub/error_template.md
       - Module Tests Template: contributor-hub/tests_template.md
