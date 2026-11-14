@@ -45,7 +45,7 @@ Copy this pattern into your test file (e.g. `tests/test_my_module.py`):
 ```python
 import pytest
 
-from py_simple import EasyModuleNameError
+from py_simple.easy_my_module import EasyModuleNameError
 import py_simple.easy_my_module as easy_my_module
 
 
