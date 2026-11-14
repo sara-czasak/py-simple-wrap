@@ -48,6 +48,9 @@ The [Testing Random Helpers](random_tests_template.md) guide shows controlled dr
 **📊 "Codecov says my PR dropped coverage, or I want to know which lines my tests missed."**
 The [Code Coverage Guide](coverage_template.md) shows how to run `pytest-cov` locally, read the `Missing` lines report, and write tests to hit uncovered branches before you push.
 
+**🗺️ "I opened the repo and have no idea where anything is."**
+The [Understanding the Codebase Layout](codebase_layout_template.md) guide maps every folder — where the code, tests, and docs live, and how the pieces connect.
+
 ## Still stuck, or something's not covered here?
 
 That's okay too. Open an issue, or mention it in your pull request, and it'll get sorted out together — see [CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) for how to reach out. Nobody's expected to figure this out alone.
