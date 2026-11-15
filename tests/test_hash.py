@@ -83,6 +83,43 @@ def test_hash_file_missing(tmp_path):
         hash_file(str(tmp_path / "missing.txt"))
 
 
+@pytest.mark.parametrize("size", [0, 2 * 65536 + 17])
+@pytest.mark.parametrize("algorithm", ["sha256", "sha1", "md5"])
+def test_hash_file_uses_bounded_reads(tmp_path, monkeypatch, size, algorithm):
+    content = (bytes(range(256)) * (size // 256 + 1))[:size]
+
+    class BoundedReader(io.BytesIO):
+        def read(self, requested=-1):
+            assert 0 < requested <= 64 * 1024
+            return super().read(requested)
+
+    reader = BoundedReader(content)
+    monkeypatch.setattr(Path, "open", lambda *args, **kwargs: reader)
+
+    assert (
+        hash_file(str(tmp_path / "data.bin"), algorithm)
+        == hashlib.new(algorithm, content).hexdigest()
+    )
+    assert reader.closed
+
+
+def test_hash_file_closes_file_after_read_error(tmp_path, monkeypatch):
+    class FailingReader(io.BytesIO):
+        def read(self, size=-1):
+            if self.tell():
+                raise OSError("read failed")
+            return super().read(1)
+
+    reader = FailingReader(b"hello")
+    monkeypatch.setattr(Path, "open", lambda *args, **kwargs: reader)
+
+    with pytest.raises(EasyHashError, match="read failed") as exc_info:
+        hash_file(str(tmp_path / "broken.bin"))
+
+    assert reader.closed
+    assert exc_info.value.__cause__ is None
+
+
 def test_hashes_match():
     digest = hash_text("hello")
     assert hashes_match("hello", digest) is True
