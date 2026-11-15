@@ -48,7 +48,7 @@ def your_helper(
 
 ## Quick reference: common types in py-simple-wrap
 
-This project uses Python 3.10+ modern type hints. You do not need to import `List`, `Dict`, `Tuple`, `Set`, or `Optional` from `typing`.
+This project uses Python 3.11+ modern type hints. You do not need to import `List`, `Dict`, `Tuple`, `Set`, or `Optional` from `typing`.
 
 | Data type | Type hint | Example usage |
 |---|---|---|
