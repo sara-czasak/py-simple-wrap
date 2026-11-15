@@ -233,3 +233,15 @@ def test_decode_urlsafe_text_wraps_invalid_utf8():
 
 def test_public_import_includes_decode_urlsafe_text():
     assert public_decode_urlsafe_text is decode_urlsafe_text
+
+
+@pytest.mark.parametrize("helper", [encode_file, public_encode_file])
+def test_encode_file_wraps_null_byte_path(helper):
+    with pytest.raises(EasyBase64Error, match="embedded null byte"):
+        helper("invalid\x00path")
+
+
+@pytest.mark.parametrize("helper", [decode_to_file, public_decode_to_file])
+def test_decode_to_file_wraps_null_byte_path(helper):
+    with pytest.raises(EasyBase64Error, match="embedded null byte"):
+        helper("aGVsbG8=", "invalid\x00path")

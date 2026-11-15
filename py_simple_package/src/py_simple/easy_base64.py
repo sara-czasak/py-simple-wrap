@@ -219,7 +219,7 @@ def encode_file(file_path: str) -> str:
         str: The Base64 text representing the file's contents.
 
     Raises:
-        EasyBase64Error: If `file_path` is not a string, the file is not found,
+        EasyBase64Error: If `file_path` is not a string or valid path, the file is not found,
             or an error occurs reading the file.
 
     Example:
@@ -243,7 +243,7 @@ def encode_file(file_path: str) -> str:
     try:
         with open(file_path, "rb") as file:
             return base64.b64encode(file.read()).decode("ascii")
-    except (FileNotFoundError, OSError) as error:
+    except (FileNotFoundError, OSError, ValueError) as error:
         raise EasyBase64Error(f"\n\nERROR: {error}") from None
 
 
@@ -260,7 +260,7 @@ def decode_to_file(encoded: str, file_path: str) -> None:
 
     Raises:
         EasyBase64Error: If `encoded` or `file_path` is not a string, `encoded`
-            is not valid Base64 text, or an error occurs writing the file.
+            is not valid Base64 text, the path is invalid, or an error occurs writing the file.
 
     Example:
         === "The Py_simple Way"
@@ -289,7 +289,7 @@ def decode_to_file(encoded: str, file_path: str) -> None:
     try:
         with open(file_path, "wb") as file:
             file.write(data)
-    except (FileNotFoundError, OSError) as error:
+    except (FileNotFoundError, OSError, ValueError) as error:
         raise EasyBase64Error(f"\n\nERROR: {error}") from None
 
 
