@@ -131,6 +131,9 @@ def flatten_list(items, levels: int | None = None) -> list:
             ```
     """
 
+    if levels is not None and (not isinstance(levels, int) or levels < 0):
+        raise ValueError("Depth level has to be a positive intager.")
+
     if isinstance(items, list):
         if not items:
             return []
