@@ -9,6 +9,7 @@ from py_simple_package.src.py_simple.easy_terminal import (
     print_centered,
     print_rule,
     print_styled,
+    print_table,
 )
 
 
@@ -304,3 +305,44 @@ def test_print_rule_public_imports(monkeypatch, capsys):
     assert public_print is module_print
     public_print(title="Hi")
     assert capsys.readouterr().out == "──────── Hi ────────\n"
+
+def test_print_table_basic_output(capsys):
+    data = {
+        "Col1": ["A", "B"],
+        "Col2": ["C", "D"]
+    }
+
+    print_table(data, style="cyan")
+    captured = capsys.readouterr()
+    
+    assert "Col1" in captured.out
+    assert "Col2" in captured.out
+    assert "A" in captured.out
+    assert "D" in captured.out
+
+
+def test_print_table_invalid_style_falls_back_to_white(monkeypatch):
+    calls = []
+
+    class DummyTable:
+        def add_column(self, name, style):
+            calls.append(("add_column", name, style))
+
+        def add_row(self, *args, style):
+            calls.append(("add_row", args, style))
+
+    class DummyConsole:
+        def print(self, table):
+            calls.append(("print",))
+
+    monkeypatch.setattr("rich.table.Table", DummyTable)
+    monkeypatch.setattr("rich.console.Console", lambda: DummyConsole())
+
+    data = {"Test": ["Value"]}
+    
+    print_table(data, style="not_valid")
+
+    
+    assert ("add_column", "Test", "white") in calls
+    assert ("add_row", ("Value",), "white") in calls
+
