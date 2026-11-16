@@ -101,6 +101,7 @@ nav:
           - Trail Stage Planner: tutorial/trail-stage-planner-project.md
           - Sleep Diary: tutorial/sleep-diary-project.md
           - Profile Intake Sanitizer: tutorial/profile-intake-sanitizer-project.md
+          - Backyard Bird Log: tutorial/backyard-bird-log-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
@@ -112,6 +113,7 @@ nav:
       - Keeping Tests Isolated: contributor-hub/test_isolation_template.md
       - Testing Random Helpers: contributor-hub/random_tests_template.md
       - Network Test Template: contributor-hub/network_tests_template.md
+      - Type Hints Template: contributor-hub/type_hints_template.md
       - Public API Export Template: contributor-hub/public_api_template.md
       - Pre-commit Guide: contributor-hub/pre_commit_template.md
       - Pull Request Workflow Guide: contributor-hub/pr_workflow_template.md
@@ -120,6 +122,7 @@ nav:
       - Project-Based Tutorial Template: contributor-hub/project_tutorial_template.md
       - Rebase Conflicts on Shared Files: contributor-hub/rebase_conflicts_template.md
       - Code Coverage Guide: contributor-hub/coverage_template.md
+      - Understanding the Codebase Layout: contributor-hub/codebase_layout_template.md
   - Reference:
       - Easy AI: reference/easy_ai.md
       - Easy Archive: reference/easy_archive.md

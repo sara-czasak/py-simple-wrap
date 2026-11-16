@@ -9,6 +9,7 @@ from py_simple_package.src.py_simple.easy_terminal import (
     print_centered,
     print_rule,
     print_styled,
+    print_table,
 )
 
 
@@ -304,3 +305,67 @@ def test_print_rule_public_imports(monkeypatch, capsys):
     assert public_print is module_print
     public_print(title="Hi")
     assert capsys.readouterr().out == "──────── Hi ────────\n"
+
+
+def test_print_table_basic_output(capsys):
+    data = {"Col1": ["A", "B"], "Col2": ["C", "D"]}
+
+    print_table(data, style="cyan")
+    captured = capsys.readouterr()
+
+    assert "Col1" in captured.out
+    assert "Col2" in captured.out
+    assert "A" in captured.out
+    assert "D" in captured.out
+
+
+def test_print_table_invalid_style_falls_back_to_white(monkeypatch):
+    calls = []
+
+    class DummyTable:
+        def add_column(self, name, style):
+            calls.append(("add_column", name, style))
+
+        def add_row(self, *args, style):
+            calls.append(("add_row", args, style))
+
+    class DummyConsole:
+        def print(self, table):
+            calls.append(("print",))
+
+    monkeypatch.setattr("rich.table.Table", DummyTable)
+    monkeypatch.setattr("rich.console.Console", lambda: DummyConsole())
+
+    data = {"Test": ["Value"]}
+
+    print_table(data, style="not_valid")
+
+    assert ("add_column", "Test", "white") in calls
+    assert ("add_row", ("Value",), "white") in calls
+
+
+def test_print_table_unequal_column_lengths(capsys):
+    data = {"Col1": ["A", "B", "C"], "Col2": ["X"]}
+    print_table(data, style="green")
+    captured = capsys.readouterr()
+    assert "Col1" in captured.out
+    assert "Col2" in captured.out
+    assert "A" in captured.out
+    assert "C" in captured.out
+
+
+def test_print_table_non_string_values(capsys):
+    data = {
+        "ID": [1, 2, 3],
+        "Active": [True, False, True],
+        "Score": [95.5, 82.0, 88.5],
+    }
+    print_table(data, style="blue")
+    captured = capsys.readouterr()
+
+    assert "ID" in captured.out
+    assert "Active" in captured.out
+    assert "Score" in captured.out
+    assert "1" in captured.out
+    assert "True" in captured.out
+    assert "95.5" in captured.out
