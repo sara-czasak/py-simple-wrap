@@ -27,6 +27,9 @@ The [Adding a Function to an Existing Module](expand_module_template.md) guide l
 **🪢 "Rebase stopped on `__init__.py` or `mkdocs.yml`. What do I keep?"**
 The [Rebase Conflicts on Shared Files](rebase_conflicts_template.md) guide shows how to keep main's new lines and your addition, then continue the rebase.
 
+**🏷️ "I don't know how to add type hints to my function parameters and return value."**
+The [Type Hints Template](type_hints_template.md) provides a cheat-sheet and copy-paste examples for modern Python typing (`list[str]`, `str | None`, `str | Path`, etc.) so editor autocomplete and type checkers work smoothly.
+
 **📦 "My helper works in its module, but I cannot import it from py_simple."**
 The [Public API Export Template](public_api_template.md) shows where to expose a helper, how to check both import paths, and how to avoid name collisions.
 
