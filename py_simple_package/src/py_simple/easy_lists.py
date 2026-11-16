@@ -95,37 +95,56 @@ def chunk_list(items: list, size: int) -> list:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
-def flatten_list(items: list) -> list:
+def flatten_list(items, levels: int | None = None) -> list:
     """
-    Flattens a list with nested lists into a single-level list.
+    Flattens a list with nested lists up to a specified depth.
 
     Args:
-        items (list): List that may contain nested lists.
+        items (list | Any): List or item that may contain nested lists.
+        levels (int | None, optional): Number of levels to flatten.
+            If `None`, flattens completely (all levels). If `0`, returns
+            the list as is. Defaults to `None`.
 
     Returns:
-        list: Flattened list, one level deep.
+        list: The flattened list.
 
     Example:
-        === "The Py_simple Way"
+        === "The Py_simple Way (Complete Flattening)"
             ```python
             from py_simple import flatten_list
 
-            result = flatten_list([[1, 2], [3]])  # -> [1, 2, 3]
+            result = flatten_list([1, [2, [3, 4]], 5])  # -> [1, 2, 3, 4, 5]
+            ```
+
+        === "The Py_simple Way (Limited Levels)"
+            ```python
+            from py_simple import flatten_list
+
+            result = flatten_list([1, [2, [3, 4]], 5], levels=1)  # -> [1, 2, [3, 4], 5]
             ```
 
         === "The Traditional Way"
             ```python
-            items = [[1, 2], [3]]
-            result = [item for sublist in items for item in sublist]
+            # Deep flattening recursively without recursion limit
+            def flatten(lst):
+                return [item for sublist in lst for item in (flatten(sublist) if isinstance(sublist, list) else [sublist])]
             ```
     """
-    flattened = []
-    for item in items:
-        if isinstance(item, list):
-            flattened.extend(item)
+
+    if isinstance(items, list):
+        if not items:
+            return []
         else:
-            flattened.append(item)
-    return flattened
+            if levels == 0:
+                return items
+            if levels is None:
+                return flatten_list(items[0]) + flatten_list(items[1:])
+            else:
+                return flatten_list(items[0], levels=levels - 1) + flatten_list(
+                    items[1:], levels=levels
+                )
+    else:
+        return [items]
 
 
 def most_common_item(items: list) -> object:
