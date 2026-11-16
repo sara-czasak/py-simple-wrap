@@ -330,3 +330,92 @@ def print_rule(title: str = "") -> None:
     from rich.text import Text
 
     Console().rule(Text(str(title)))
+
+
+RICH_STYLES: set[str] = {
+    # Standard colors
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "white",
+    # Bright colors
+    "bright_black",
+    "bright_red",
+    "bright_green",
+    "bright_yellow",
+    "bright_blue",
+    "bright_magenta",
+    "bright_cyan",
+    "bright_white",
+    # Text modifiers
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "strike",
+    "reverse",
+    "blink",
+    "conceal",
+}
+
+
+def print_table(items: dict[str, list], style: str = "white") -> None:
+    """
+    Prints a formatted table to the terminal from a dictionary of columns.
+
+    Each key in the dictionary becomes a column header, and the corresponding
+    list provides the row values for that column.
+
+    Args:
+        items (dict[str, list]): A dictionary where keys are column headers
+            and values are lists of row data.
+        style (str, optional): The Rich style to apply to the table columns
+            and rows. Defaults to `"white"`. If an invalid style name is given,
+            it falls back to `"white"`.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import print_table
+
+            data = {
+                "Name": ["Mario", "Luigi"],
+                "Role": ["Admin", "Developer"]
+            }
+            print_table(data, style="cyan")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from rich.console import Console
+            from rich.table import Table
+
+            console = Console()
+            table = Table()
+            table.add_column("Name", style="cyan")
+            table.add_column("Role", style="cyan")
+            table.add_row("Mario", "Admin", style="cyan")
+            table.add_row("Luigi", "Developer", style="cyan")
+            console.print(table)
+            ```
+    """
+    from itertools import zip_longest
+    from rich.console import Console
+    from rich.table import Table
+
+    if style not in RICH_STYLES:
+        style = "white"
+
+    table = Table()
+
+    for column_name in items.keys():
+        table.add_column(str(column_name), style=style)
+
+    for data in zip_longest(*items.values(), fillvalue=""):
+        table.add_row(*[str(data_item) for data_item in data], style=style)
+
+    Console().print(table)

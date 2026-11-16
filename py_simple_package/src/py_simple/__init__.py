@@ -414,4 +414,5 @@ from .easy_terminal import (
     print_centered,
     print_rule,
     print_styled,
+    print_table,
 )
