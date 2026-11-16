@@ -95,7 +95,7 @@ def chunk_list(items: list, size: int) -> list:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
-def flatten_list(items, levels: int | None = None, _result: None | list = None) -> list:
+def flatten_list(items, levels: int | None = None) -> list:
     """
     Returns a flattened list by unpacking nested lists up to a specified depth.
 
@@ -130,27 +130,26 @@ def flatten_list(items, levels: int | None = None, _result: None | list = None) 
             ```
     """
 
+    result: list = []
+
     if levels is not None and (
         not isinstance(levels, int) or levels < 0 or levels % 1 != 0
     ):
         raise ValueError("Depth level has to be a positive integer/valid float.")
 
-    if not isinstance(_result, list):
-        _result = []
-
     if not items:
-        return _result
+        return result
     if levels == 0:
-        _result.extend(list(items))
+        result.extend(list(items))
     else:
         for element in items:
             if isinstance(element, list):
-                _result.extend(
+                result.extend(
                     flatten_list(element, levels - 1 if levels is not None else None)
                 )
             else:
-                _result.append(element)
-    return _result
+                result.append(element)
+    return result
 
 
 def most_common_item(items: list) -> object:
