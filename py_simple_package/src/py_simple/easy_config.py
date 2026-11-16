@@ -3,6 +3,7 @@ easy_config aims to simplify creating configuration files.
 """
 
 import os
+import tomllib
 from importlib.resources import files
 
 from .easy_dict import get_nested_value as _get_nested_value
@@ -269,6 +270,50 @@ def read_env_file(file_path: str = ".env") -> dict[str, str]:
                 value = value.strip()
                 variables[key] = value
         return variables
+    except Exception as e:
+        raise EasyConfigError(f"\n\n\nERROR: {e}") from None
+
+
+def read_toml_file(file_path: str) -> dict[str, object]:
+    """
+    Reads a TOML configuration file into a dictionary.
+
+    TOML tables become nested dictionaries, and arrays become lists. The
+    standard-library TOML reader is used, so this works without an extra
+    package on supported Python versions.
+
+    Args:
+        file_path (str): Path to the TOML file to read.
+
+    Returns:
+        dict[str, object]: The parsed TOML data. For example, a file with
+            ``[server]`` and ``port = 8000`` returns
+            ``{"server": {"port": 8000}}``.
+
+    Raises:
+        EasyConfigError: If the file cannot be read or contains invalid TOML.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple.easy_config import read_toml_file
+
+            config = read_toml_file("settings.toml")
+            port = config["server"]["port"]
+            ```
+
+        === "The Traditional Way"
+            ```python
+            import tomllib
+
+            with open("settings.toml", "rb") as config_file:
+                config = tomllib.load(config_file)
+            port = config["server"]["port"]
+            ```
+    """
+    try:
+        with open(file_path, "rb") as config_file:
+            return tomllib.load(config_file)
     except Exception as e:
         raise EasyConfigError(f"\n\n\nERROR: {e}") from None
 

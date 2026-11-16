@@ -13,6 +13,7 @@ from py_simple_package.src.py_simple.easy_config import (
     create_env_file,
     create_env_example_file,
     read_env_file,
+    read_toml_file,
     load_env_file,
     dockerfile_config,
     get_nested,
@@ -161,6 +162,36 @@ def test_read_env_file_keeps_equals_signs_in_values(tmp_path):
 def test_read_env_file_wraps_missing_file_error(tmp_path):
     with pytest.raises(EasyConfigError, match="does_not_exist"):
         read_env_file(str(tmp_path / "does_not_exist.env"))
+
+
+def test_read_toml_file_reads_nested_configuration(tmp_path):
+    toml_file = tmp_path / "settings.toml"
+    toml_file.write_text(
+        '[server]\nhost = "localhost"\nport = 8000\n', encoding="utf-8"
+    )
+
+    assert read_toml_file(str(toml_file)) == {
+        "server": {"host": "localhost", "port": 8000}
+    }
+
+
+def test_read_toml_file_wraps_invalid_toml_error(tmp_path):
+    toml_file = tmp_path / "invalid.toml"
+    toml_file.write_text("port =\n", encoding="utf-8")
+
+    with pytest.raises(EasyConfigError):
+        read_toml_file(str(toml_file))
+
+
+def test_read_toml_file_wraps_missing_file_error(tmp_path):
+    with pytest.raises(EasyConfigError, match="missing.toml"):
+        read_toml_file(str(tmp_path / "missing.toml"))
+
+
+def test_read_toml_file_imported_from_easy_config_module():
+    from py_simple.easy_config import read_toml_file as module_read_toml_file
+
+    assert callable(module_read_toml_file)
 
 
 @pytest.fixture(autouse=True)
