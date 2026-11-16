@@ -331,17 +331,37 @@ def print_rule(title: str = "") -> None:
 
     Console().rule(Text(str(title)))
 
+
 RICH_STYLES: set[str] = {
     # Standard colors
-    "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
-    
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "white",
     # Bright colors
-    "bright_black", "bright_red", "bright_green", "bright_yellow", 
-    "bright_blue", "bright_magenta", "bright_cyan", "bright_white",
-    
+    "bright_black",
+    "bright_red",
+    "bright_green",
+    "bright_yellow",
+    "bright_blue",
+    "bright_magenta",
+    "bright_cyan",
+    "bright_white",
     # Text modifiers
-    "bold", "dim", "italic", "underline", "strike", "reverse", "blink", "conceal"
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "strike",
+    "reverse",
+    "blink",
+    "conceal",
 }
+
 
 def print_table(items: dict[str, list], style: str = "white") -> None:
     """
@@ -383,6 +403,7 @@ def print_table(items: dict[str, list], style: str = "white") -> None:
             console.print(table)
             ```
     """
+    from itertools import zip_longest
     from rich.console import Console
     from rich.table import Table
 
@@ -392,17 +413,9 @@ def print_table(items: dict[str, list], style: str = "white") -> None:
     table = Table()
 
     for column_name in items.keys():
-        table.add_column(column_name, style=style)
+        table.add_column(str(column_name), style=style)
 
-    for data in zip(*items.values()):
-        table.add_row(*data, style=style)
+    for data in zip_longest(*items.values(), fillvalue=""):
+        table.add_row(*[str(data_item) for data_item in data], style=style)
 
     Console().print(table)
-
-
-    
-
-
-    
-
-
