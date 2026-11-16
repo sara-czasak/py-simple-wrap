@@ -74,6 +74,11 @@ def test_chunk_list_rejects_invalid_size(size):
 def test_flatten_list(items, expected, levels):
     assert flatten_list(items, levels) == expected
 
+def test_flatten_large_flat_list():
+    import sys
+    large_flat_list = list(range(sys.getrecursionlimit() * 5))
+    assert flatten_list(large_flat_list) == large_flat_list
+
 
 @pytest.mark.parametrize(
     "items, expected",

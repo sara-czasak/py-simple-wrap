@@ -1,6 +1,9 @@
 """Beginner-friendly helpers for common list operations."""
 
 
+from operator import le
+
+
 def unique_items(items: list) -> list:
     """
     Returns a new list with duplicates removed, keeping the original order.
@@ -95,59 +98,59 @@ def chunk_list(items: list, size: int) -> list:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
-def flatten_list(items, levels: int | None = None) -> list:
+def flatten_list(items, levels: int | None = None, _result: None | list = None) -> list:
     """
-    Flattens a list with nested lists up to a specified depth.
+    Returns a flattened list by unpacking nested lists up to a specified depth.
 
     Args:
-        items (list | Any): List or item that may contain nested lists.
-        levels (int | None, optional): Number of levels to flatten.
-            If `None`, flattens completely (all levels). If `0`, returns
+        items (list): The list containing nested lists to flatten.
+        levels (int | None): The number of nesting levels to flatten.
+            If `None`, flattens all levels completely. If `0`, returns
             the list as is. Defaults to `None`.
 
     Returns:
-        list: The flattened list.
+        list: A single flattened list containing the unpacked elements
+            (e.g., `[1, 2, 3, 4, 5]`).
 
     Example:
-        === "The Py_simple Way (Complete Flattening)"
+        === "The Py_simple Way"
             ```python
             from py_simple import flatten_list
 
             result = flatten_list([1, [2, [3, 4]], 5])  # -> [1, 2, 3, 4, 5]
-            ```
-
-        === "The Py_simple Way (Limited Levels)"
-            ```python
-            from py_simple import flatten_list
-
-            result = flatten_list([1, [2, [3, 4]], 5], levels=1)  # -> [1, 2, [3, 4], 5]
+            result_limited = flatten_list([1, [2, [3, 4]], 5], levels=1)  # -> [1, 2, [3, 4], 5]
             ```
 
         === "The Traditional Way"
             ```python
-            # Deep flattening recursively without recursion limit
+            # Recursive flattening 
             def flatten(lst):
-                return [item for sublist in lst for item in (flatten(sublist) if isinstance(sublist, list) else [sublist])]
+                return [
+                    item
+                    for sublist in lst
+                    for item in (flatten(sublist) if isinstance(sublist, list) else [sublist])
+                ]
             ```
     """
 
-    if levels is not None and (not isinstance(levels, int) or levels < 0):
-        raise ValueError("Depth level has to be a positive integer.")
+    if levels is not None and (not isinstance(levels, int) or levels < 0 or levels % 1 != 0):
+        raise ValueError("Depth level has to be a positive integer/valid float.")
 
-    if isinstance(items, list):
-        if not items:
-            return []
-        else:
-            if levels == 0:
-                return items
-            if levels is None:
-                return flatten_list(items[0]) + flatten_list(items[1:])
-            else:
-                return flatten_list(items[0], levels=levels - 1) + flatten_list(
-                    items[1:], levels=levels
-                )
+    if not isinstance(_result, list):
+        _result = []
+    
+    if not items:
+        return _result
+    if levels == 0:
+        _result.extend(list(items))
     else:
-        return [items]
+        for element in items:
+            if isinstance(element, list):
+                _result.extend(flatten_list(element, levels-1 if levels is not None else None))
+            else:
+                _result.append(element)
+    return _result
+    
 
 
 def most_common_item(items: list) -> object:
