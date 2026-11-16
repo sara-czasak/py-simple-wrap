@@ -71,7 +71,7 @@ def test_chunk_list_rejects_invalid_size(size):
         ([1, [2, 3, [4]]], [1, 2, 3, [4]], 1),
     ],
 )
-def test_flatten_list(items, levels, expected):
+def test_flatten_list(items, expected, levels):
     assert flatten_list(items, levels) == expected
 
 
