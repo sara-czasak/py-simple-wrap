@@ -1302,6 +1302,12 @@ Every tile below is a real person who showed up for this project. 💛
         <sub><b>mafujahmedridoy22-commits</b></sub>
       </a>
     </td>
+    <td align="center" valign="top" width="8.6%">
+      <a href="https://github.com/Golden007-prog">
+        <img src="https://github.com/Golden007-prog.png" width="100px;" alt="Oikantik Basu"/><br />
+        <sub><b>Oikantik Basu</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
 
@@ -1587,6 +1593,7 @@ The Module Magicians. The Code Conjurers. The Test Sentinels. The Lore Keepers. 
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/uclthomasblaimont"><img src="https://github.com/uclthomasblaimont.png?size=80" width="80px" height="80px" alt="Thomas Blaimont"/><br /><sub><b>Thomas Blaimont</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=uclthomasblaimont" title="Tests">🧪</a> <a href="https://github.com/sara-czasak/py_simple/commits?author=uclthomasblaimont" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mii0829"><img src="https://github.com/mii0829.png?size=80" width="80px" height="80px" alt="niko"/><br /><sub><b>niko</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=mii0829" title="Docs">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mafujahmedridoy22-commits"><img src="https://github.com/mafujahmedridoy22-commits.png?size=80" width="80px" height="80px" alt="mafujahmedridoy22-commits"/><br /><sub><b>mafujahmedridoy22-commits</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=mafujahmedridoy22-commits" title="Docs">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Golden007-prog"><img src="https://github.com/Golden007-prog.png?size=80" width="80px" height="80px" alt="Oikantik Basu"/><br /><sub><b>Oikantik Basu</b></sub></a><br /><a href="https://github.com/sara-czasak/py_simple/commits?author=Golden007-prog" title="Docs">📖</a></td>
     </tr>
   </tbody>
 </table>
