@@ -17,7 +17,7 @@
 [![PyPI](https://img.shields.io/pypi/v/py-simple-wrap?style=flat-square&logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/py-simple-wrap/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/sara-czasak/py-simple-wrap/tests.yml?style=flat-square&logo=github&label=tests)](https://github.com/sara-czasak/py-simple-wrap/actions/workflows/tests.yml)
 [![Security: SkillsLLM](https://skillsllm.com/security-check/badge.svg?owner=sara-czasak&repo=py-simple-wrap)](https://skillsllm.com/security-check/ClrqG49aEoiZ)
-[![Contributors](https://img.shields.io/badge/contributors-100-orange?style=flat-square)](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTORS.md)
+[![Contributors](https://img.shields.io/badge/contributors-102-green?style=flat-square)](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTORS.md)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/py-simple-wrap?period=total&units=NONE&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/py-simple-wrap)
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](https://github.com/sara-czasak/py-simple-wrap/blob/main/LICENSE.md)
 [![Discord](https://img.shields.io/discord/1533803449895092245?style=flat-square&logo=discord&logoColor=white&label=discord&color=5865F2)](https://discord.gg/f9PUGNaVZ)
@@ -230,6 +230,6 @@ gets built next. **[Take the 2-minute survey →](https://docs.google.com/forms/
 
 **[Contributing](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) · [Changelog](https://github.com/sara-czasak/py-simple-wrap/blob/main/CHANGELOG.md) · [License](https://github.com/sara-czasak/py-simple-wrap/blob/main/LICENSE.md)**
  
-<sub>Built for beginners, grown by 90+ contributors ✨</sub>
+<sub>Built for beginners, grown by 100+ contributors ✨</sub>
  
 </div>

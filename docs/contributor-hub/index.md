@@ -27,6 +27,9 @@ The [Adding a Function to an Existing Module](expand_module_template.md) guide l
 **🪢 "Rebase stopped on `__init__.py` or `mkdocs.yml`. What do I keep?"**
 The [Rebase Conflicts on Shared Files](rebase_conflicts_template.md) guide shows how to keep main's new lines and your addition, then continue the rebase.
 
+**🏷️ "I don't know how to add type hints to my function parameters and return value."**
+The [Type Hints Template](type_hints_template.md) provides a cheat-sheet and copy-paste examples for modern Python typing (`list[str]`, `str | None`, `str | Path`, etc.) so editor autocomplete and type checkers work smoothly.
+
 **📦 "My helper works in its module, but I cannot import it from py_simple."**
 The [Public API Export Template](public_api_template.md) shows where to expose a helper, how to check both import paths, and how to avoid name collisions.
 
@@ -50,6 +53,9 @@ The [Optional Dependency Guide](optional_dependencies_template.md) shows how to 
 
 **📊 "Codecov says my PR dropped coverage, or I want to know which lines my tests missed."**
 The [Code Coverage Guide](coverage_template.md) shows how to run `pytest-cov` locally, read the `Missing` lines report, and write tests to hit uncovered branches before you push.
+
+**🗺️ "I opened the repo and have no idea where anything is."**
+The [Understanding the Codebase Layout](codebase_layout_template.md) guide maps every folder — where the code, tests, and docs live, and how the pieces connect.
 
 ## Still stuck, or something's not covered here?
 

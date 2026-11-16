@@ -71,6 +71,18 @@ print(get_query_value(link, "tag"))  # python
 print(get_query_value(link, "missing"))  # None
 ```
 
+Use `add_query_value()` to add another value without replacing existing ones:
+
+```python
+from py_simple import add_query_value
+
+print(add_query_value("https://school.example/clubs?tag=art", "tag", "music"))
+# https://school.example/clubs?tag=art&tag=music
+```
+
+If the name is missing, `add_query_value()` adds it. Use `add_query_param()`
+when you want to replace all existing values for a name instead.
+
 ## Why use these helpers?
 
 A link without `https://` is rejected with a clear error, so a bare

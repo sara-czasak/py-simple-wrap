@@ -114,6 +114,8 @@ def hash_file(filepath: str, algorithm: str = "sha256") -> str:
     """
     Create a checksum for the contents of a file.
 
+    Reads the file in chunks so large files do not need to fit in memory.
+
     Args:
         filepath (str): Path to the file.
         algorithm (str, optional): One of `"sha256"`, `"sha1"`, or
@@ -140,16 +142,12 @@ def hash_file(filepath: str, algorithm: str = "sha256") -> str:
 
             hasher = hashlib.sha256()
             with open("notes.txt", "rb") as f:
-                hasher.update(f.read())
+                while chunk := f.read(64 * 1024):
+                    hasher.update(chunk)
             digest = hasher.hexdigest()
             ```
     """
-    hasher = _new_hasher(algorithm)
-    try:
-        hasher.update(Path(filepath).read_bytes())
-    except OSError as error:
-        raise EasyHashError(f"\n\nERROR: {error}") from None
-    return hasher.hexdigest()
+    return _hash_file_chunks(filepath, algorithm)
 
 
 def hash_files(
