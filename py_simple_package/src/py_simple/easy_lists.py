@@ -1,9 +1,6 @@
 """Beginner-friendly helpers for common list operations."""
 
 
-from operator import le
-
-
 def unique_items(items: list) -> list:
     """
     Returns a new list with duplicates removed, keeping the original order.
@@ -123,7 +120,7 @@ def flatten_list(items, levels: int | None = None, _result: None | list = None) 
 
         === "The Traditional Way"
             ```python
-            # Recursive flattening 
+            # Recursive flattening
             def flatten(lst):
                 return [
                     item
@@ -133,12 +130,14 @@ def flatten_list(items, levels: int | None = None, _result: None | list = None) 
             ```
     """
 
-    if levels is not None and (not isinstance(levels, int) or levels < 0 or levels % 1 != 0):
+    if levels is not None and (
+        not isinstance(levels, int) or levels < 0 or levels % 1 != 0
+    ):
         raise ValueError("Depth level has to be a positive integer/valid float.")
 
     if not isinstance(_result, list):
         _result = []
-    
+
     if not items:
         return _result
     if levels == 0:
@@ -146,11 +145,12 @@ def flatten_list(items, levels: int | None = None, _result: None | list = None) 
     else:
         for element in items:
             if isinstance(element, list):
-                _result.extend(flatten_list(element, levels-1 if levels is not None else None))
+                _result.extend(
+                    flatten_list(element, levels - 1 if levels is not None else None)
+                )
             else:
                 _result.append(element)
     return _result
-    
 
 
 def most_common_item(items: list) -> object:
