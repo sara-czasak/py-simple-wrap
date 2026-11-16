@@ -1085,6 +1085,16 @@
       "contributions": [
         "documentation"
       ]
+    },
+    {
+      "login": "mxrfp",
+      "name": "mxrcox",
+      "avatar_url": "https://github.com/mxrfp.png",
+      "profile": "https://github.com/mxrfp",
+      "contributions": [
+        "test",
+        "code"
+      ]
     }
   ]
 }
