@@ -194,6 +194,14 @@ def test_read_toml_file_imported_from_easy_config_module():
     assert callable(module_read_toml_file)
 
 
+def test_read_toml_file_imported_from_package_root(tmp_path):
+    toml_file = tmp_path / "settings.toml"
+    toml_file.write_text("[server]\nport = 8000\n", encoding="utf-8")
+    from py_simple import read_toml_file as package_read_toml_file
+
+    assert package_read_toml_file(str(toml_file)) == {"server": {"port": 8000}}
+
+
 @pytest.fixture(autouse=True)
 def clean_env():
     """Snapshot and restore os.environ so all modifications are reverted."""
