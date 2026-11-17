@@ -95,37 +95,59 @@ def chunk_list(items: list, size: int) -> list:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
-def flatten_list(items: list) -> list:
+def flatten_list(items, levels: int | None = None) -> list:
     """
-    Flattens a list with nested lists into a single-level list.
+    Returns a flattened list by unpacking nested lists up to a specified depth.
 
     Args:
-        items (list): List that may contain nested lists.
+        items (list): The list containing nested lists to flatten.
+        levels (int | None): The number of nesting levels to flatten.
+            If `None`, flattens all levels completely. If `0`, returns
+            the list as is. Defaults to `None`.
 
     Returns:
-        list: Flattened list, one level deep.
+        list: A single flattened list containing the unpacked elements
+            (e.g., `[1, 2, 3, 4, 5]`).
 
     Example:
         === "The Py_simple Way"
             ```python
             from py_simple import flatten_list
 
-            result = flatten_list([[1, 2], [3]])  # -> [1, 2, 3]
+            result = flatten_list([1, [2, [3, 4]], 5])  # -> [1, 2, 3, 4, 5]
+            result_limited = flatten_list([1, [2, [3, 4]], 5], levels=1)  # -> [1, 2, [3, 4], 5]
             ```
 
         === "The Traditional Way"
             ```python
-            items = [[1, 2], [3]]
-            result = [item for sublist in items for item in sublist]
+            # Recursive flattening
+            def flatten(lst):
+                return [
+                    item
+                    for sublist in lst
+                    for item in (flatten(sublist) if isinstance(sublist, list) else [sublist])
+                ]
             ```
     """
-    flattened = []
-    for item in items:
-        if isinstance(item, list):
-            flattened.extend(item)
-        else:
-            flattened.append(item)
-    return flattened
+
+    result: list = []
+
+    if levels is not None and (not isinstance(levels, int) or levels < 0):
+        raise ValueError("Depth level has to be a non-negative integer.")
+
+    if not items:
+        return result
+    if levels == 0:
+        result.extend(list(items))
+    else:
+        for element in items:
+            if isinstance(element, list):
+                result.extend(
+                    flatten_list(element, levels - 1 if levels is not None else None)
+                )
+            else:
+                result.append(element)
+    return result
 
 
 def most_common_item(items: list) -> object:
