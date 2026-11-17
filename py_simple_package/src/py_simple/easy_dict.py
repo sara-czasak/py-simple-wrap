@@ -328,8 +328,20 @@ def most_common_value(dictionary: dict) -> object:
             result = max(counts, key=counts.get)
             ```
     """
+    # cannot use count_values for unhashable types (such as list)
+
     if not dictionary:
         raise ValueError("Cannot find the most common value of an empty dictionary.")
 
-    counts = count_values(dictionary)
-    return max(counts, key=counts.get)
+    values = []
+    freq = []
+
+    for item in dictionary.values():
+        if item not in values:
+            values.append(item)
+            freq.append(1)
+        else:
+            indx = values.index(item)
+            freq[indx] += 1
+
+    return values[max(enumerate(freq), key=lambda x: x[1])[0]]
