@@ -174,7 +174,7 @@ def is_password_secure(password: str) -> bool:
             last_char = ''
             result = False
 
-            if len(password) > min_length:
+            if len(password) >= min_length:
                 for char in password:
                     if char.isdigit():
                         digits += 1
@@ -215,7 +215,7 @@ def is_password_secure(password: str) -> bool:
     special_characters = 0
     last_char = ""
 
-    if len(password) > min_length:
+    if len(password) >= min_length:
         for char in password:
             if char.isdigit():
                 digits += 1
