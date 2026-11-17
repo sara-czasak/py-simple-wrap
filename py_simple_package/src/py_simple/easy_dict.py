@@ -29,8 +29,10 @@ def merge_dicts(dict_a: dict, dict_b: dict) -> dict:
             result.update(dict_b)
             ```
     """
-    result = dict(dict_a)
-    result.update(dict_b)
+    import copy
+
+    result = dict(copy.deepcopy(dict_a))
+    result.update(copy.deepcopy(dict_b))
     return result
 
 
