@@ -168,3 +168,39 @@ def test_most_common_value(dictionary, expected):
 def test_most_common_value_rejects_empty_dictionary():
     with pytest.raises(ValueError):
         most_common_value({})
+
+
+@pytest.mark.parametrize(
+    "dictionary, expected",
+    [
+        ({"a": [1, 2], "b": [3, 4], "c": [1, 2]}, [1, 2]),
+        ({"a": {1: 2}, "b": {1: 2}}, {1: 2}),
+        ({"a": {1, 2}}, {1, 2}),
+    ],
+)
+def test_most_common_value_unhashable(dictionary, expected):
+    assert most_common_value(dictionary) == expected
+
+
+@pytest.mark.parametrize(
+    "dictionary, expected",
+    [
+        ({"a": [1, 2], "b": 3, "c": [1, 2]}, [1, 2]),
+        ({"a": "x", "b": 1, "c": "x"}, "x"),
+        ({"a": complex(1, 2), "b": complex(1, 2), "c": (1, 2, 2)}, complex(1, 2)),
+    ],
+)
+def test_most_common_mixed_types(dictionary, expected):
+    assert most_common_value(dictionary) == expected
+
+
+@pytest.mark.parametrize(
+    "dictionary, expected",
+    [
+        ({"a": 8, "b": 8, "c": 4, "d": 4}, 8),
+        ({"a": "x", "b": "x"}, "x"),
+        ({"a": 90, "b": [1, 2], "c": 90, "d": [1, 2]}, 90),
+    ],
+)
+def test_most_common_ties(dictionary, expected):
+    assert most_common_value(dictionary) == expected
