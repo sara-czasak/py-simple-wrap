@@ -145,7 +145,7 @@ def is_password_secure(password: str) -> bool:
         - at least one upper case letter
         - at least two lowercase letters
         - at least two digits
-        - no repeating characters
+        - no consecutive repeated characters
 
     Arguments:
         password (str): password to validate.
