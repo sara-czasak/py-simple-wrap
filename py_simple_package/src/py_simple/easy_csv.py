@@ -724,6 +724,9 @@ def delete_csv_rows(
     """
     Deletes rows from a CSV file where a column matches the given value.
 
+    The original is replaced only after processing succeeds. Temporary
+    output is removed if processing or replacement fails.
+
     Args:
         filepath (str): The path to the CSV file.
         column (str): The column to check for the given value.
@@ -769,37 +772,41 @@ def delete_csv_rows(
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"File not found: {filepath}")
 
-    with open(filepath, "r", newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f, delimiter=delimiter)
+    temp_filepath = None
+    try:
+        with open(filepath, "r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f, delimiter=delimiter)
 
-        if reader.fieldnames is None:
-            raise ValueError(f"File is empty: {filepath}")
+            if reader.fieldnames is None:
+                raise ValueError(f"File is empty: {filepath}")
 
-        if column not in reader.fieldnames:
-            raise ValueError(f"Column not found: {column}")
+            if column not in reader.fieldnames:
+                raise ValueError(f"Column not found: {column}")
 
-        found = False
-        with tempfile.NamedTemporaryFile(
-            "w",
-            newline="",
-            encoding="utf-8",
-            delete=False,
-            dir=os.path.dirname(os.path.abspath(filepath)),
-        ) as temp_file:
-            temp_filepath = temp_file.name
-            writer = csv.DictWriter(
-                temp_file, fieldnames=reader.fieldnames, delimiter=delimiter
-            )
-            writer.writeheader()
+            found = False
+            with tempfile.NamedTemporaryFile(
+                "w",
+                newline="",
+                encoding="utf-8",
+                delete=False,
+                dir=os.path.dirname(os.path.abspath(filepath)),
+            ) as temp_file:
+                temp_filepath = temp_file.name
+                writer = csv.DictWriter(
+                    temp_file, fieldnames=reader.fieldnames, delimiter=delimiter
+                )
+                writer.writeheader()
 
-            for row in reader:
-                if row[column] == value:
-                    found = True
-                else:
-                    writer.writerow(row)
+                for row in reader:
+                    if row[column] == value:
+                        found = True
+                    else:
+                        writer.writerow(row)
 
-    if not found:
-        os.remove(temp_filepath)
-        raise ValueError(f"No rows found with {column}={value} in {filepath}")
+        if not found:
+            raise ValueError(f"No rows found with {column}={value} in {filepath}")
 
-    os.replace(temp_filepath, filepath)
+        os.replace(temp_filepath, filepath)
+    finally:
+        if temp_filepath is not None and os.path.exists(temp_filepath):
+            os.remove(temp_filepath)
