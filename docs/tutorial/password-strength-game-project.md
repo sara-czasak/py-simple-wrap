@@ -53,7 +53,7 @@ def score_password(password: str) -> tuple[int, list[str]]:
     if is_password_secure(password):
         score += 1
     else:
-        feedback.append("avoid repeated characters and satisfy every security rule")
+        feedback.append("avoid consecutive repeated characters and satisfy every security rule")
 
     return score, feedback
 
@@ -62,7 +62,7 @@ def play_password_game() -> None:
     """Run a short password-strength challenge in the terminal."""
     print("=== Password Strength Challenge ===")
     print("Create a password with at least 8 characters, uppercase and lowercase letters,")
-    print("two digits, a special character, and no repeated characters.")
+    print("two digits, a special character, and no consecutive repeated characters.")
     print("You have three attempts.\n")
 
     for attempt in range(1, 4):
@@ -106,12 +106,12 @@ Example session:
 ```text
 === Password Strength Challenge ===
 Create a password with at least 8 characters, uppercase and lowercase letters,
-two digits, a special character, and no repeated characters.
+two digits, a special character, and no consecutive repeated characters.
 You have three attempts.
 
 Attempt 1/3 — enter a password: sunshine
 Strength score: 2/6
-Suggestions: mix uppercase and lowercase letters; include at least 2 digits; include a special character; avoid repeated characters and satisfy every security rule.
+Suggestions: mix uppercase and lowercase letters; include at least 2 digits; include a special character; avoid consecutive repeated characters and satisfy every security rule.
 Hint: try a pattern like aQ7!mZ2@rT5k (do not reuse this example).
 
 Attempt 2/3 — enter a password: River!27Map
@@ -125,7 +125,7 @@ You have passed this game.
 
 1. `count_letters(password)` contributes a point when the password contains enough letters to provide meaningful variety.
 2. The character checks contribute points for mixed case, digits, and special characters. The game can explain missing criteria instead of showing only `True` or `False`.
-3. `is_password_secure(password)` contributes the final point when the password passes the module's complete rules: at least 8 characters, one special character, one uppercase letter, at least two lowercase letters, at least two digits, and no repeating characters.
+3. `is_password_secure(password)` contributes the final point when the password passes the module's complete rules: at least 8 characters, one special character, one uppercase letter, at least two lowercase letters, at least two digits, and no consecutive repeating characters.
 4. A score of `6/6` immediately ends the game with a passed result; after three lower scores, the game ends with a failed result.
 5. The `for` loop gives the player three attempts without requiring separate counters or repeated input code.
 6. `generate_password()` creates a randomized example with the requested length and character counts. It also shuffles the characters and avoids identical adjacent characters.
@@ -141,7 +141,7 @@ You have passed this game.
 
 ## Why use these helpers?
 
-Without `py-simple-wrap`, the game would need to manually count letters, detect uppercase and lowercase letters, count digits and punctuation, check the minimum length, and track repeated characters. It would also need separate logic to build character pools, choose random characters, shuffle them, and avoid adjacent duplicates.
+Without `py-simple-wrap`, the game would need to manually count letters, detect uppercase and lowercase letters, count digits and punctuation, check the minimum length, and track consecutive repeated characters. It would also need separate logic to build character pools, choose random characters, shuffle them, and avoid adjacent duplicates.
 
 Combining `easy_generator`, `easy_validator`, and `easy_text` keeps the game focused on its rules and feedback. `generate_password()` handles random password construction, `count_letters()` simplifies one of the scoring checks, and `is_password_secure()` provides the final complete-security check.
 
