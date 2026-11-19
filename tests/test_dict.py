@@ -29,6 +29,27 @@ def test_merge_dicts(dict_a, dict_b, expected):
 
 
 @pytest.mark.parametrize(
+    "dict_a, dict_b, expected",
+    [
+        ({"a": [1, 2]}, {"b": [3, 4]}, {"a": [1, 2], "b": [3, 4]}),
+        ({"a": []}, {"a": [1, 2]}, {"a": [1, 2]}),
+        (
+            {"a": [3, 4], "b": [6]},
+            {"b": [3], "c": [8, 9]},
+            {"a": [3, 4], "b": [3], "c": [8, 9]},
+        ),
+    ],
+)
+def test_merge_dicts_deepcopy(dict_a, dict_b, expected):
+    result = merge_dicts(dict_a, dict_b)
+
+    for lst in result.values():
+        lst.append(1)
+
+    assert merge_dicts(dict_a, dict_b) != result
+
+
+@pytest.mark.parametrize(
     "keys, values, expected",
     [
         (["a", "b"], [1, 2], {"a": 1, "b": 2}),
