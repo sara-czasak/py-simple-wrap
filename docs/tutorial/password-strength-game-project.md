@@ -53,7 +53,7 @@ def score_password(password: str) -> tuple[int, list[str]]:
     if is_password_secure(password):
         score += 1
     else:
-        feedback.append("avoid repeated characters and satisfy every security rule")
+        feedback.append("avoid consecutive repeated characters and satisfy every security rule")
 
     return score, feedback
 
@@ -62,7 +62,7 @@ def play_password_game() -> None:
     """Run a short password-strength challenge in the terminal."""
     print("=== Password Strength Challenge ===")
     print("Create a password with at least 8 characters, uppercase and lowercase letters,")
-    print("two digits, a special character, and no repeated characters.")
+    print("two digits, a special character, and no consecutive repeated characters.")
     print("You have three attempts.\n")
 
     for attempt in range(1, 4):
@@ -106,12 +106,12 @@ Example session:
 ```text
 === Password Strength Challenge ===
 Create a password with at least 8 characters, uppercase and lowercase letters,
-two digits, a special character, and no repeated characters.
+two digits, a special character, and no consecutive repeated characters.
 You have three attempts.
 
 Attempt 1/3 — enter a password: sunshine
 Strength score: 2/6
-Suggestions: mix uppercase and lowercase letters; include at least 2 digits; include a special character; avoid repeated characters and satisfy every security rule.
+Suggestions: mix uppercase and lowercase letters; include at least 2 digits; include a special character; avoid consecutive repeated characters and satisfy every security rule.
 Hint: try a pattern like aQ7!mZ2@rT5k (do not reuse this example).
 
 Attempt 2/3 — enter a password: River!27Map
@@ -141,7 +141,7 @@ You have passed this game.
 
 ## Why use these helpers?
 
-Without `py-simple-wrap`, the game would need to manually count letters, detect uppercase and lowercase letters, count digits and punctuation, check the minimum length, and track repeated characters. It would also need separate logic to build character pools, choose random characters, shuffle them, and avoid adjacent duplicates.
+Without `py-simple-wrap`, the game would need to manually count letters, detect uppercase and lowercase letters, count digits and punctuation, check the minimum length, and track consecutive repeated characters. It would also need separate logic to build character pools, choose random characters, shuffle them, and avoid adjacent duplicates.
 
 Combining `easy_generator`, `easy_validator`, and `easy_text` keeps the game focused on its rules and feedback. `generate_password()` handles random password construction, `count_letters()` simplifies one of the scoring checks, and `is_password_secure()` provides the final complete-security check.
 
