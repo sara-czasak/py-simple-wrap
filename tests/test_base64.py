@@ -10,6 +10,7 @@ from py_simple_package.src.py_simple import (
     encode_bytes as public_encode_bytes,
     encode_file as public_encode_file,
     encode_text as public_encode_text,
+    encode_urlsafe_bytes as public_encode_urlsafe_bytes,
     encode_urlsafe_text as public_encode_urlsafe_text,
     is_base64 as public_is_base64,
 )
@@ -22,6 +23,7 @@ from py_simple_package.src.py_simple.easy_base64 import (
     encode_bytes,
     encode_file,
     encode_text,
+    encode_urlsafe_bytes,
     encode_urlsafe_text,
     is_base64,
 )
@@ -245,3 +247,33 @@ def test_encode_file_wraps_null_byte_path(helper):
 def test_decode_to_file_wraps_null_byte_path(helper):
     with pytest.raises(EasyBase64Error, match="embedded null byte"):
         helper("aGVsbG8=", "invalid\x00path")
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    [
+        (b"", ""),
+        (b"\x00\x01\x02", "AAEC"),
+        (b"hello?", "aGVsbG8_"),
+        (b"\xfb\xff", "-_8="),
+    ],
+)
+def test_encode_urlsafe_bytes_known_values(data, expected):
+    assert encode_urlsafe_bytes(data) == expected
+
+
+@pytest.mark.parametrize("data", [b"hello?~~~", b"\x00\xff\xfe\xfd", bytes(range(256))])
+def test_encode_urlsafe_bytes_round_trip(data):
+    encoded = encode_urlsafe_bytes(data)
+    assert "+" not in encoded and "/" not in encoded
+    assert base64.urlsafe_b64decode(encoded) == data
+
+
+@pytest.mark.parametrize("data", [None, 123, "hello", ["hello"]])
+def test_encode_urlsafe_bytes_rejects_non_bytes(data):
+    with pytest.raises(EasyBase64Error, match="data must be bytes"):
+        encode_urlsafe_bytes(data)
+
+
+def test_public_import_includes_encode_urlsafe_bytes():
+    assert public_encode_urlsafe_bytes is encode_urlsafe_bytes
