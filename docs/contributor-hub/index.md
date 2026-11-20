@@ -9,6 +9,9 @@ Pick whatever's stressing you out below, and go straight to it. You don't need t
 **📝 "I need to write a docstring and I don't know what that even means."**
 The [Docstring Template](docstring_template.md) has a copy-paste block — just fill in the blanks. It also explains *why* the format looks the way it does, in case you're curious, but you don't have to read that part to use it.
 
+**🎛️ "My docstring needs an example, and I don't know how to format the 'Py_simple Way vs Traditional Way' tabs."**
+The [Writing the Two-Panel Examples](example_panels_template.md) page has the exact tab syntax for docstrings and tutorials, plus the rules for what each panel should show.
+
 **📖 "I added a new module and need to write a tutorial page, but I've never written docs before."**
 The [Tutorial Template](tutorial_template.md) walks through the exact structure every tutorial page in this project uses, with a real example to copy from. You're not writing from a blank page.
 
