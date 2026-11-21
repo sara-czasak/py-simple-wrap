@@ -101,6 +101,8 @@ def save_json_data(filepath: str, data: dict) -> None:
     already exists, so you don't accidentally overwrite something.
     Exclusive creation also protects files created by another writer
     immediately before this function opens the path.
+    Data is serialized before creating the file, so unsupported values
+    or circular references do not leave a partial JSON file behind.
 
     Args:
         filepath (str): Path to the JSON file to create.
@@ -120,8 +122,9 @@ def save_json_data(filepath: str, data: dict) -> None:
 
             filepath = "config.json"
             try:
+                serialized = json.dumps({"name": "Sara"}, indent=4)
                 with open(filepath, "x", encoding="utf-8") as json_file:
-                    json.dump({"name": "Sara"}, json_file, indent=4)
+                    json_file.write(serialized)
             except FileExistsError:
                 print(f"File {filepath} already exists.")
             ```
@@ -130,8 +133,9 @@ def save_json_data(filepath: str, data: dict) -> None:
         if os.path.lexists(filepath):
             raise FileExistsError
 
+        serialized = json.dumps(data, indent=4)
         with open(filepath, "x", encoding="utf-8") as json_file:
-            json.dump(data, json_file, indent=4)
+            json_file.write(serialized)
     except FileExistsError:
         raise EasyJsonError(f"\n\n\nERROR: File {filepath} already exists.") from None
     except Exception as e:
@@ -184,6 +188,9 @@ def update_json(filepath: str, new_data: dict) -> None:
     Updates a JSON file with new data, merging it into what's already
     there. Existing top-level keys in `new_data` overwrite matching keys
     in the file; anything else in the file is left untouched.
+    Data is serialized before opening the file for writing, so a
+    serialization error leaves the existing file unchanged. This does
+    not protect against failures during the file write itself.
 
     Args:
         filepath (str): Path to the JSON file to update.
@@ -205,16 +212,18 @@ def update_json(filepath: str, new_data: dict) -> None:
                 data = json.load(json_file)
 
             data.update({"name": "Sara"})
+            serialized = json.dumps(data, indent=4)
 
             with open("config.json", "w") as json_file:
-                json.dump(data, json_file, indent=4)
+                json_file.write(serialized)
             ```
     """
     try:
         old_data = open_json(filepath)
         old_data.update(new_data)
+        serialized = json.dumps(old_data, indent=4)
         with open(filepath, "w", encoding="utf-8") as json_file:
-            json.dump(old_data, json_file, indent=4)
+            json_file.write(serialized)
     except Exception as e:
         raise EasyJsonError(f"\n\n\nERROR: {e}") from None
 
