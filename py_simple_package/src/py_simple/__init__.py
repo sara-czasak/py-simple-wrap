@@ -23,6 +23,7 @@ from .easy_base64 import (
     encode_bytes,
     encode_file,
     encode_text,
+    encode_urlsafe_bytes,
     encode_urlsafe_text,
     is_base64,
 )
