@@ -48,6 +48,9 @@ The [Pull Request Workflow Guide](pr_workflow_template.md) breaks down the compl
 **🎲 "My helper uses randomness. How can its tests pass reliably?"**
 The [Testing Random Helpers](random_tests_template.md) guide shows controlled draws, boundary cases, and shuffle checks that accept every valid ordering.
 
+**🔁 "I have multiple inputs and edge cases to test and don't want to copy-paste test functions."**
+The [Parametrized Tests Guide](parametrize_tests_template.md) shows how to test tables of inputs, custom test IDs, and expected exceptions cleanly with `@pytest.mark.parametrize`.
+
 **📊 "Codecov says my PR dropped coverage, or I want to know which lines my tests missed."**
 The [Code Coverage Guide](coverage_template.md) shows how to run `pytest-cov` locally, read the `Missing` lines report, and write tests to hit uncovered branches before you push.
 
