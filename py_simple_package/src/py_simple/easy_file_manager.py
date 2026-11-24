@@ -363,3 +363,59 @@ def copy_file(source: str, destination: str):
             f"\n\n\nERROR: File '{destination}' already exists — not overwriting."
         )
     shutil.copy2(source, destination)
+
+
+def read_file_chunked(source: str, chunk_size: int):
+    """
+    Read a file in chunks of a given size.
+
+    Args:
+        source (str): File to read from.
+        chunk_size (int): Number of characters to read per chunk.
+
+    Yields:
+        str: Next chunk of file content.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import read_file_chunked
+
+            for chunk in read_file_chunked("new_file.txt", 1024):
+                print(chunk)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            with open("new_file.txt", "r", encoding="utf-8") as f:
+                while True:
+                    chunk = f.read(1024)
+                    if not chunk:
+                        break
+            ```
+    """
+
+    if not isinstance(chunk_size, int) or chunk_size <= 0:
+        raise EasyFileManagerError(
+            f"\n\n\nERROR: {chunk_size} is not a valid value for chunk_size."
+            f"\nVALID VALUES: chunk_size must be a positive integer."
+        )
+
+    ext = _get_extension(source)
+
+    if is_file_there(source):
+        if _is_valid_extension(ext):
+            with open(source, "r", encoding="utf-8") as file:
+                while True:
+                    chunk = file.read(chunk_size)
+
+                    if not chunk:
+                        return
+                    yield chunk
+        else:
+            raise EasyFileManagerError(
+                f"\n\n\nERROR: '{ext}' is not a valid extension.\n"
+                f"\nVALID EXTENSIONS: {VALID_EXTENSIONS}"
+            )
+    else:
+        raise EasyFileManagerError(f"\n\n\nERROR: '{source}' does not exist.")

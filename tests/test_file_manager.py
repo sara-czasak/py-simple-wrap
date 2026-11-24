@@ -16,6 +16,7 @@ from py_simple_package.src.py_simple.easy_file_manager import (
     read_file_to_list,
     remove_file,
     rename_file,
+    read_file_chunked,
 )
 
 
@@ -248,3 +249,36 @@ class TestIsFileThere:
         """Should return False for directories."""
         os.mkdir("mydir")
         assert not is_file_there("mydir")
+
+
+class TestReadFileChunked:
+    """Tests for read_file_chunked function."""
+
+    def test_reads_chunks_of_given_size(self, tmp_workdir):
+        """Should yield file content in chunks of chunk_size."""
+        with open("test.txt", "w", encoding="utf-8") as f:
+            f.write("abcdefghij")
+        chunks = list(read_file_chunked("test.txt", 4))
+        assert chunks == ["abcd", "efgh", "ij"]
+
+    def test_read_empty_file(self, tmp_workdir):
+        """Should yield nothing for an empty file."""
+        make_blank_file("empty", "txt")
+        chunks = list(read_file_chunked("empty.txt", 10))
+        assert chunks == []
+
+    def test_chunk_larger_than_file(self, tmp_workdir):
+        """Should yield full content when chunk_size exceeds file length."""
+        add_a_line("short.txt", "hi")
+        chunks = list(read_file_chunked("short.txt", 100))
+        assert chunks == ["hi\n"]
+
+    def test_read_non_existent_file(self, tmp_workdir):
+        """Should raise EasyFileManagerError when iterating missing file."""
+        with pytest.raises(EasyFileManagerError):
+            list(read_file_chunked("nonexistent.txt", 10))
+
+    def test_invalid_extension_raises(self, tmp_workdir):
+        """Should raise EasyFileManagerError for unsupported extension."""
+        with pytest.raises(EasyFileManagerError):
+            list(read_file_chunked("test.exe", 10))
