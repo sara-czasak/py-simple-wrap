@@ -88,6 +88,14 @@ def test_basic_game_setup_wraps_pygame_errors(monkeypatch):
     assert exc_info.value.__cause__ is None
 
 
+def test_basic_game_setup_missing_pygame(monkeypatch):
+    """Missing pygame should raise an informative EasyGameError."""
+    monkeypatch.setattr(easy_game, "pygame", None)
+
+    with pytest.raises(EasyGameError, match="easy_game needs pygame"):
+        basic_game_setup(800, 600)
+
+
 def test_check_if_quit_returns_true_when_quit_event_is_present(monkeypatch):
     """A quit event anywhere in the queue should stop the game loop."""
     events = [
