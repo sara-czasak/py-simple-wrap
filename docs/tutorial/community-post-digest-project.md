@@ -15,10 +15,12 @@ python -m pip install py-simple-wrap
 Save this as `community_digest.py`:
 
 ```python
-from py_simple import (
+from py_simple.easy_regex import (
     extract_hashtags,
     extract_mentions,
     extract_urls,
+)
+from py_simple.easy_lists import (
     find_duplicates,
     flatten_list,
     most_common_item,
@@ -64,15 +66,15 @@ Example output:
 --- Community Post Digest ---
 Total posts analyzed: 4
 Shared links (2): ['https://py-simple.dev', 'https://hackathon.org']
-Unique hashtags (4): ['python', 'opensource', 'coding', 'hackathon']
-Trending topic: python
+Unique hashtags (4): ['#python', '#opensource', '#coding', '#hackathon']
+Trending topic: #python
 Tagged members: ['@sara', '@alex', '@dev_team']
 Frequently mentioned: ['@sara', '@alex']
 ```
 
 ## What happened?
 
-`extract_hashtags()` scans message text and pulls out hashtag keywords without requiring custom regular expression boundaries.
+`extract_hashtags()` from `Easy Regex` scans message text and pulls out hashtag tokens (including their `#` prefix) without requiring custom regular expression boundaries.
 
 `extract_mentions()` locates user handle mentions prefixed with `@` across each post.
 
