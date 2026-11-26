@@ -103,7 +103,10 @@ nav:
           - Profile Intake Sanitizer: tutorial/profile-intake-sanitizer-project.md
           - Backyard Bird Log: tutorial/backyard-bird-log-project.md
           - Password Strength Game: tutorial/password-strength-game-project.md
+ docs/rpg-inventory-loadout-tutorial
           - RPG Inventory Loadout: tutorial/rpg-inventory-loadout-project.md
+          - Community Post Digest: tutorial/community-post-digest-project.md
+ main
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
