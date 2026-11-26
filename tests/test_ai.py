@@ -419,6 +419,7 @@ def test_detect_language_invalid_type():
     with pytest.raises(Exception):
         detect_language(None)
 
+
 def test_easy_ai_error_initialization():
     """Test that EasyAIError initializes properly and holds the expected message."""
     error = EasyAIError("Model execution failed")
@@ -438,6 +439,8 @@ def test_get_model_ollama_custom_url():
 
 def test_get_model_anthropic_custom_timeout_and_key():
     """Test get_model with anthropic provider, explicit timeout, and api key."""
+    from pydantic import SecretStr
+
     with patch("langchain_anthropic.ChatAnthropic") as mock_anthropic:
         get_model("anthropic", "claude-3-opus", api_key="sk-ant-test", timeout=60)
         mock_anthropic.assert_called_once()
@@ -445,6 +448,8 @@ def test_get_model_anthropic_custom_timeout_and_key():
         assert kwargs["model_name"] == "claude-3-opus"
         assert kwargs["timeout"] == 60
         assert kwargs["stop"] is None
+        assert isinstance(kwargs["api_key"], SecretStr)
+        assert kwargs["api_key"].get_secret_value() == "sk-ant-test"
 
 
 def test_get_model_openai_custom_base_url():
