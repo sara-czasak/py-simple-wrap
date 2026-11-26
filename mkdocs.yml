@@ -127,6 +127,7 @@ nav:
       - Rebase Conflicts on Shared Files: contributor-hub/rebase_conflicts_template.md
       - Code Coverage Guide: contributor-hub/coverage_template.md
       - Understanding the Codebase Layout: contributor-hub/codebase_layout_template.md
+      - Terminal & CLI Testing: contributor-hub/terminal_tests_template.md
   - Reference:
       - Easy AI: reference/easy_ai.md
       - Easy Archive: reference/easy_archive.md
