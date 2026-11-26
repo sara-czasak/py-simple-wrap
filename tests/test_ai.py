@@ -418,3 +418,81 @@ def test_detect_language_invalid_type():
 
     with pytest.raises(Exception):
         detect_language(None)
+
+def test_easy_ai_error_initialization():
+    """Test that EasyAIError initializes properly and holds the expected message."""
+    error = EasyAIError("Model execution failed")
+    assert error.message == "Model execution failed"
+    assert str(error) == "Model execution failed"
+    assert isinstance(error, Exception)
+
+
+def test_get_model_ollama_custom_url():
+    """Test get_model with ollama provider and a custom base_url."""
+    with patch("langchain_ollama.ChatOllama") as mock_ollama:
+        get_model("ollama", "llama3", base_url="http://remote-ollama:11434")
+        mock_ollama.assert_called_once_with(
+            model="llama3", base_url="http://remote-ollama:11434"
+        )
+
+
+def test_get_model_anthropic_custom_timeout_and_key():
+    """Test get_model with anthropic provider, explicit timeout, and api key."""
+    with patch("langchain_anthropic.ChatAnthropic") as mock_anthropic:
+        get_model("anthropic", "claude-3-opus", api_key="sk-ant-test", timeout=60)
+        mock_anthropic.assert_called_once()
+        kwargs = mock_anthropic.call_args[1]
+        assert kwargs["model_name"] == "claude-3-opus"
+        assert kwargs["timeout"] == 60
+        assert kwargs["stop"] is None
+
+
+def test_get_model_openai_custom_base_url():
+    """Test get_model with openai provider and custom base_url."""
+    with patch("langchain_openai.ChatOpenAI") as mock_openai:
+        get_model("openai", "gpt-4o", api_key="sk-test", base_url="https://custom.api.com/v1")
+        mock_openai.assert_called_once_with(
+            model="gpt-4o", api_key="sk-test", base_url="https://custom.api.com/v1"
+        )
+
+
+def test_ask_ai_with_message_list():
+    """Test that ask_ai supports passing a list of conversation turns."""
+    mock_model = MagicMock()
+    mock_model.invoke.return_value = MagicMock(content="Conversation reply")
+    messages = [MagicMock(content="Turn 1"), MagicMock(content="Turn 2")]
+
+    result = ask_ai(mock_model, messages)
+
+    assert result == "Conversation reply"
+    mock_model.invoke.assert_called_once_with(messages)
+
+
+def test_easy_agent_init_permission_error():
+    """Test that EasyAgent wraps PermissionError in an EasyAIError."""
+    with patch("builtins.open", side_effect=PermissionError("Permission denied")):
+        with pytest.raises(EasyAIError) as exc_info:
+            EasyAgent("protected_prompt.txt")
+        assert "Permission denied" in str(exc_info.value)
+
+
+def test_easy_agent_init_unicode_decode_error():
+    """Test that EasyAgent wraps UnicodeDecodeError in an EasyAIError."""
+    with patch("builtins.open", side_effect=UnicodeDecodeError("utf-8", b"", 0, 1, "invalid")):
+        with pytest.raises(EasyAIError) as exc_info:
+            EasyAgent("corrupt_prompt.txt")
+        assert "invalid" in str(exc_info.value)
+
+
+def test_easy_agent_strips_trailing_whitespace():
+    """Test that EasyAgent strips trailing whitespace from master prompt."""
+    with tempfile.NamedTemporaryFile("w+", suffix=".txt", delete=False) as tmp:
+        tmp.write("You are an expert coder.   \n\n  ")
+        tmp_path = tmp.name
+
+    try:
+        agent = EasyAgent(tmp_path)
+        assert agent.master_prompt == "You are an expert coder."
+    finally:
+        os.remove(tmp_path)
+
