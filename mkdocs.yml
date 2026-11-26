@@ -104,6 +104,7 @@ nav:
           - Backyard Bird Log: tutorial/backyard-bird-log-project.md
           - Password Strength Game: tutorial/password-strength-game-project.md
           - Community Post Digest: tutorial/community-post-digest-project.md
+          - SQLite to CSV Exporter: tutorial/sqlite-csv-exporter-project.md
   - How To:
       - Contributing: how-to/contributing.md
   - Contributor Hub:
