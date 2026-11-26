@@ -8,11 +8,13 @@ from py_simple_package.src.py_simple.easy_url import (
     add_query_param,
     add_query_value,
     get_domain,
+    get_fragment,
     get_path,
     get_query_value,
     get_query_values,
     is_https,
     remove_query_param,
+    set_fragment,
 )
 
 
@@ -309,3 +311,64 @@ def test_add_query_value_is_public():
     from py_simple.easy_url import add_query_value as module_add
 
     assert public_add is module_add
+
+def test_get_fragment():
+    assert get_fragment("https://school.example/clubs#schedule") == "schedule"
+    assert get_fragment("https://school.example/clubs#") == ""
+    assert get_fragment("https://school.example/clubs") == ""
+    assert get_fragment("https://school.example/search?q=test#top") == "top"
+
+
+def test_get_fragment_validates_input():
+    with pytest.raises(EasyUrlError):
+        get_fragment("school.example#schedule")
+    with pytest.raises(EasyUrlError):
+        get_fragment("")
+    with pytest.raises(EasyUrlError):
+        get_fragment(123)
+
+
+def test_get_fragment_is_public():
+    from py_simple import get_fragment as public_get_fragment
+    from py_simple.easy_url import get_fragment as module_get_fragment
+
+    assert public_get_fragment is module_get_fragment
+
+
+def test_set_fragment():
+    assert (
+        set_fragment("https://school.example/clubs", "schedule")
+        == "https://school.example/clubs#schedule"
+    )
+    assert (
+        set_fragment("https://school.example/clubs", "#schedule")
+        == "https://school.example/clubs#schedule"
+    )
+    assert (
+        set_fragment("https://school.example/clubs#old", "new")
+        == "https://school.example/clubs#new"
+    )
+    assert (
+        set_fragment("https://school.example/clubs#old", "")
+        == "https://school.example/clubs"
+    )
+    assert (
+        set_fragment("https://school.example/search?q=test#old", "results")
+        == "https://school.example/search?q=test#results"
+    )
+
+
+def test_set_fragment_validates_input():
+    with pytest.raises(EasyUrlError):
+        set_fragment("school.example", "section")
+    with pytest.raises(EasyUrlError):
+        set_fragment("https://school.example", 123)
+    with pytest.raises(EasyUrlError):
+        set_fragment("https://school.example", None)
+
+
+def test_set_fragment_is_public():
+    from py_simple import set_fragment as public_set_fragment
+    from py_simple.easy_url import set_fragment as module_set_fragment
+
+    assert public_set_fragment is module_set_fragment

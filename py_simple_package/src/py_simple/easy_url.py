@@ -367,3 +367,76 @@ def add_query_value(url: str, key: str, value: str) -> str:
     pairs = parse_qsl(parsed.query, keep_blank_values=True)
     pairs.append((key, value))
     return urlunparse(parsed._replace(query=urlencode(pairs)))
+
+
+def get_fragment(url: str) -> str:
+    """
+    Return the fragment identifier (hash anchor) from a link.
+
+    Args:
+        url (str): A full link, such as `"https://school.example/clubs#schedule"`.
+
+    Returns:
+        str: The fragment part after the hash symbol `#`, such as `"schedule"`.
+            Returns an empty string if no fragment is present.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link or has an invalid port.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import get_fragment
+
+            print(get_fragment("https://school.example/clubs#schedule"))
+            # -> "schedule"
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import urlparse
+
+            print(urlparse("https://school.example/clubs#schedule").fragment)
+            ```
+    """
+    return _parsed(url).fragment
+
+
+def set_fragment(url: str, fragment: str) -> str:
+    """
+    Set or update the fragment identifier (hash anchor) on a link.
+
+    Args:
+        url (str): A full link.
+        fragment (str): The new fragment name (with or without a leading `#`).
+            Pass an empty string `""` to remove the fragment.
+
+    Returns:
+        str: The link with the fragment set or removed.
+
+    Raises:
+        EasyUrlError: If `url` is not a full link, or if `fragment` is not a string.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import set_fragment
+
+            print(set_fragment("https://school.example/clubs", "schedule"))
+            # -> "https://school.example/clubs#schedule"
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from urllib.parse import urlparse, urlunparse
+
+            parsed = urlparse("https://school.example/clubs")
+            print(urlunparse(parsed._replace(fragment="schedule")))
+            ```
+    """
+    if not isinstance(fragment, str):
+        raise EasyUrlError("\n\nERROR: fragment must be a string.") from None
+    clean_fragment = fragment.lstrip("#")
+    parsed = _parsed(url)
+    return urlunparse(parsed._replace(fragment=clean_fragment))
+
