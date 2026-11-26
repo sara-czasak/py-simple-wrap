@@ -414,6 +414,7 @@ from .easy_web import (
 from .easy_terminal import (
     EasyTerminal,
     print_centered,
+    print_panel,
     print_rule,
     print_styled,
     print_table,

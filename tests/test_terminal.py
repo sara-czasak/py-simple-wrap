@@ -7,6 +7,7 @@ from py_simple_package.src.py_simple import (
 from py_simple_package.src.py_simple.easy_terminal import (
     EasyTerminal,
     print_centered,
+    print_panel,
     print_rule,
     print_styled,
     print_table,
@@ -369,3 +370,50 @@ def test_print_table_non_string_values(capsys):
     assert "1" in captured.out
     assert "True" in captured.out
     assert "95.5" in captured.out
+
+def test_print_panel_basic_output(capsys):
+    print_panel("Important notice", style="green")
+    captured = capsys.readouterr()
+    assert "Important notice" in captured.out
+
+
+def test_print_panel_with_title_and_subtitle(capsys):
+    print_panel("System ready", title="Status", subtitle="v1.0", style="cyan")
+    captured = capsys.readouterr()
+    assert "System ready" in captured.out
+    assert "Status" in captured.out
+    assert "v1.0" in captured.out
+
+
+def test_print_panel_invalid_style_falls_back_to_white(monkeypatch):
+    calls = []
+
+    class DummyPanel:
+        def __init__(self, text, **kwargs):
+            calls.append((text, kwargs))
+
+    class DummyConsole:
+        def print(self, panel):
+            calls.append(("print",))
+
+    monkeypatch.setattr("rich.panel.Panel", DummyPanel)
+    monkeypatch.setattr("rich.console.Console", lambda: DummyConsole())
+
+    print_panel("Testing fallback", style="invalid_style_xyz")
+
+    assert ("Testing fallback", {"style": "white"}) in calls
+
+
+def test_print_panel_converts_non_string(capsys):
+    print_panel(12345, title=999, subtitle=True)
+    captured = capsys.readouterr()
+    assert "12345" in captured.out
+    assert "999" in captured.out
+    assert "True" in captured.out
+
+
+def test_print_panel_is_public():
+    from py_simple import print_panel as public_print_panel
+    from py_simple.easy_terminal import print_panel as module_print_panel
+
+    assert public_print_panel is module_print_panel
