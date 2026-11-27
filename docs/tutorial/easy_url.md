@@ -83,6 +83,25 @@ print(add_query_value("https://school.example/clubs?tag=art", "tag", "music"))
 If the name is missing, `add_query_value()` adds it. Use `add_query_param()`
 when you want to replace all existing values for a name instead.
 
+## Work with URL fragments (hash anchors)
+
+Web links often point to specific sections on a page using a hash fragment (such as `#schedule` or `#top`). `get_fragment()` reads the fragment without the hash symbol, and `set_fragment()` sets, updates, or removes it:
+
+```python
+from py_simple import get_fragment, set_fragment
+
+link = "https://school.example/clubs#schedule"
+print(get_fragment(link))  # schedule
+
+# Update to a different section
+new_link = set_fragment(link, "members")
+print(new_link)  # https://school.example/clubs#members
+
+# Remove the fragment by passing an empty string
+clean_link = set_fragment(link, "")
+print(clean_link)  # https://school.example/clubs
+```
+
 ## Why use these helpers?
 
 A link without `https://` is rejected with a clear error, so a bare

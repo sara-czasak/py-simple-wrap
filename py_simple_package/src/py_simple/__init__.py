@@ -393,11 +393,13 @@ from .easy_url import (
     add_query_param,
     add_query_value,
     get_domain,
+    get_fragment,
     get_path,
     get_query_value,
     get_query_values,
     is_https,
     remove_query_param,
+    set_fragment,
 )
 from .easy_web import (
     count_links,
