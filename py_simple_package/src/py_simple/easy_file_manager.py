@@ -392,6 +392,7 @@ def read_file_chunked(source: str, chunk_size: int):
                     chunk = f.read(1024)
                     if not chunk:
                         break
+                    print(chunk)
             ```
     """
 
