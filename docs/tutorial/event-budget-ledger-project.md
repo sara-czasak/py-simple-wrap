@@ -4,7 +4,7 @@ Combine **Easy SQL** and **Easy Money** to record expenses in an SQLite database
 
 ## A small real-world example
 
-Organizing a meetup, hackathon, or team outing involves tracking shared expenses across multiple categories—such as catering, venue hire, and participant badges. Manually tracking receipts in spreadsheets often leads to floating-point currency rounding errors and messy calculations. This project creates an in-memory SQLite database ledger, applies sales tax and discounts to line items, stores clean expense records, tallies category totals, and computes the exact per-person share for all attendees.
+Organizing a meetup, hackathon, or team outing involves tracking shared expenses across multiple categories—such as catering, venue hire, and participant badges. Manually tracking receipts in spreadsheets often leads to floating-point currency rounding errors and messy calculations. This project creates an SQLite database ledger, applies sales tax and discounts to line items, stores clean expense records with exact decimal precision, tallies category totals, and computes the exact per-person share for all attendees.
 
 Install the package:
 
@@ -15,6 +15,7 @@ python -m pip install py-simple-wrap
 Save this as `event_ledger.py`:
 
 ```python
+from decimal import Decimal
 from py_simple.easy_money import (
     add_tax,
     calculate_discount,
@@ -29,50 +30,53 @@ from py_simple.easy_sql import (
 )
 
 # 1. Connect to SQLite database and set up the schema
+# Note: ':memory:' is transient and creates a temporary in-memory database.
+# For persistent storage across runs, pass a file path like open_db("event_expenses.db").
 connection, cursor = open_db(":memory:")
 
+# Store monetary values as TEXT to preserve exact decimal precision without floating-point inaccuracies
 cursor.execute(
     """
     CREATE TABLE expenses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         item TEXT,
         category TEXT,
-        amount REAL
+        amount TEXT
     )
 """
 )
 
 # 2. Prepare expense line items with taxes and discounts applied
-raw_catering = 450.00
-final_catering = float(add_tax(raw_catering, 8.5))  # 8.5% sales tax applied
+raw_catering = Decimal("450.00")
+final_catering = add_tax(raw_catering, Decimal("8.5"))  # 8.5% sales tax applied
 
-raw_venue = 800.00
-final_venue = float(
-    calculate_discount(raw_venue, 15.0)
+raw_venue = Decimal("800.00")
+final_venue = calculate_discount(
+    raw_venue, Decimal("15.0")
 )  # 15.0% early-bird discount applied
 
-raw_supplies = 120.00
-final_supplies = float(add_tax(raw_supplies, 8.5))  # 8.5% sales tax applied
+raw_supplies = Decimal("120.00")
+final_supplies = add_tax(raw_supplies, Decimal("8.5"))  # 8.5% sales tax applied
 
-# 3. Insert records into the expenses table
+# 3. Insert records into the expenses table (amounts stored as text)
 run_insert(
     connection,
     cursor,
-    ["Catering & Refreshments", "Food", final_catering],
+    ["Catering & Refreshments", "Food", str(final_catering)],
     "expenses",
     ["item", "category", "amount"],
 )
 run_insert(
     connection,
     cursor,
-    ["Main Hall Reservation", "Venue", final_venue],
+    ["Main Hall Reservation", "Venue", str(final_venue)],
     "expenses",
     ["item", "category", "amount"],
 )
 run_insert(
     connection,
     cursor,
-    ["Badges & Signage", "Supplies", final_supplies],
+    ["Badges & Signage", "Supplies", str(final_supplies)],
     "expenses",
     ["item", "category", "amount"],
 )
@@ -81,17 +85,18 @@ run_insert(
 records = run_select(connection, cursor, "expenses", "*")
 
 print("--- Event Expense Ledger ---")
-for record_id, item, category, amount in records:
+for record_id, item, category, amount_str in records:
+    amount = Decimal(amount_str)
     print(f"[{category.upper()}] {item}: {format_money(amount)}")
 
 # 5. Filter expenses by category using conditional select
 food_records = conditional_run_select(
     connection, cursor, "expenses", "*", "category = ?", ("Food",)
 )
-food_total = sum(r[3] for r in food_records)
+food_total = sum(Decimal(r[3]) for r in food_records)
 
 # 6. Tally overall totals and split cost among attendees
-total_cost = sum(r[3] for r in records)
+total_cost = sum(Decimal(r[3]) for r in records)
 attendee_count = 24
 per_person_share = split_bill(total_cost, attendee_count)
 
@@ -122,13 +127,13 @@ Cost per attendee (24 people): $54.10
 
 ## What happened?
 
-`open_db()` establishes a verified connection and returns both the SQLite connection and cursor objects without boilerplate `sqlite3.connect()` exception handling.
+`open_db()` establishes a verified connection and returns both the SQLite connection and cursor objects without boilerplate `sqlite3.connect()` exception handling. Passing `":memory:"` creates an ephemeral in-memory database suitable for temporary scripts or tests; for persistent storage across application runs, pass a file path like `open_db("event_expenses.db")`.
 
 `add_tax()` calculates the additional tax on a transaction and returns the total sum as a precise `Decimal`.
 
 `calculate_discount()` deducts the percentage discount from an amount and returns the discounted total.
 
-`run_insert()` safely parameterizes and inserts a new row into the SQLite table while validating table and column identifiers against SQL injection.
+`run_insert()` safely parameterizes and inserts a new row into the SQLite table while validating table and column identifiers against SQL injection. Storing decimal values as `TEXT` avoids floating-point inaccuracies when writing and reading financial data in SQLite.
 
 `run_select()` retrieves all matching records from the table with built-in query execution and error guarding.
 
@@ -136,7 +141,7 @@ Cost per attendee (24 people): $54.10
 
 `format_money()` formats numbers into clean currency strings with standard decimal separators and currency symbols.
 
-`split_bill()` evenly divides a total amount across a given group count with proper banker's rounding.
+`split_bill()` evenly divides a total amount across a given group count with standard half-up rounding (`ROUND_HALF_UP`).
 
 ## Try it yourself
 
@@ -151,7 +156,7 @@ Without `py-simple-wrap`, building this workflow requires substantial boilerplat
 - Managing raw `sqlite3.connect()`, manual cursor allocations, and repetitive `cursor.execute("INSERT ...")` string constructions.
 - Manually sanitizing table names and column parameters to prevent accidental SQL injection vulnerabilities.
 - Writing custom formatting logic (`f"${val:.2f}"`) that fails on floating-point precision issues like `0.1 + 0.2 != 0.3`.
-- Implementing custom rounding logic when dividing bills across groups where fractions of a cent cannot be lost.
+- Implementing custom rounding logic (`ROUND_HALF_UP`) when dividing bills across groups where fractions of a cent cannot be lost.
 
 Combining `easy_sql` and `easy_money` gives you reliable database persistence and accurate financial calculations in clean, readable Python code.
 
