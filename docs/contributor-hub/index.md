@@ -60,6 +60,9 @@ The [Code Coverage Guide](coverage_template.md) shows how to run `pytest-cov` lo
 **🗺️ "I opened the repo and have no idea where anything is."**
 The [Understanding the Codebase Layout](codebase_layout_template.md) guide maps every folder — where the code, tests, and docs live, and how the pieces connect.
 
+**🖥️ "My function prints output to the terminal or prompts for input. How do I test it without hanging the test runner?"**
+The [Terminal & CLI Testing Template](terminal_tests_template.md) shows how to capture standard output and standard error with pytest's `capsys` fixture and simulate interactive user input with `monkeypatch`.
+
 ## Still stuck, or something's not covered here?
 
 That's okay too. Open an issue, or mention it in your pull request, and it'll get sorted out together — see [CONTRIBUTING.md](https://github.com/sara-czasak/py-simple-wrap/blob/main/CONTRIBUTING.md) for how to reach out. Nobody's expected to figure this out alone.
