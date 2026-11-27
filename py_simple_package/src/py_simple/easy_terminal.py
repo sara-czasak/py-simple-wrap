@@ -421,6 +421,60 @@ def print_table(items: dict[str, list], style: str = "white") -> None:
     Console().print(table)
 
 
+def print_panel(
+    text: str,
+    title: str = "",
+    style: str = "white",
+    subtitle: str = "",
+) -> None:
+    """
+    Prints text inside a bordered decorative box (panel) in the terminal.
+
+    A clean, one-line way to highlight notices, welcome banners, alerts,
+    or important messages without dealing with manual box-drawing characters.
+
+    Args:
+        text (str): The content to display inside the panel.
+        title (str, optional): A heading displayed on the top border.
+            Defaults to `""`.
+        style (str, optional): Border and text color style (e.g. `"green"`,
+            `"cyan"`, `"red"`). Defaults to `"white"`. If an unrecognized
+            style name is provided, it falls back to `"white"`.
+        subtitle (str, optional): An optional label displayed on the bottom
+            border. Defaults to `""`.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import print_panel
+
+            print_panel("System operational", title="Status", style="green")
+            ```
+
+        === "The Traditional Way"
+            ```python
+            from rich.console import Console
+            from rich.panel import Panel
+
+            console = Console()
+            console.print(Panel("System operational", title="Status", style="green"))
+            ```
+    """
+    from rich.console import Console
+    from rich.panel import Panel
+
+    if style not in RICH_STYLES:
+        style = "white"
+
+    kwargs = {"style": style}
+    if title:
+        kwargs["title"] = str(title)
+    if subtitle:
+        kwargs["subtitle"] = str(subtitle)
+
+    Console().print(Panel(str(text), **kwargs))
+
+
 def prompt_choice(question: str, choices: list[str]) -> str:
     """
     Displays numbered choices and returns the option selected by the user.

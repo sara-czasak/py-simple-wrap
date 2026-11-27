@@ -68,6 +68,20 @@ rather than treating them as a color instruction. Install the existing
 terminal extra with `python -m pip install "py-simple-wrap[terminal]"`
 if Rich is not already available.
 
+## Highlight messages with a panel
+
+Use `print_panel()` to wrap text inside a decorative bordered box (panel):
+
+```python
+from py_simple import print_panel
+
+print_panel("System operational and all services healthy.", title="Status", style="green")
+print_panel("Configuration file reloaded successfully.", title="Notice", subtitle="v1.0", style="cyan")
+```
+
+The panel automatically fits your text and console width. You can provide an optional `title` for the top border and a `subtitle` for the bottom border. If an unrecognized style name is passed, it safely falls back to `"white"`.
+
+
 ## Ask the user to choose an option
 
 Use `prompt_choice()` to display a numbered menu and get the selected option:
