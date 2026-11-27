@@ -312,6 +312,7 @@ def test_add_query_value_is_public():
 
     assert public_add is module_add
 
+
 def test_get_fragment():
     assert get_fragment("https://school.example/clubs#schedule") == "schedule"
     assert get_fragment("https://school.example/clubs#") == ""
