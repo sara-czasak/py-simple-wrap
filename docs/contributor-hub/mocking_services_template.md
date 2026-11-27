@@ -1,59 +1,66 @@
 # Mocking Functions and Services
 
-When writing unit tests for functions that call external libraries, third-party APIs, or system operations, tests should never make real external calls or depend on live credentials. This guide provides copy-paste templates using `unittest.mock.patch` and `pytest.monkeypatch` to substitute predictable test doubles.
+When writing unit tests for functions that call external libraries, third-party APIs, or system operations, tests should never make real external calls or depend on live credentials. This guide provides copy-paste templates using `unittest.mock.patch` and `pytest.monkeypatch` to substitute predictable test doubles while testing actual package helpers.
 
 ## Copy a working example first
 
 Save this as `tests/test_mock_demo.py` while practicing. For your actual contribution, add your test cases to the appropriate file in `tests/`.
 
 ```python
+from datetime import datetime
 from unittest.mock import MagicMock, patch
+import os
 import pytest
+import requests
 
-from py_simple_package.src.py_simple import easy_date_formatter
-
-
-def test_mocking_function_return_value():
-    """Example 1: Mocking a module function to return a fixed value."""
-    with patch("py_simple_package.src.py_simple.easy_date_formatter.get_pretty_date") as mock_date:
-        mock_date.return_value = "Monday, Jan 1, 2026"
-        result = easy_date_formatter.get_pretty_date()
-        assert result == "Monday, Jan 1, 2026"
-        mock_date.assert_called_once()
+from py_simple_package.src.py_simple.easy_ai import summarize_text
+from py_simple_package.src.py_simple.easy_date_formatter import get_pretty_date
+from py_simple_package.src.py_simple.easy_web import (
+    SomethingWentWrongError,
+    is_page_up,
+)
 
 
-def test_mocking_class_instantiation():
-    """Example 2: Mocking an external class constructor and its method."""
-    with patch("smtplib.SMTP") as mock_smtp_cls:
-        # Configure instance returned when SMTP() is instantiated
-        mock_instance = MagicMock()
-        mock_instance.sendmail.return_value = {}
-        mock_smtp_cls.return_value = mock_instance
+def test_mocking_time_dependency():
+    """Example 1: Mocking an external system clock dependency to test get_pretty_date()."""
+    with patch("py_simple_package.src.py_simple.easy_date_formatter.datetime") as mock_dt:
+        # Freeze the clock to January 1, 2026 (Thursday)
+        mock_dt.now.return_value = datetime(2026, 1, 1, 12, 0)
 
-        # Call the code under test
-        import smtplib
-        server = smtplib.SMTP("smtp.example.com", 587)
-        status = server.sendmail("sender@test.com", ["recv@test.com"], "Hello!")
-
-        assert status == {}
-        mock_smtp_cls.assert_called_once_with("smtp.example.com", 587)
-        mock_instance.sendmail.assert_called_once()
+        # Exercise the real helper under test
+        result = get_pretty_date()
+        assert result == "Thursday, January 01, 2026"
+        mock_dt.now.assert_called_once()
 
 
-def test_mocking_exceptions_and_failures():
-    """Example 3: Simulating network timeouts or errors."""
-    with patch("urllib.request.urlopen") as mock_urlopen:
-        mock_urlopen.side_effect = TimeoutError("Connection timed out")
+def test_mocking_client_dependency():
+    """Example 2: Mocking an external AI model client to test summarize_text()."""
+    # Create a mock client model
+    mock_model = MagicMock()
+    mock_response = MagicMock()
+    mock_response.content = "Antigravity streamlines open-source workflows."
+    mock_model.invoke.return_value = mock_response
 
-        import urllib.request
-        with pytest.raises(TimeoutError, match="timed out"):
-            urllib.request.urlopen("https://api.example.com")
+    # Exercise the real helper with the test double
+    summary = summarize_text(mock_model, "Long article about software tooling...")
+
+    assert summary == "Antigravity streamlines open-source workflows."
+    mock_model.invoke.assert_called_once()
+
+
+def test_mocking_network_and_exceptions():
+    """Example 3: Mocking network calls and simulating timeouts in easy_web."""
+    with patch("requests.get") as mock_get:
+        # Simulate a network timeout from requests
+        mock_get.side_effect = requests.exceptions.Timeout("Connection timed out")
+
+        # The real is_page_up() catches requests exceptions and raises SomethingWentWrongError
+        with pytest.raises(SomethingWentWrongError, match="Connection timed out"):
+            is_page_up("https://example.com")
 
 
 def test_mocking_with_pytest_monkeypatch(monkeypatch):
-    """Example 4: Using pytest's built-in monkeypatch fixture."""
-    import os
-
+    """Example 4: Using pytest's built-in monkeypatch fixture for environment variables."""
     # Safely set a temporary environment variable
     monkeypatch.setenv("MOCK_API_KEY", "test-secret-key-123")
     assert os.getenv("MOCK_API_KEY") == "test-secret-key-123"
@@ -77,51 +84,69 @@ The most common bug when writing mocks is patching where an object was **defined
 
 ### What does this mean?
 
-Suppose `py_simple.easy_web` imports `urlopen` like this:
+Suppose a helper in `easy_date_formatter.py` imports `datetime` directly:
 
 ```python
-# py_simple_package/src/py_simple/easy_web.py
-from urllib.request import urlopen
+# py_simple_package/src/py_simple/easy_date_formatter.py
+from datetime import datetime
 
-def fetch_page(url: str):
-    return urlopen(url).read()
+def get_pretty_date():
+    return _format_date(datetime.now(), "pretty")
 ```
 
-If your test patches `urllib.request.urlopen`:
+If your test patches the standard library `datetime.datetime`:
 
 ```python
-# ❌ INCORRECT: easy_web already imported urlopen directly into its namespace!
-with patch("urllib.request.urlopen"):
-    fetch_page("https://example.com")
+# ❌ INCORRECT: easy_date_formatter already imported datetime into its own namespace!
+with patch("datetime.datetime"):
+    get_pretty_date()
 ```
 
-The real `urlopen` will still run because `easy_web` has its own reference to `urlopen`.
+The real `datetime.now()` will still run because `easy_date_formatter` has its own reference to `datetime`.
 
 Instead, patch it where it is used:
 
 ```python
-# ✅ CORRECT: patch the reference inside easy_web
-with patch("py_simple_package.src.py_simple.easy_web.urlopen"):
-    fetch_page("https://example.com")
+# ✅ CORRECT: patch the reference inside easy_date_formatter
+with patch("py_simple_package.src.py_simple.easy_date_formatter.datetime") as mock_dt:
+    mock_dt.now.return_value = datetime(2026, 1, 1, 12, 0)
+    get_pretty_date()
 ```
+
+### Hypothetical Web Request Example
+
+As another example, imagine a hypothetical module `my_crawler.py` that imports `requests.get` directly:
+
+```python
+# hypothetical my_crawler.py
+from requests import get
+
+def fetch_content(url: str):
+    return get(url).text
+```
+
+- ❌ Patching `patch("requests.get")` will **not** intercept calls made by `my_crawler.py` because `fetch_content` holds a direct reference imported into `my_crawler`.
+- ✅ Patching `patch("my_crawler.get")` targets the exact namespace where the function is looked up and executed.
+
+*(Note: If a module imports `import requests` and calls `requests.get()`, patching `requests.get` works because `requests` is looked up dynamically on each call.)*
 
 ---
 
 ## Fill-in-the-Blanks Templates
 
-### 1. Mocking a Function with a Custom Return Value
+### 1. Mocking a Function or Dependency with a Custom Return Value
 
 ```python
 from unittest.mock import patch
 
 def test_<helper>_success():
-    with patch("<target_module>.<function_to_mock>") as mock_func:
-        mock_func.return_value = <expected_fake_result>
+    with patch("<target_module>.<dependency_to_mock>") as mock_dep:
+        mock_dep.return_value = <expected_fake_result>
         
         result = <your_helper_function>(...)
         
         assert result == <expected_output>
-        mock_func.assert_called_once_with(<expected_args>)
+        mock_dep.assert_called_once_with(<expected_args>)
 ```
 
 ### 2. Mocking an External Service or SDK Client
@@ -130,15 +155,13 @@ def test_<helper>_success():
 from unittest.mock import MagicMock, patch
 
 def test_<helper>_calls_client():
-    with patch("<target_module>.<ClientClass>") as mock_client_cls:
-        mock_client = MagicMock()
-        mock_client.<method_name>.return_value = <fake_response>
-        mock_client_cls.return_value = mock_client
-        
-        result = <your_helper_function>(...)
-        
-        mock_client_cls.assert_called_once()
-        mock_client.<method_name>.assert_called_once_with(...)
+    mock_client = MagicMock()
+    mock_client.<method_name>.return_value = <fake_response>
+    
+    result = <your_helper_function>(mock_client, ...)
+    
+    assert result == <expected_result>
+    mock_client.<method_name>.assert_called_once_with(...)
 ```
 
 ### 3. Mocking an Error or Exception
@@ -148,10 +171,10 @@ from unittest.mock import patch
 import pytest
 
 def test_<helper>_handles_error():
-    with patch("<target_module>.<function_to_mock>") as mock_func:
-        mock_func.side_effect = <ExpectedError>("Failed operation")
+    with patch("<target_module>.<dependency_to_mock>") as mock_dep:
+        mock_dep.side_effect = <ExpectedUnderlyingError>("Failed operation")
         
-        with pytest.raises(<ExpectedCustomError>):
+        with pytest.raises(<ExpectedPackageError>):
             <your_helper_function>(...)
 ```
 
@@ -159,6 +182,7 @@ def test_<helper>_handles_error():
 
 ## Checklist for Clean Mocks
 
+- [ ] **Test real helpers**: Exercise real package helper functions by mocking their external dependencies, rather than calling mock objects directly.
 - [ ] **No live network or API calls**: Tests run entirely offline and complete in milliseconds.
 - [ ] **Patch where used**: Double check that the patch target string references the module executing the call.
 - [ ] **Verify call arguments**: Use `.assert_called_once_with(...)` or inspect `call_args` to ensure your wrapper forwards the right parameters.
