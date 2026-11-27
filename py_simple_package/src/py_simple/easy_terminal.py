@@ -474,3 +474,65 @@ def print_panel(
 
     Console().print(Panel(str(text), **kwargs))
 
+
+def prompt_choice(question: str, choices: list[str]) -> str:
+    """
+    Displays numbered choices and returns the option selected by the user.
+
+    The function repeats the prompt when the answer is blank or is not a
+    number in the displayed range. At least one choice must be provided.
+
+    Args:
+        question (str): The question to display above the choices.
+        choices (list[str]): The options to display, in their numbered order.
+
+    Returns:
+        str: The text of the selected option.
+
+    Raises:
+        ValueError: If `choices` is empty.
+
+    Example:
+        === "The Py_simple Way"
+            ```python
+            from py_simple import prompt_choice
+
+            color = prompt_choice("Choose a color:", ["Red", "Blue"])
+            print(color)
+            ```
+
+        === "The Traditional Way"
+            ```python
+            choices = ["Red", "Blue"]
+            if not choices:
+                raise ValueError("choices must contain at least one option")
+
+            for number, choice in enumerate(choices, start=1):
+                print(f"{number}. {choice}")
+
+            while True:
+                answer = input("Enter choice: ").strip()
+                if answer.isdecimal():
+                    selected_number = int(answer)
+                    if 1 <= selected_number <= len(choices):
+                        color = choices[selected_number - 1]
+                        break
+                print(f"Please enter a number between 1 and {len(choices)}.")
+
+            print(color)
+            ```
+    """
+    if not choices:
+        raise ValueError("choices must contain at least one option")
+
+    print(question)
+    for number, choice in enumerate(choices, start=1):
+        print(f"{number}. {choice}")
+
+    while True:
+        answer = input("Enter choice: ").strip()
+        if answer.isdecimal():
+            selected_number = int(answer)
+            if 1 <= selected_number <= len(choices):
+                return choices[selected_number - 1]
+        print(f"Please enter a number between 1 and {len(choices)}.")

@@ -81,3 +81,17 @@ print_panel("Configuration file reloaded successfully.", title="Notice", subtitl
 
 The panel automatically fits your text and console width. You can provide an optional `title` for the top border and a `subtitle` for the bottom border. If an unrecognized style name is passed, it safely falls back to `"white"`.
 
+
+## Ask the user to choose an option
+
+Use `prompt_choice()` to display a numbered menu and get the selected option:
+
+```python
+from py_simple import prompt_choice
+
+transport = prompt_choice("How will you travel?", ["Bus", "Train", "Walk"])
+print(f"You chose: {transport}")
+```
+
+If the user enters a blank answer or a number outside the menu, the function
+asks again. Provide at least one option.

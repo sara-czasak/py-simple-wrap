@@ -6,6 +6,7 @@ from py_simple_package.src.py_simple import (
 )
 from py_simple_package.src.py_simple.easy_terminal import (
     EasyTerminal,
+    prompt_choice,
     print_centered,
     print_panel,
     print_rule,
@@ -371,6 +372,7 @@ def test_print_table_non_string_values(capsys):
     assert "True" in captured.out
     assert "95.5" in captured.out
 
+
 def test_print_panel_basic_output(capsys):
     print_panel("Important notice", style="green")
     captured = capsys.readouterr()
@@ -417,3 +419,37 @@ def test_print_panel_is_public():
     from py_simple.easy_terminal import print_panel as module_print_panel
 
     assert public_print_panel is module_print_panel
+
+
+def test_prompt_choice_returns_selected_option(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", lambda prompt: "2")
+
+    result = prompt_choice("Choose a color:", ["Red", "Blue"])
+
+    assert result == "Blue"
+    assert capsys.readouterr().out == "Choose a color:\n1. Red\n2. Blue\n"
+
+
+@pytest.mark.parametrize("answer", ["", "0", "3", "not a number"])
+def test_prompt_choice_reprompts_for_invalid_input(answer, monkeypatch, capsys):
+    answers = iter([answer, "1"])
+    monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
+
+    result = prompt_choice("Choose:", ["One", "Two"])
+
+    assert result == "One"
+    assert capsys.readouterr().out == (
+        "Choose:\n1. One\n2. Two\nPlease enter a number between 1 and 2.\n"
+    )
+
+
+def test_prompt_choice_rejects_empty_choices():
+    with pytest.raises(ValueError, match="at least one option"):
+        prompt_choice("Choose:", [])
+
+
+def test_prompt_choice_public_import():
+    from py_simple import prompt_choice as public_prompt_choice
+    from py_simple.easy_terminal import prompt_choice as module_prompt_choice
+
+    assert public_prompt_choice is module_prompt_choice
