@@ -39,6 +39,9 @@ The [Network Test Template](network_tests_template.md) gives you a working examp
 **🧪 "My test changes files, environment variables or the working directory. How do I keep the next test safe?"**
 The [Keeping Tests Isolated](test_isolation_template.md) guide starts with runnable `tmp_path` and `monkeypatch` examples, then shows what gets restored and what stays on disk.
 
+**💥 "My function is supposed to raise an error when given bad input. How do I test that with pytest?"**
+The [Testing Exceptions and Error Handling Guide](testing_exceptions_template.md) shows how to assert on custom exception types, match error messages, inspect exception details, and test boundary conditions with parametrization.
+
 **🧹 "A pre-commit check failed, or changed my files. What do I do next?"**
 The [Pre-commit Guide](pre_commit_template.md) shows how to run the repository's hooks, review their fixes, and stage and check your files again.
 
