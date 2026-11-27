@@ -28,10 +28,10 @@ travel_time = seconds_to_hh_mm_ss(drive_seconds)
 # 3. Fuel and campsite expenses
 fuel_cost = 120.00
 campsite_cost = 80.00
-subtotal = fuel_cost + campsite_cost
 
 # 4. Apply a 15% promotional discount on the campsite booking
-trip_total = calculate_discount(subtotal, 15.0)
+discounted_campsite = float(calculate_discount(campsite_cost, 15.0))
+trip_total = fuel_cost + discounted_campsite
 
 # 5. Split expenses evenly among 4 travelers
 friends = 4
@@ -48,15 +48,15 @@ Example output:
 ```text
 Road Trip Distance: 350 miles (563.3 km)
 Estimated Driving Time: 7:00:00
-Total Trip Expenses: $170.00
-Share Per Person (4 friends): $42.50
+Total Trip Expenses: $188.00
+Share Per Person (4 friends): $47.00
 ```
 
 ## What happened?
 
 1. `miles_to_km(350.0)` converts imperial distance into kilometers without having to memorize or look up `1.60934`.
 2. `seconds_to_hh_mm_ss(drive_seconds)` converts raw seconds into a clear `HH:MM:SS` format.
-3. `calculate_discount(subtotal, 15.0)` calculates the discounted total using accurate decimal arithmetic so fractional pennies don't get lost.
+3. `calculate_discount(campsite_cost, 15.0)` calculates the promotional discount on the campsite booking using accurate decimal arithmetic so fractional pennies don't get lost.
 4. `split_bill(trip_total, friends)` divides the final bill evenly among all passengers, rounding accurately to standard cents.
 5. `format_money(...)` returns formatted currency strings with the standard `$` symbol and two decimal places.
 
