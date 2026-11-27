@@ -67,3 +67,17 @@ Headings are literal text: `print_rule("[red]")` displays the brackets
 rather than treating them as a color instruction. Install the existing
 terminal extra with `python -m pip install "py-simple-wrap[terminal]"`
 if Rich is not already available.
+
+## Ask the user to choose an option
+
+Use `prompt_choice()` to display a numbered menu and get the selected option:
+
+```python
+from py_simple import prompt_choice
+
+transport = prompt_choice("How will you travel?", ["Bus", "Train", "Walk"])
+print(f"You chose: {transport}")
+```
+
+If the user enters a blank answer or a number outside the menu, the function
+asks again. Provide at least one option.
