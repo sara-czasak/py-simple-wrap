@@ -1,17 +1,17 @@
-# Terminal & CLI Testing Template
+# How to Test Terminal & CLI Features
 
-Functions that print text, draw styled rules, format tables, or prompt the user for input shouldn't pollute the test runner's console or hang waiting for manual keystrokes. Use pytest's built-in `capsys` fixture to capture standard output (`stdout`) and standard error (`stderr`), and `monkeypatch` to simulate terminal widths or mock user input.
+A practical guide for testing command-line tools, formatted outputs, and interactive prompts in `py-simple-wrap`.
 
-This builds on the [Module Tests Template](tests_template.md), using the same patterns found across `tests/test_terminal.py`.
+---
 
-## Copy this working example
+## 5-minute quickstart
 
-After following the environment setup in [CONTRIBUTING.md](../how-to/contributing.md), create `tests/test_terminal_demo.py` and paste this code:
+Save this as `tests/test_terminal_demo.py` to see `capsys` and `monkeypatch` in action:
 
 ```python
+import pytest
+from rich.cells import cell_len
 from py_simple_package.src.py_simple.easy_terminal import (
-    EasyTerminal,
-    print_centered,
     print_rule,
     print_styled,
     print_table,
@@ -19,18 +19,8 @@ from py_simple_package.src.py_simple.easy_terminal import (
 
 
 def test_print_styled_captures_stdout(capsys):
-    """Verify that print_styled sends formatted text to stdout."""
-    print_styled("Build complete!", color="green", bold=True)
-
-    captured = capsys.readouterr()
-    assert "Build complete!" in captured.out
-    assert captured.err == ""
-
-
-def test_easy_terminal_show_prints_expected_content(capsys):
-    """Verify EasyTerminal.show() outputs clean text."""
-    terminal = EasyTerminal("Deploying service...")
-    terminal.show()
+    """Verify print_styled writes text cleanly to standard output."""
+    print_styled("Deploying service...", style="green")
 
     captured = capsys.readouterr()
     assert captured.out == "Deploying service...\n"
@@ -42,6 +32,9 @@ def test_print_rule_with_custom_columns(monkeypatch, capsys):
     print_rule("System Status")
 
     captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    assert len(lines) == 1
+    assert 0 < cell_len(lines[0]) <= 40
     assert "System Status" in captured.out
 
 
@@ -100,6 +93,7 @@ Copy this template into your module's test file in `tests/`:
 
 ```python
 import pytest
+from rich.cells import cell_len
 from py_simple_package.src.py_simple.<your_module> import <your_cli_function>
 
 
@@ -118,6 +112,9 @@ def test_<function_name>_custom_styling_or_width(monkeypatch, capsys):
     <your_cli_function>("Sample title")
 
     captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    assert len(lines) == 1
+    assert 0 < cell_len(lines[0]) <= 80
     assert "<expected_title>" in captured.out
 
 
@@ -157,7 +154,14 @@ CLI helpers often inspect terminal characteristics like column width via `os.env
 monkeypatch.setenv("COLUMNS", "60")
 ```
 
-After the test finishes, pytest automatically restores the original environment variables.
+After the test finishes, pytest automatically restores the original environment variables. To verify that terminal output adapts to the simulated width, use Rich's `cell_len()` on the rendered line:
+
+```python
+from rich.cells import cell_len
+
+lines = captured.out.splitlines()
+assert 0 < cell_len(lines[0]) <= 60
+```
 
 ### 3. Preventing hangs on interactive prompts
 
