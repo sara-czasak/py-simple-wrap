@@ -286,18 +286,21 @@ class TestReadFileChunked:
             list(read_file_chunked("test.exe", 10))
 
     def test_zero_chunk_size(self, tmp_workdir):
+        """Should raise EasyFileManagerError for invalid chunk size."""
         make_blank_file("test", "txt")
 
         with pytest.raises(EasyFileManagerError):
             list(read_file_chunked("test.txt", 0))
 
     def test_negative_chunk_size(self, tmp_workdir):
+        """Should raise EasyFileManagerError for invalid chunk size."""
         make_blank_file("test", "txt")
 
         with pytest.raises(EasyFileManagerError):
             list(read_file_chunked("test.txt", -1))
 
     def test_float_chunk_size(self, tmp_workdir):
+        """Should raise EasyFileManagerError for invalid chunk size."""
         make_blank_file("test", "txt")
 
         with pytest.raises(EasyFileManagerError):
